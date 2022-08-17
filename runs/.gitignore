@@ -1,0 +1,9 @@
+*.log
+*.json
+*.pt
+*.csv
+*.pth
+*.txt
+*.bin
+*.md
+exit_code

@@ -1,0 +1,42 @@
+[tool.poetry]
+name = "privacy-glue"
+version = "0.1.0"
+description = ""
+authors = ["Atreya Shankar <35427332+atreyasha@users.noreply.github.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+transformers = "^4.18.0"
+tqdm = "^4.62.3"
+numpy = "^1.21.4"
+datasets = "^2.0.0"
+torch = "1.10.0"
+PyYAML = "^6.0"
+
+[tool.poetry.dev-dependencies]
+ipdb = "^0.13.9"
+pytest = "^6.2.5"
+mypy = "0.960"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.mypy]
+allow_redefinition = true
+files = "src"
+
+[[tool.mypy.overrides]]
+module = [
+    "ipdb",
+    "tqdm.*",
+    "sklearn.*",
+    "scipy.*",
+    "pandas",
+    "sentence_transformers.*"
+]
+ignore_missing_imports = true
