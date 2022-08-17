@@ -30,7 +30,7 @@ privacy_qa() {
   mkdir -p "$target"
 
   # fetch all submodules
-  git submodule update --init --recursive
+  git submodule update --init --recursive "submodules/PrivacyQA_EMNLP"
 
   # copy relevant data
   for tsv_file in submodules/PrivacyQA_EMNLP/data/*.csv; do
@@ -88,7 +88,7 @@ policy_qa() {
   mkdir -p "$target"
 
   # fetch all submodules
-  git submodule update --init --recursive
+  git submodule update --init --recursive "submodules/PolicyQA"
 
   # copy relevant data
   for json_file in submodules/PolicyQA/data/*.json; do
@@ -105,7 +105,7 @@ policy_ie() {
   mkdir -p "$target"
 
   # fetch all submodules
-  git submodule update --init --recursive
+  git submodule update --init --recursive "submodules/PolicyIE"
 
   # execute process in subshell
   (
