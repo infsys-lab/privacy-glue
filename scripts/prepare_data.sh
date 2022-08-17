@@ -31,17 +31,6 @@ policy_detection() {
   tar -zxvf "$target/classifier_data.tar.gz" -C "$target" --strip-components 1 "dataset/1301_dataset.csv"
 }
 
-opp_115() {
-  local target="./data/opp_115"
-  mkdir -p "$target"
-  wget -N -P "$target" "https://usableprivacy.org/static/data/OPP-115_v1_0.zip"
-  wget -N -P "$target" "https://usableprivacy.org/static/data/JURIX_2020_OPP-115_GDPR_v1.0.zip"
-  unzip -o "$target/OPP-115_v1_0.zip" -d "$target"
-  unzip -o "$target/JURIX_2020_OPP-115_GDPR_v1.0.zip" -d "$target"
-  rsync -a "$target/OPP-115/" "$target"
-  rm -rf "$target/OPP-115"
-}
-
 app_350_transform() {
   cat <<EOF
 from glob import glob
@@ -101,7 +90,6 @@ clean() {
 # define main function
 main() {
   policy_detection
-  opp_115
   app_350
   opt_out
   clean
