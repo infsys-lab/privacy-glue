@@ -118,11 +118,27 @@ policy_ie() {
   cp -r submodules/PolicyIE/data/bio_format/. "$target"
 }
 
+opp_115() {
+  local target="./data/opp_115"
+  mkdir -p "$target"
+
+  # fetch all submodules
+  git submodule update --init --recursive "submodules/Polisis_Benchmark"
+
+  # copy relevant data
+  for csv_file in submodules/Polisis_Benchmark/datasets/Union/*.csv; do
+    printf "%s\n" "Copying $csv_file to $target"
+    target_csv_file="$target/$(basename "$csv_file")"
+    cp "$csv_file" "$target_csv_file"
+  done
+}
+
 # define main function
 main() {
   privacy_qa
   policy_qa
   policy_ie
+  opp_115
 }
 
 # execute all functions
