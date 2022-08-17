@@ -32,10 +32,6 @@ $ pip install -r requirements.txt
     $ bash scripts/prepare_git_hooks.sh
     ```
 
-## Usage :snowflake:
-
-Under development ...
-
 ## Test :microscope:
 
 To run a `mypy` type-integrity test, execute:
