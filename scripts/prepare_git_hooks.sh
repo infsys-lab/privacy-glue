@@ -15,7 +15,7 @@ EOF
 }
 
 # check for help
-check_help() {
+parser() {
   for arg; do
     if [ "$arg" == "--help" ] || [ "$arg" == "-h" ]; then
       usage
@@ -30,5 +30,5 @@ main() {
 }
 
 # execute function
-check_help "$@"
+parser "$@"
 main
