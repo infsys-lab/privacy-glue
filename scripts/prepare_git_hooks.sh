@@ -9,8 +9,7 @@ usage: prepare_git_hooks.sh [-h|--help]
 Copy git hooks to git repository config
 
 optional arguments:
-  -h, --help  <flag>
-              show this help message and exit
+  -h, --help  show this help message and exit
 EOF
 }
 

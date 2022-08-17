@@ -9,8 +9,7 @@ usage: prepare_data.sh [-h|--help]
 This script downloads and prepares relevant data
 
 optional arguments:
-  -h, --help  <flag>
-              show this help message and exit
+  -h, --help  show this help message and exit
 EOF
 }
 

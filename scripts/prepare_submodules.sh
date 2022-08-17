@@ -10,8 +10,7 @@ This script instantiates necessary submodules and
 extracts relevant data to the necessary locations
 
 optional arguments:
-  -h, --help  <flag>
-              show this help message and exit
+  -h, --help  show this help message and exit
 EOF
 }
 
