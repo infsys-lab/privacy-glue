@@ -10,3 +10,7 @@
   path = submodules/PolicyIE
   url = https://github.com/wasiahmad/PolicyIE.git
   branch = main
+[submodule "submodules/Polisis_Benchmark"]
+  path = submodules/Polisis_Benchmark
+  url = https://github.com/SmartDataAnalytics/Polisis_Benchmark
+  branch = master
