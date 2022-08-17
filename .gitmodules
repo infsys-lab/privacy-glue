@@ -1,0 +1,12 @@
+[submodule "submodules/PrivacyQA_EMNLP"]
+  path = submodules/PrivacyQA_EMNLP
+  url = https://github.com/AbhilashaRavichander/PrivacyQA_EMNLP.git
+  branch = master
+[submodule "submodules/PolicyQA"]
+  path = submodules/PolicyQA
+  url = https://github.com/wasiahmad/PolicyQA.git
+  branch = main
+[submodule "submodules/PolicyIE"]
+  path = submodules/PolicyIE
+  url = https://github.com/wasiahmad/PolicyIE.git
+  branch = main
