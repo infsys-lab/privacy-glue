@@ -14,3 +14,7 @@
   path = submodules/Polisis_Benchmark
   url = https://github.com/SmartDataAnalytics/Polisis_Benchmark.git
   branch = master
+[submodule "submodules/piextract_dataset"]
+  path = submodules/piextract_dataset
+  url = https://github.com/um-rtcl/piextract_dataset.git
+  branch = master
