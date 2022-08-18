@@ -7,7 +7,6 @@ from datasets import load_dataset, concatenate_datasets
 from glob import glob
 import pandas as pd
 import datasets
-import nltk
 import json
 import ipdb
 import os
@@ -287,16 +286,37 @@ def load_app_350(directory: str) -> datasets.DatasetDict:
     dataset = datasets.Dataset.from_dict(documents)
     combined = datasets.DatasetDict()
     for split in ["train", "validation", "test"]:
-        combined[split] = dataset.filter(lambda row: row["split"] == split)
-        combined[split] = combined[split].remove_columns("split")
+        combined[split] = dataset.filter(
+            lambda row: row["split"] == split).remove_columns("split")
 
     return combined
 
 
-ipdb.set_trace()
+def load_opp_115(directory: str) -> datasets.DatasetDict:
+    columns = ["text", "label"]
+    df = pd.DataFrame()
+    for split in ["train", "validation", "test"]:
+        temp_df = pd.read_csv(os.path.join(directory,
+                                           "%s_dataset.csv" % split),
+                              header=None,
+                              names=columns)
+        temp_df = temp_df.groupby("text").agg(
+            dict(label=lambda x: list(set(x)))).reset_index()
+        temp_df["split"] = split
+        df = pd.concat([df, temp_df], ignore_index=True)
+
+    dataset = datasets.Dataset.from_pandas(df, preserve_index=False)
+    combined = datasets.DatasetDict()
+    for split in ["train", "validation", "test"]:
+        combined[split] = dataset.filter(
+            lambda row: row["split"] == split).remove_columns("split")
+    return combined
+
+
 # data = load_policy_detection("./data/policy_detection")
 # data = load_privacy_qa("./data/privacy_qa")
 # data = load_policy_qa("./data/policy_qa")
 # data = load_policy_ie("./data/policy_ie")
 # data = load_opt_out("./data/opt_out")
-data = load_app_350("./data/app_350")
+# data = load_app_350("./data/app_350")
+data = load_opp_115("./data/opp_115")
