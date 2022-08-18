@@ -12,5 +12,5 @@
   branch = main
 [submodule "submodules/Polisis_Benchmark"]
   path = submodules/Polisis_Benchmark
-  url = https://github.com/SmartDataAnalytics/Polisis_Benchmark
+  url = https://github.com/SmartDataAnalytics/Polisis_Benchmark.git
   branch = master
