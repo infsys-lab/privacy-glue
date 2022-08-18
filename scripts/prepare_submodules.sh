@@ -126,7 +126,7 @@ opp_115() {
   git submodule update --init --recursive "submodules/Polisis_Benchmark"
 
   # copy relevant data
-  for csv_file in submodules/Polisis_Benchmark/datasets/Union/*.csv; do
+  for csv_file in submodules/Polisis_Benchmark/datasets/Majority/*.csv; do
     printf "%s\n" "Copying $csv_file to $target"
     target_csv_file="$target/$(basename "$csv_file")"
     cp "$csv_file" "$target_csv_file"
