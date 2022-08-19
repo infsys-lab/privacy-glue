@@ -369,12 +369,5 @@ def load_piextract(directory: str) -> datasets.DatasetDict:
     return combined
 
 
-# data = load_policy_detection("./data/policy_detection")
-# data = load_privacy_qa("./data/privacy_qa")
-# data = load_policy_qa("./data/policy_qa")
-# data = load_policy_ie("./data/policy_ie")
-# data = load_opt_out("./data/opt_out")
-# data = load_app_350("./data/app_350")
-# data = load_opp_115("./data/opp_115")
-# data = load_piextract("./data/piextract")
-ipdb.set_trace()
+if __name__ == "__main__":
+    ipdb.set_trace()
