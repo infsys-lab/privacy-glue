@@ -3,12 +3,18 @@
 
 from collections import defaultdict
 from typing import Dict, Tuple, Iterable, Any
+from tqdm import tqdm
 from glob import glob
 import datasets
-import json
+import yaml
 import nltk
 import os
 import re
+
+try:
+    from yaml import CLoader as Loader
+except ImportError:
+    from yaml import Loader
 
 
 def has_conflicting_labels(labels: Iterable[Tuple[Any, Any]]) -> bool:
@@ -33,9 +39,11 @@ def get_normalized_label(label: Dict[str, str]) -> Tuple[str, str, str]:
 
 def load_app_350(directory: str) -> datasets.DatasetDict:
     documents = defaultdict(list)
-    for file in glob(os.path.join(directory, "annotations", "*.json")):
+    for file in tqdm(glob(os.path.join(directory, "annotations", "*.yml")),
+                     desc="Parsing YAML files"):
         with open(file, "r") as input_file_stream:
-            document = json.load(input_file_stream)
+            document = yaml.load(input_file_stream, Loader=Loader)
+
         split = re.sub(r"ing$", "", document["policy_type"].lower())
         for segment in document["segments"]:
             has_difficult_annotation = any([
