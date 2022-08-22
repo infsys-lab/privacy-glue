@@ -27,8 +27,10 @@ parser() {
 policy_detection() {
   local target="./data/policy_detection"
   mkdir -p "$target"
-  wget -N -P "$target" "https://privacypolicies.cs.princeton.edu/data-release/data/classifier_data.tar.gz"
-  tar -zxvf "$target/classifier_data.tar.gz" -C "$target" --strip-components 1 "dataset/1301_dataset.csv"
+  wget -N -P "$target" \
+    "https://privacypolicies.cs.princeton.edu/data-release/data/classifier_data.tar.gz"
+  tar -zxvf "$target/classifier_data.tar.gz" -C "$target" \
+    --strip-components 1 "dataset/1301_dataset.csv"
 }
 
 app_350() {
@@ -50,7 +52,8 @@ WHERE label IN ("Positive", "Negative");
 EOF
   )
   mkdir -p "$target"
-  wget -N -P "$target" "https://usableprivacy.org/static/data/OptOutChoice-2020_v1.0.zip"
+  wget -N -P "$target" \
+    "https://usableprivacy.org/static/data/OptOutChoice-2020_v1.0.zip"
   unzip -o "$target/OptOutChoice-2020_v1.0.zip" -d "$target"
   rsync -a "$target/OptOutChoice-2020_v1.0/" "$target"
   rm -rf "$target/OptOutChoice-2020_v1.0/"
@@ -58,9 +61,12 @@ EOF
     >"$target/binary_data/binary_data.json"
   cat <<<"$(jq -c '.[]' "$target/binary_data/binary_data.json")" \
   >"$target/binary_data/binary_data.json"
-  cat "$target/category_data/train_set1.jsonl" "$target/category_data/train_set2.jsonl" \
-    "$target/category_data/train_set3.jsonl" >"$target/category_data/train_set.jsonl"
-  rm -f "$target/category_data/train_set1.jsonl" "$target/category_data/train_set2.jsonl" \
+  cat "$target/category_data/train_set1.jsonl" \
+    "$target/category_data/train_set2.jsonl" \
+    "$target/category_data/train_set3.jsonl" \
+    >"$target/category_data/train_set.jsonl"
+  rm -f "$target/category_data/train_set1.jsonl" \
+    "$target/category_data/train_set2.jsonl" \
     "$target/category_data/train_set3.jsonl"
 }
 
