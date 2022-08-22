@@ -14,3 +14,7 @@
   path = submodules/piextract_dataset
   url = https://github.com/um-rtcl/piextract_dataset.git
   branch = master
+[submodule "submodules/policy-ie"]
+  path = submodules/policy-ie
+  url = https://github.com/infsys-lab/policy-ie.git
+  branch = main
