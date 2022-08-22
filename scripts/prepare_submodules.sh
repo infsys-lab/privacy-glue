@@ -105,17 +105,17 @@ policy_ie() {
   mkdir -p "$target"
 
   # fetch submodule
-  git submodule update --init --recursive "submodules/PolicyIE"
+  git submodule update --init --recursive "submodules/policy-ie"
 
   # execute process in subshell
   (
-    cd "submodules/PolicyIE/data/"
+    cd "submodules/policy-ie/data/"
     bash prepare.sh || true
     git clean -f -d
   )
 
   # copy and unzip relevant data
-  cp -r submodules/PolicyIE/data/bio_format/. "$target"
+  cp -r "submodules/policy-ie/data/bio_format/." "$target"
 }
 
 opp_115() {
