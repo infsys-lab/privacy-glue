@@ -1,1 +1,1 @@
-# This package contains relevant utility source code
+# This module contains relevant utility source code
