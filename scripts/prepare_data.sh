@@ -31,23 +31,6 @@ policy_detection() {
   tar -zxvf "$target/classifier_data.tar.gz" -C "$target" --strip-components 1 "dataset/1301_dataset.csv"
 }
 
-app_350_transform() {
-  cat <<EOF
-from glob import glob
-from tqdm import tqdm
-import yaml
-import json
-import os
-
-for file in tqdm(glob(os.path.join("$target", "annotations", "*.yml"))):
-    with open(file, "r") as input_file_stream:
-        data = yaml.safe_load(input_file_stream)
-    with open("%s%s" % (os.path.splitext(file)[0], ".json"), "w") as output_file_stream:
-        json.dump(data, output_file_stream)
-    os.remove(file)
-EOF
-}
-
 app_350() {
   local target="./data/app_350"
   mkdir -p "$target"
@@ -55,7 +38,6 @@ app_350() {
   unzip -o "$target/APP-350_v1.1.zip" -d "$target"
   rsync -a "$target/APP-350_v1.1/" "$target"
   rm -rf "$target/APP-350_v1.1"
-  python3 -c "$(app_350_transform)"
 }
 
 opt_out() {
