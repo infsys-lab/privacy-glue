@@ -39,24 +39,20 @@ def load_policy_qa(directory: str) -> datasets.DatasetDict:
                 context = paragraph["context"]
                 answers = {}
                 for qa in paragraph["qas"]:
-                    question = qa["question"]
-                    question_type = qa["type"].split("|||")
-                    idx = qa["id"]
                     answers["text"] = [
                         answer["text"] for answer in qa["answers"]
                     ]
                     answers["answer_start"] = [
                         answer["answer_start"] for answer in qa["answers"]
                     ]
-                    temp_dict["id"].append(idx)
+                    temp_dict["id"].append(qa["id"])
                     temp_dict["title"].append(title)
                     temp_dict["context"].append(context)
-                    temp_dict["question"].append(question)
-                    temp_dict["question_type"].append(question_type)
+                    temp_dict["question"].append(qa["question"])
+                    temp_dict["question_type"].append(qa["type"].split("|||"))
                     temp_dict["answers"].append(answers)
 
         # convert temp_dict to Dataset and insert into DatasetDict
         combined[split] = datasets.Dataset.from_dict(temp_dict)
 
-    # return final DatasetDict
     return combined
