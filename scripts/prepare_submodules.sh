@@ -77,7 +77,7 @@ policy_ie() {
   )
 
   # copy and unzip relevant data
-  cp -r "submodules/policy-ie/data/bio_format/." "$target"
+  cp -r "submodules/policy-ie/data/bio_format/"* "$target"
 }
 
 opp_115() {
