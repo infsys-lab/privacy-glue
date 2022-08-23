@@ -7,21 +7,28 @@ import os
 
 
 def load_opp_115(directory: str) -> datasets.DatasetDict:
-    columns = ["text", "label"]
-    df = pd.DataFrame()
-    for split in ["train", "validation", "test"]:
+    # define an empty DatasetDict
+    combined = datasets.DatasetDict()
+
+    # define available splits
+    splits = ["train", "validation", "test"]
+
+    # loop over all splits
+    for split in splits:
+        # read CSV file corresponding to split
         temp_df = pd.read_csv(os.path.join(directory,
                                            "%s_dataset.csv" % split),
                               header=None,
-                              names=columns)
+                              names=["text", "label"])
+
+        # aggregate all labels per sentence into a unique list
         temp_df = temp_df.groupby("text").agg(
             dict(label=lambda x: list(set(x)))).reset_index()
-        temp_df["split"] = split
-        df = pd.concat([df, temp_df], ignore_index=True)
 
-    dataset = datasets.Dataset.from_pandas(df, preserve_index=False)
-    combined = datasets.DatasetDict()
-    for split in ["train", "validation", "test"]:
-        combined[split] = dataset.filter(
-            lambda row: row["split"] == split).remove_columns("split")
+        # convert temporary dataframe into HF dataset
+        dataset = datasets.Dataset.from_pandas(temp_df, preserve_index=False)
+
+        # insert dataset into combined DatasetDict
+        combined[split] = dataset
+
     return combined
