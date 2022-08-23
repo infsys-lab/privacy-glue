@@ -15,8 +15,8 @@ def load_policy_qa(directory: str) -> datasets.DatasetDict:
     for json_file in glob(os.path.join(directory, "*.json")):
         # infer split from filename
         filename = os.path.basename(json_file)
-        split = "train" if filename.startswith("train") else (
-            "validation" if filename.startswith("dev") else "test")
+        split = "validation" if filename.startswith(
+            "dev") else filename.replace(".json", "")
 
         # define temporarily dictionary
         temp_dict = {
@@ -40,7 +40,7 @@ def load_policy_qa(directory: str) -> datasets.DatasetDict:
                 answers = {}
                 for qa in paragraph["qas"]:
                     question = qa["question"]
-                    question_type = qa["type"]
+                    question_type = qa["type"].split("|||")
                     idx = qa["id"]
                     answers["text"] = [
                         answer["text"] for answer in qa["answers"]
@@ -55,13 +55,8 @@ def load_policy_qa(directory: str) -> datasets.DatasetDict:
                     temp_dict["question_type"].append(question_type)
                     temp_dict["answers"].append(answers)
 
-        # convert temp_dict to Dataset
+        # convert temp_dict to Dataset and insert into DatasetDict
         combined[split] = datasets.Dataset.from_dict(temp_dict)
-
-    # split question_type column
-    combined = combined.map(
-        lambda example:
-        {"question_type": example["question_type"].split("|||")})
 
     # return final DatasetDict
     return combined
