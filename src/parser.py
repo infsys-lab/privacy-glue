@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from utils.parser_utils import dir_path
+from transformers import HfArgumentParser, TrainingArguments
 from dataclasses import dataclass, field
 from typing import Optional
 from enum import Enum
+import os
 
 # 1. NOTE: Fields with no default value set will be transformed
 # into`required arguments within the HuggingFace argument parser
@@ -80,6 +83,10 @@ class ModelArguments:
 class DataArguments:
     task: Task = field(
         metadata={"help": "The name of the task for fine-tuning"})
+    data_dir: dir_path = field(
+        default=os.path.relpath(
+            os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")),
+        metadata={"help": "Path to directory containing task input data"})
     overwrite_cache: bool = field(
         default=False,
         metadata={
@@ -107,3 +114,7 @@ class DataArguments:
             "For debugging purposes or quicker training, truncate the "
             "number of prediction examples to this value if set"
         })
+
+
+def get_parser() -> HfArgumentParser:
+    return HfArgumentParser((ModelArguments, DataArguments, TrainingArguments))
