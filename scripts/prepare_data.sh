@@ -40,18 +40,13 @@ app_350() {
   unzip -o "$target/APP-350_v1.1.zip" -d "$target"
   mv "$target/APP-350_v1.1/"* "$target"
   rm -rf "$target/APP-350_v1.1"
-}
-
-clean() {
-  find data -name ".DS_Store" -or -name ".idea" -or -name "__MACOSX" |
-    xargs -n 1 rm -rf
+  rm -rf "$target/__MACOSX"
 }
 
 # define main function
 main() {
   policy_detection
   app_350
-  clean
 }
 
 # execute all functions
