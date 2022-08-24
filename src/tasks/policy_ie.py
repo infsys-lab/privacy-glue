@@ -1,42 +1,63 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from typing import Dict
 import datasets
 import os
 
 
-def load_policy_ie(directory: str) -> datasets.DatasetDict:
-    data_files = {}
-    data_files["train"] = os.path.join(directory, "train", "seq.in")
-    data_files["validation"] = os.path.join(directory, "valid", "seq.in")
-    data_files["test"] = os.path.join(directory, "test", "seq.in")
-    tokens = datasets.load_dataset("text", data_files=data_files).map(
-        lambda example: {"tokens": example["text"].split()},
-        remove_columns=["text"])
-    data_files["train"] = os.path.join(directory, "train", "label")
-    data_files["validation"] = os.path.join(directory, "valid", "label")
-    data_files["test"] = os.path.join(directory, "test", "label")
-    labels = datasets.load_dataset("text",
-                                   data_files=data_files).rename_column(
-                                       "text", "label")
-    data_files["train"] = os.path.join(directory, "train", "seq_type_I.out")
-    data_files["validation"] = os.path.join(directory, "valid",
-                                            "seq_type_I.out")
-    data_files["test"] = os.path.join(directory, "test", "seq_type_I.out")
-    ner_tags_first = datasets.load_dataset("text", data_files=data_files).map(
-        lambda example: {"ner_tags_type_one": example["text"].split()},
-        remove_columns=["text"])
-    data_files["train"] = os.path.join(directory, "train", "seq_type_II.out")
-    data_files["validation"] = os.path.join(directory, "valid",
-                                            "seq_type_II.out")
-    data_files["test"] = os.path.join(directory, "test", "seq_type_II.out")
-    ner_tags_second = datasets.load_dataset("text", data_files=data_files).map(
-        lambda example: {"ner_tags_type_two": example["text"].split()},
-        remove_columns=["text"])
+def file_mapping(directory: str, filename: str) -> Dict[str, str]:
+    # define patterns for file loading
+    files = {}
+    files["train"] = os.path.join(directory, "train", filename)
+    files["validation"] = os.path.join(directory, "valid", filename)
+    files["test"] = os.path.join(directory, "test", filename)
+
+    return files
+
+
+def load_policy_ie_a(directory: str) -> datasets.DatasetDict:
+    return load_policy_ie(directory, "a")
+
+
+def load_policy_ie_b(directory: str) -> datasets.DatasetDict:
+    return load_policy_ie(directory, "b")
+
+
+def load_policy_ie(directory: str, subtype: str) -> datasets.DatasetDict:
+    # initialize DatasetDict object
     combined = datasets.DatasetDict()
-    for (split, a), (_, b), (_, c), (_, d) in zip(tokens.items(),
-                                                  labels.items(),
-                                                  ner_tags_first.items(),
-                                                  ner_tags_second.items()):
-        combined[split] = datasets.concatenate_datasets([a, b, c, d], axis=1)
+
+    # load tokens which are common for all sub-tasks
+    tokens = datasets.load_dataset(
+        "text", data_files=file_mapping(directory, "seq.in")).map(
+            lambda example: {"tokens": example["text"].split()},
+            remove_columns=["text"])
+
+    # proceed conditionally dependent on subtask
+    if subtype == "a":
+        # if task A, only load labels
+        labels = datasets.load_dataset(
+            "text",
+            data_files=file_mapping(directory,
+                                    "label")).rename_column("text", "label")
+
+        # zip together data
+        for (split,
+             tokens_split), (_, labels_split) in zip(tokens.items(),
+                                                     labels.items()):
+            combined[split] = datasets.concatenate_datasets(
+                [tokens_split, labels_split], axis=1)
+
+    elif subtype == "b":
+        # if task B, load all NER tags
+        ner_tags_first = datasets.load_dataset(
+            "text", data_files=file_mapping(directory, "seq_type_I.out")).map(
+                lambda example: {"ner_tags_type_one": example["text"].split()},
+                remove_columns=["text"])
+        ner_tags_second = datasets.load_dataset(
+            "text", data_files=file_mapping(directory, "seq_type_II.out")).map(
+                lambda example: {"ner_tags_type_two": example["text"].split()},
+                remove_columns=["text"])
+
     return combined
