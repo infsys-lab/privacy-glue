@@ -206,9 +206,6 @@ def load_app_350(directory: str) -> datasets.DatasetDict:
     # create a DatasetDict to fill up
     combined = datasets.DatasetDict()
 
-    import ipdb
-    ipdb.set_trace()
-
     # assign splits to DatasetDict and drop the "split" column
     for split in ["train", "validation", "test"]:
         combined[split] = dataset.filter(
