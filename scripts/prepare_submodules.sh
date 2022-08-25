@@ -63,8 +63,10 @@ policy_qa() {
 }
 
 policy_ie() {
-  local target="./data/policy_ie"
-  mkdir -p "$target"
+  local target_a="./data/policy_ie_a"
+  local target_b="./data/policy_ie_b"
+  local source="submodules/policy-ie/data/bio_format"
+  mkdir -p "$target_a" "$target_b"
 
   # fetch submodule
   git submodule update --init --recursive "submodules/policy-ie"
@@ -76,8 +78,21 @@ policy_ie() {
     git clean -f -d
   )
 
-  # copy and unzip relevant data
-  cp -r "submodules/policy-ie/data/bio_format/"* "$target"
+  # copy metadata from source to target
+  cp "$source/vocab.txt" "$source/intent_label.txt" "$target_a"
+  cp "$source/vocab.txt" "$source/type_I_slot_label.txt" \
+    "$source/type_II_slot_label.txt" "$target_b"
+
+  # copy annotation data from source to target
+  for inner_source in "$source/"*/; do
+    inner_target_a="$target_a/$(basename "$inner_source")"
+    inner_target_b="$target_b/$(basename "$inner_source")"
+    mkdir -p "$inner_target_a"
+    mkdir -p "$inner_target_b"
+    cp "$inner_source/seq.in" "$inner_source/label" "$inner_target_a"
+    cp "$inner_source/seq.in" "$inner_source/seq_type_I.out" \
+      "$inner_source/seq_type_II.out" "$inner_target_b"
+  done
 }
 
 opp_115() {
