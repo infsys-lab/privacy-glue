@@ -31,8 +31,8 @@ optional arguments:
   --task                  <str>
                           task to be worked on. The following values are
                           accepted: "app_350", "opp_115", "piextract",
-                          "policy_detection", "policy_ie", "policy_qa",
-                          "privacy_qa", "all"
+                          "policy_detection", "policy_ie_a", "policy_ie_b",
+                          "policy_qa", "privacy_qa", "all"
                           (default: all)
 
   -h, --help              show this help message and exit
