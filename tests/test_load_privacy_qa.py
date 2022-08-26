@@ -21,10 +21,11 @@ def test_load_privacy_qa():
 
         # ensure all questions are composed of strings and not array-like
         # objects
-        assert all([isinstance(text, str) for text in data_split["question"]])
+        assert all(
+            [isinstance(question, str) for question in data_split["question"]])
 
         # ensure all text is composed of strings and not array-like objects
         assert all([isinstance(text, str) for text in data_split["text"]])
 
         # ensure all labels are composed of strings and not array-like objects
-        assert all([isinstance(text, str) for text in data_split["label"]])
+        assert all([isinstance(label, str) for label in data_split["label"]])

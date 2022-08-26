@@ -23,4 +23,4 @@ def test_load_policy_ie_a():
         assert all([isinstance(text, str) for text in data_split["text"]])
 
         # ensure all labels are composed of strings and not array-like objects
-        assert all([isinstance(text, str) for text in data_split["label"]])
+        assert all([isinstance(label, str) for label in data_split["label"]])

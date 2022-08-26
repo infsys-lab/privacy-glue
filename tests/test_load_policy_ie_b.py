@@ -39,7 +39,8 @@ def test_load_policy_ie_b():
 
         # check that all NER tags have two elements
         assert all([
-            len(ner_tag) == 2 and all([isinstance(x, str) for x in ner_tag])
+            len(ner_tag) == 2
+            and all([isinstance(inner_tag, str) for inner_tag in ner_tag])
             for ner_tag_sample in data_split["ner_tags"]
             for ner_tag in ner_tag_sample
         ])
