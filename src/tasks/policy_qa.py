@@ -24,7 +24,6 @@ def load_policy_qa(directory: str) -> datasets.DatasetDict:
             "title": [],
             "context": [],
             "question": [],
-            "question_type": [],
             "answers": []
         }
 
@@ -49,7 +48,6 @@ def load_policy_qa(directory: str) -> datasets.DatasetDict:
                     temp_dict["title"].append(title)
                     temp_dict["context"].append(context)
                     temp_dict["question"].append(qa["question"])
-                    temp_dict["question_type"].append(qa["type"].split("|||"))
                     temp_dict["answers"].append(answers)
 
         # convert temp_dict to Dataset and insert into DatasetDict
