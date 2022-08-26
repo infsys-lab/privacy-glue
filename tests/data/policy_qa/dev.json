@@ -1,0 +1,2429 @@
+{
+  "version": "v1.0",
+  "data": [
+    {
+      "title": "ticketmaster.com",
+      "paragraphs": [
+        {
+          "qas": [
+            {
+              "question": "How does this website inform users about their policy changes?",
+              "type": "Policy Change|||Notification Type|||General notice in privacy policy",
+              "id": "ctnk84gy3t6wdijv",
+              "answers": [
+                {
+                  "text": "Effective July 20, 2012 (last updated October 08, 2013)",
+                  "answer_start": 63
+                }
+              ]
+            }
+          ],
+          "index": 0,
+          "context": "Live Nation Entertainment Privacy Policy - Your Privacy Rights Effective July 20, 2012 (last updated October 08, 2013)",
+          "summary": [
+            "When a change of an unspecified nature is made to the privacy policy, the policy date is updated or information about the change is posted as part of the policy. Users' choices regarding policy changes are not mentioned or are unclear.",
+            "The text introduces the policy, a section, or a group of practices, but it does not mention a specific practice."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "Does the privacy policy mention about the data practice for interantional audiences?",
+              "type": "International and Specific Audiences|||Audience Type|||Citizens from other countries",
+              "id": "jmti4stsogolp49z",
+              "answers": [
+                {
+                  "text": "If you live in Canada, please read our Canadian Privacy Policy.",
+                  "answer_start": 294
+                }
+              ]
+            }
+          ],
+          "index": 1,
+          "context": "This Privacy Policy applies to the sites and apps where it appears. This Policy describes how we treat personal information we collect both online and offline. This includes on our websites or in our apps. It also includes at our box offices or in phone or email interactions you have with us. If you live in Canada, please read our Canadian Privacy Policy.",
+          "summary": [
+            "The text does not fit into our label scheme.",
+            "The policy makes specific provisions for international audiences, non-US citizens, or non-European citizens (e.g., about international data transfer).",
+            "The text introduces the policy, a section, or a group of practices, but it does not mention a specific practice."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "Do you ask for my contact information?",
+              "type": "First Party Collection/Use|||Personal Information Type|||Contact",
+              "id": "el20m9l5wj8fq2om",
+              "answers": [
+                {
+                  "text": "Contact information. For example, we might collect your name and street address. We might also collect your phone number or email.",
+                  "answer_start": 43
+                },
+                {
+                  "text": "name and street address. We might also collect your phone number or email.",
+                  "answer_start": 99
+                }
+              ]
+            },
+            {
+              "question": "Does the collected data reveal my identity?",
+              "type": "First Party Collection/Use|||Identifiability|||Identifiable",
+              "id": "x3elyri8l6ol3zqr",
+              "answers": [
+                {
+                  "text": "name and street address",
+                  "answer_start": 99
+                }
+              ]
+            },
+            {
+              "question": "Will they use the data collected from me?",
+              "type": "First Party Collection/Use|||Does/Does Not|||Does",
+              "id": "hezwq0unnhmezwlw",
+              "answers": [
+                {
+                  "text": "We collect information from and about you.",
+                  "answer_start": 0
+                }
+              ]
+            }
+          ],
+          "index": 2,
+          "context": "We collect information from and about you. Contact information. For example, we might collect your name and street address. We might also collect your phone number or email.",
+          "summary": [
+            "The site collects your contact information for an unspecified purpose. Collection happens in an unspecified way.",
+            "The site collects your contact information for an unspecified purpose. Collection happens in an unspecified way, and your data is identifiable."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "Does the company collect user's financial information?",
+              "type": "First Party Collection/Use|||Personal Information Type|||Financial",
+              "id": "i1matwosph3owqln",
+              "answers": [
+                {
+                  "text": "Payment and billing information. For example, we collect your credit card number and zip code when you buy a ticket.",
+                  "answer_start": 0
+                },
+                {
+                  "text": "credit card number and zip code",
+                  "answer_start": 62
+                }
+              ]
+            },
+            {
+              "question": "Does the website provide any choices to users for data collection?",
+              "type": "First Party Collection/Use|||Choice Scope|||Collection",
+              "id": "hp3z0slx1qkejssd",
+              "answers": [
+                {
+                  "text": "collect",
+                  "answer_start": 49
+                }
+              ]
+            },
+            {
+              "question": "Will you collect my data? If yes, how?",
+              "type": "First Party Collection/Use|||Action First-Party|||Other",
+              "id": "v883988zklkj8bfe",
+              "answers": [
+                {
+                  "text": "when you buy a ticket",
+                  "answer_start": 94
+                }
+              ]
+            },
+            {
+              "question": "Do I need to give up privacy control to use your service?",
+              "type": "First Party Collection/Use|||Choice Type|||Dont use service/feature",
+              "id": "8vv9g4kcjv90vbw7",
+              "answers": [
+                {
+                  "text": "when you buy a ticket.",
+                  "answer_start": 94
+                }
+              ]
+            },
+            {
+              "question": "Does this website collect my information?",
+              "type": "First Party Collection/Use|||Does/Does Not|||Does",
+              "id": "wxoo1ii57ap6xerx",
+              "answers": [
+                {
+                  "text": "we collect your credit card number",
+                  "answer_start": 46
+                }
+              ]
+            },
+            {
+              "question": "For what purpose do you use my data?",
+              "type": "First Party Collection/Use|||Purpose|||Basic service/feature",
+              "id": "jpfv8krobtqfpoox",
+              "answers": [
+                {
+                  "text": "buy a ticket.",
+                  "answer_start": 103
+                }
+              ]
+            }
+          ],
+          "index": 3,
+          "context": "Payment and billing information. For example, we collect your credit card number and zip code when you buy a ticket.",
+          "summary": [
+            "The site collects your financial information for a basic service or feature. Collection happens by some means outside of our label scheme. You can choose not to use the service or feature for the collection of your information.",
+            "The site collects your financial information for an unspecified purpose. Collection happens in an unspecified way."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "What is the choice scope for users with regards to first party data collection?",
+              "type": "First Party Collection/Use|||Choice Scope|||Collection",
+              "id": "eplxx3whxemxs8oc",
+              "answers": [
+                {
+                  "text": "collect",
+                  "answer_start": 38
+                }
+              ]
+            },
+            {
+              "question": "Where do you collect my information?",
+              "type": "First Party Collection/Use|||Action First-Party|||Collect on website",
+              "id": "hok8glgmaxuss2hq",
+              "answers": [
+                {
+                  "text": "we collect information you post in a public space on our website",
+                  "answer_start": 35
+                }
+              ]
+            },
+            {
+              "question": "Will you give me control over your data collection or use?",
+              "type": "First Party Collection/Use|||Choice Type|||Dont use service/feature",
+              "id": "kem34fmbzuggp2h9",
+              "answers": [
+                {
+                  "text": "Information you post",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "Does this website collect my information?",
+              "type": "First Party Collection/Use|||Does/Does Not|||Does",
+              "id": "vtnxyjwvd1iu3909",
+              "answers": [
+                {
+                  "text": "we collect information",
+                  "answer_start": 35
+                }
+              ]
+            },
+            {
+              "question": "Do you receive my data from other companies? ",
+              "type": "First Party Collection/Use|||Action First-Party|||Receive from other service/third-party (unnamed)",
+              "id": "d12p236hr3mclhmj",
+              "answers": [
+                {
+                  "text": "third-party social media site.",
+                  "answer_start": 108
+                },
+                {
+                  "text": "on a third-party social media site",
+                  "answer_start": 103
+                }
+              ]
+            },
+            {
+              "question": "What type of personal info does the company collect about me?",
+              "type": "First Party Collection/Use|||Personal Information Type|||Social media data",
+              "id": "7rbicc832zwk85oh",
+              "answers": [
+                {
+                  "text": "Information you post. For example, we collect information you post in a public space on our website or on a third-party social media site.",
+                  "answer_start": 0
+                },
+                {
+                  "text": "on a third-party social media site",
+                  "answer_start": 103
+                }
+              ]
+            },
+            {
+              "question": "Does the company keep track of users' profile info?",
+              "type": "First Party Collection/Use|||Personal Information Type|||User profile",
+              "id": "l2k37mgnss2lctad",
+              "answers": [
+                {
+                  "text": "information you post in a public space",
+                  "answer_start": 46
+                }
+              ]
+            }
+          ],
+          "index": 4,
+          "context": "Information you post. For example, we collect information you post in a public space on our website or on a third-party social media site.",
+          "summary": [
+            "The site collects your user profile for an unspecified purpose. Collection happens on the website.",
+            "The site collects your unspecified information for an unspecified purpose. Collection happens on the website. You can choose not to use the service or feature for the collection of your information.",
+            "The site collects your social media data for an unspecified purpose. Collection happens in an unspecified way.",
+            "The site collects your social media data for an unspecified purpose. Collection happens by an unnamed service or third party.",
+            "The site collects your unspecified information for an unspecified purpose. Collection happens by an unnamed service or third party. You can choose not to use the service or feature for the collection of your information."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "Do you keep a record of my demographic information?",
+              "type": "First Party Collection/Use|||Personal Information Type|||Demographic",
+              "id": "5mrz9xjdyvx2jcey",
+              "answers": [
+                {
+                  "text": "Demographic information. We may collect information about events you like or products you buy.",
+                  "answer_start": 0
+                },
+                {
+                  "text": "Demographic information. We may collect information about events you like or products you buy. We might collect this as part of a survey, for example.",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "Will they use the data collected from me?",
+              "type": "First Party Collection/Use|||Does/Does Not|||Does",
+              "id": "xhkkny28e47wy57z",
+              "answers": [
+                {
+                  "text": "We may collect information",
+                  "answer_start": 25
+                }
+              ]
+            },
+            {
+              "question": "Do you collect data about users explicitly?",
+              "type": "First Party Collection/Use|||Collection Mode|||Explicit",
+              "id": "me5r3z7v28n8luqa",
+              "answers": [
+                {
+                  "text": "We might collect this as part of a survey",
+                  "answer_start": 95
+                }
+              ]
+            }
+          ],
+          "index": 5,
+          "context": "Demographic information. We may collect information about events you like or products you buy. We might collect this as part of a survey, for example.",
+          "summary": [
+            "The site collects your demographic information for an unspecified purpose. Collection happens when you explicitly provide information in an unspecified way.",
+            "The site collects your demographic information for an unspecified purpose. Collection happens in an unspecified way."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "Does the website provide any choices to users for data collection?",
+              "type": "First Party Collection/Use|||Choice Scope|||Collection",
+              "id": "mb8ayzz84n94focd",
+              "answers": [
+                {
+                  "text": "collect",
+                  "answer_start": 50
+                }
+              ]
+            },
+            {
+              "question": "Does the company collect user's information directly on their website?",
+              "type": "First Party Collection/Use|||Action First-Party|||Collect on website",
+              "id": "22uq9xd7xpteykgy",
+              "answers": [
+                {
+                  "text": "If you use our website, we may collect information about the browser you're using.",
+                  "answer_start": 19
+                },
+                {
+                  "text": "If you use our website,",
+                  "answer_start": 19
+                },
+                {
+                  "text": "If you use our website, we may collect",
+                  "answer_start": 19
+                }
+              ]
+            },
+            {
+              "question": "Do you collect or use my information? If yes, then what type?",
+              "type": "First Party Collection/Use|||Personal Information Type|||Computer information",
+              "id": "331acxv5d490yr2h",
+              "answers": [
+                {
+                  "text": "browser you're using",
+                  "answer_start": 80
+                },
+                {
+                  "text": "type of mobile device you are using, or the version of the operating system your computer or device is running",
+                  "answer_start": 308
+                },
+                {
+                  "text": "browser you're using.",
+                  "answer_start": 80
+                },
+                {
+                  "text": "We might also collect the type of mobile device you are using, or the version of the operating system your computer or device is running.",
+                  "answer_start": 282
+                },
+                {
+                  "text": "information about the browser you're using. We might look at what site you came from, or what site you visit when you leave us.",
+                  "answer_start": 58
+                }
+              ]
+            },
+            {
+              "question": "What are the choices or controls available to the users?",
+              "type": "First Party Collection/Use|||Choice Type|||Dont use service/feature",
+              "id": "36cfo8lm4gsud848",
+              "answers": [
+                {
+                  "text": "If you use our website",
+                  "answer_start": 19
+                }
+              ]
+            },
+            {
+              "question": "Does this website collect my information?",
+              "type": "First Party Collection/Use|||Does/Does Not|||Does",
+              "id": "i257saypjm0rz7mm",
+              "answers": [
+                {
+                  "text": "we may collect information",
+                  "answer_start": 43
+                }
+              ]
+            },
+            {
+              "question": "Do they keep track of my online activities?",
+              "type": "First Party Collection/Use|||Personal Information Type|||User online activities",
+              "id": "7rpyfhf24cn578nn",
+              "answers": [
+                {
+                  "text": "what site you came from, or what site you visit when you leave us",
+                  "answer_start": 119
+                },
+                {
+                  "text": "We might look at how often you use the app and where you downloaded it.",
+                  "answer_start": 420
+                },
+                {
+                  "text": "We might look at what site you came from, or what site you visit when you leave us.",
+                  "answer_start": 102
+                }
+              ]
+            },
+            {
+              "question": "Does the website collect my data if I use their app?",
+              "type": "First Party Collection/Use|||Action First-Party|||Collect in mobile app",
+              "id": "x86vbod44jeo0ohi",
+              "answers": [
+                {
+                  "text": "our mobile app",
+                  "answer_start": 197
+                },
+                {
+                  "text": "If you use our mobile app",
+                  "answer_start": 186
+                },
+                {
+                  "text": "If you use our mobile app,",
+                  "answer_start": 186
+                },
+                {
+                  "text": "If you use our mobile app, we may collect",
+                  "answer_start": 186
+                }
+              ]
+            },
+            {
+              "question": "What types of location data do you collect?",
+              "type": "First Party Collection/Use|||Personal Information Type|||Location",
+              "id": "v0gl8tmqgf3825c4",
+              "answers": [
+                {
+                  "text": "GPS location",
+                  "answer_start": 233
+                },
+                {
+                  "text": "we may collect your GPS location",
+                  "answer_start": 213
+                },
+                {
+                  "text": "your GPS location",
+                  "answer_start": 228
+                }
+              ]
+            },
+            {
+              "question": "Does the company collect user's IP address and device IDs?",
+              "type": "First Party Collection/Use|||Personal Information Type|||IP address and device IDs",
+              "id": "h8km4p3ikxz3as5s",
+              "answers": [
+                {
+                  "text": "device's unique identifier",
+                  "answer_start": 254
+                },
+                {
+                  "text": "your device's unique identifier.",
+                  "answer_start": 249
+                },
+                {
+                  "text": "your device's unique identifier",
+                  "answer_start": 249
+                }
+              ]
+            }
+          ],
+          "index": 6,
+          "context": "Other information. If you use our website, we may collect information about the browser you're using. We might look at what site you came from, or what site you visit when you leave us. If you use our mobile app, we may collect your GPS location or your device's unique identifier. We might also collect the type of mobile device you are using, or the version of the operating system your computer or device is running. We might look at how often you use the app and where you downloaded it.",
+          "summary": [
+            "The site collects your website activities for an unspecified purpose. Collection happens in the mobile app.",
+            "The site collects your computer information for an unspecified purpose. Collection happens on the website. You can choose not to use the service or feature for the collection of your information.",
+            "The site collects your computer information for an unspecified purpose. Collection happens in the mobile app. You can choose not to use the service or feature for the collection of your information.",
+            "The site collects your IP address or device IDs for an unspecified purpose. Collection happens in the mobile app. You can choose not to use the service or feature for the collection of your information.",
+            "The site collects your website activities for an unspecified purpose. Collection happens in the mobile app. You can choose not to use the service or feature for the collection of your information.",
+            "The site collects your computer information for an unspecified purpose. Collection happens on the website.",
+            "The site collects your website activities for an unspecified purpose. Collection happens on the website.",
+            "The site collects your computer information for an unspecified purpose. Collection happens in the mobile app.",
+            "The site collects your location information for an unspecified purpose. Collection happens in the mobile app. You can choose not to use the service or feature for the collection of your information.",
+            "The site collects your IP address or device IDs for an unspecified purpose. Collection happens in the mobile app.",
+            "The site collects your location information for an unspecified purpose. Collection happens in the mobile app.",
+            "The site collects your website activities for an unspecified purpose. Collection happens on the website. You can choose not to use the service or feature for the collection of your information."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "Do you collect data about users explicitly?",
+              "type": "First Party Collection/Use|||Collection Mode|||Explicit",
+              "id": "qax0rss7sjc05rk3",
+              "answers": [
+                {
+                  "text": "We collect information directly from you.",
+                  "answer_start": 42
+                },
+                {
+                  "text": "We collect information directly from you",
+                  "answer_start": 42
+                }
+              ]
+            },
+            {
+              "question": "What scope does the user choice apply to?",
+              "type": "First Party Collection/Use|||Choice Scope|||Collection",
+              "id": "qdazwxll5rne3cqd",
+              "answers": [
+                {
+                  "text": "collect",
+                  "answer_start": 45
+                }
+              ]
+            },
+            {
+              "question": "Do you provide choices to the users with regards to your data collection?",
+              "type": "First Party Collection/Use|||Choice Type|||Dont use service/feature",
+              "id": "7p3tb3oh9hxgjq95",
+              "answers": [
+                {
+                  "text": "if you register",
+                  "answer_start": 97
+                }
+              ]
+            },
+            {
+              "question": "Does this website use information collected from the user's?",
+              "type": "First Party Collection/Use|||Does/Does Not|||Does",
+              "id": "2so6kh6jphlu6vpd",
+              "answers": [
+                {
+                  "text": "We collect information in different ways.",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "For what purpose do you use my data?",
+              "type": "First Party Collection/Use|||Purpose|||Additional service/feature",
+              "id": "gxtaxl1ctkgl5jzr",
+              "answers": [
+                {
+                  "text": "register for a promotion",
+                  "answer_start": 104
+                }
+              ]
+            },
+            {
+              "question": "Does the website collect user's information to provide basic services?",
+              "type": "First Party Collection/Use|||Purpose|||Basic service/feature",
+              "id": "0a50xb181sb0rk20",
+              "answers": [
+                {
+                  "text": "buy tickets",
+                  "answer_start": 132
+                },
+                {
+                  "text": "if you register for a promotion or buy tickets. We also collect information if you post a comment on our websites or ask us a question",
+                  "answer_start": 97
+                }
+              ]
+            }
+          ],
+          "index": 7,
+          "context": "We collect information in different ways. We collect information directly from you. For example, if you register for a promotion or buy tickets. We also collect information if you post a comment on our websites or ask us a question.",
+          "summary": [
+            "The site collects your unspecified information for an additional (non-basic) service or feature. Collection happens when you explicitly provide information in an unspecified way. You can choose not to use the service or feature for the collection of your information.",
+            "The site collects your unspecified information for an unspecified purpose. Collection happens when you explicitly provide information in an unspecified way.",
+            "The site collects your unspecified information for a basic service or feature. Collection happens when you explicitly provide information in an unspecified way. You can choose not to use the service or feature for the collection of your information.",
+            "The site collects your unspecified information for a basic service or feature. Collection happens when you explicitly provide information in an unspecified way."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "How do you collect my information for use?",
+              "type": "First Party Collection/Use|||Collection Mode|||Implicit",
+              "id": "0gytx80fjr1joejd",
+              "answers": [
+                {
+                  "text": "passively.",
+                  "answer_start": 32
+                },
+                {
+                  "text": "We collect information from you passively.",
+                  "answer_start": 0
+                },
+                {
+                  "text": "information from you passively",
+                  "answer_start": 11
+                }
+              ]
+            },
+            {
+              "question": "Will you give me choices for my data collection?",
+              "type": "First Party Collection/Use|||Choice Scope|||Collection",
+              "id": "7x7t2o918uf9a7n7",
+              "answers": [
+                {
+                  "text": "collect",
+                  "answer_start": 3
+                }
+              ]
+            },
+            {
+              "question": "In what ways do you obtain my information?",
+              "type": "First Party Collection/Use|||Action First-Party|||Other",
+              "id": "5kzwjf4bcz3o087m",
+              "answers": [
+                {
+                  "text": "We use tracking tools like browser cookies and web beacons.",
+                  "answer_start": 43
+                }
+              ]
+            },
+            {
+              "question": "Will you let me modify the privacy setting for your data usage?",
+              "type": "First Party Collection/Use|||Choice Type|||Third-party privacy controls",
+              "id": "1l9ykq77bipy2te3",
+              "answers": [
+                {
+                  "text": "To learn more about these tools and to control them, please click here.",
+                  "answer_start": 103
+                }
+              ]
+            },
+            {
+              "question": "Does this website collect my information?",
+              "type": "First Party Collection/Use|||Does/Does Not|||Does",
+              "id": "m56il4krxin3as7i",
+              "answers": [
+                {
+                  "text": "We collect information from you passively.",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "Do you keep track of my information?",
+              "type": "First Party Collection/Use|||Personal Information Type|||Cookies and tracking elements",
+              "id": "lzjpbmmxqf1r8n8a",
+              "answers": [
+                {
+                  "text": "We use tracking tools like browser cookies and web beacons.",
+                  "answer_start": 43
+                },
+                {
+                  "text": "We use tracking tools like browser cookies and web beacons",
+                  "answer_start": 43
+                }
+              ]
+            },
+            {
+              "question": "What type of choice is applicable for first party data collection?",
+              "type": "First Party Collection/Use|||Choice Type|||Other",
+              "id": "3yitikvqsdtkkzz0",
+              "answers": [
+                {
+                  "text": "To learn more about these tools and to control them, please click here.",
+                  "answer_start": 103
+                }
+              ]
+            }
+          ],
+          "index": 8,
+          "context": "We collect information from you passively. We use tracking tools like browser cookies and web beacons. To learn more about these tools and to control them, please click here.",
+          "summary": [
+            "The site collects your unspecified information for an unspecified purpose. Collection happens when you implicitly provide information by some means outside of our label scheme. You can configure your privacy with third-party user settings for the collection of your information.",
+            "The site collects your cookies or tracking elements for an unspecified purpose. Collection happens when you implicitly provide information in an unspecified way. You can configure your privacy using a method outside our label scheme.",
+            "The site collects your cookies or tracking elements for an unspecified purpose. Collection happens when you implicitly provide information in an unspecified way."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "What scope does the user choice apply to?",
+              "type": "First Party Collection/Use|||Choice Scope|||Collection",
+              "id": "ve59acnw3i3muu5n",
+              "answers": [
+                {
+                  "text": "We get information about you",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "Do you receive my data from other companies? ",
+              "type": "First Party Collection/Use|||Action First-Party|||Receive from other service/third-party (unnamed)",
+              "id": "tjbe60dv9jk9tg57",
+              "answers": [
+                {
+                  "text": "We get information about you from third parties.",
+                  "answer_start": 0
+                },
+                {
+                  "text": "We get information about you from third parties",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "Do you ask for my contact information?",
+              "type": "First Party Collection/Use|||Personal Information Type|||Contact",
+              "id": "evaizj1aau1cawat",
+              "answers": [
+                {
+                  "text": "name and email address.",
+                  "answer_start": 250
+                },
+                {
+                  "text": "This could include your name and email address.",
+                  "answer_start": 226
+                }
+              ]
+            },
+            {
+              "question": "Do you provide choices to the users with regards to your data collection?",
+              "type": "First Party Collection/Use|||Choice Type|||Dont use service/feature",
+              "id": "cvfgtntnqnj9v4at",
+              "answers": [
+                {
+                  "text": "if you use an integrated social media feature on our websites or mobile applications",
+                  "answer_start": 62
+                }
+              ]
+            },
+            {
+              "question": "Can you identify me via my data that you collect?",
+              "type": "First Party Collection/Use|||Identifiability|||Identifiable",
+              "id": "6ztnn8yqoapmi29s",
+              "answers": [
+                {
+                  "text": "This could include your name and email address.",
+                  "answer_start": 226
+                }
+              ]
+            },
+            {
+              "question": "Does this website use information collected from the user's?",
+              "type": "First Party Collection/Use|||Does/Does Not|||Does",
+              "id": "fstxps538j3rhnbm",
+              "answers": [
+                {
+                  "text": "We get information about you",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "Is my information collected for the purpose of providing additional service?",
+              "type": "First Party Collection/Use|||Purpose|||Additional service/feature",
+              "id": "xsy0v0g52e5r8i5i",
+              "answers": [
+                {
+                  "text": "integrated social media feature on our websites or mobile applications.",
+                  "answer_start": 76
+                }
+              ]
+            },
+            {
+              "question": "Do they collect my social media data?",
+              "type": "First Party Collection/Use|||Personal Information Type|||Social media data",
+              "id": "gitab5v4is6i0fgy",
+              "answers": [
+                {
+                  "text": "Your activities on our sites and apps may be posted to the social media platforms.",
+                  "answer_start": 274
+                }
+              ]
+            }
+          ],
+          "index": 9,
+          "context": "We get information about you from third parties. For example, if you use an integrated social media feature on our websites or mobile applications. The third-party social media site will give us certain information about you. This could include your name and email address. Your activities on our sites and apps may be posted to the social media platforms.",
+          "summary": [
+            "The site collects your unspecified information for an unspecified purpose. Collection happens by an unnamed service or third party.",
+            "The site collects your unspecified information for an additional (non-basic) service or feature. Collection happens by an unnamed service or third party. You can choose not to use the service or feature for the collection of your information.",
+            "The site collects your contact information for an additional (non-basic) service or feature. Collection happens by an unnamed service or third party, and your data is identifiable. You can choose not to use the service or feature for the collection of your information.",
+            "The site collects your contact information for an unspecified purpose. Collection happens by an unnamed service or third party.",
+            "The site collects your social media data for an unspecified purpose. Collection happens by an unnamed service or third party."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "What scope does the user choice or control apply to?",
+              "type": "First Party Collection/Use|||Choice Scope|||Use",
+              "id": "9z8frxyndxqb0s7h",
+              "answers": [
+                {
+                  "text": "use",
+                  "answer_start": 3
+                }
+              ]
+            },
+            {
+              "question": "Does this website use information collected from the user's?",
+              "type": "First Party Collection/Use|||Does/Does Not|||Does",
+              "id": "demgyhqds4wpdrw0",
+              "answers": [
+                {
+                  "text": "We use information as disclosed and described here",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "Why do you collect my data?",
+              "type": "First Party Collection/Use|||Purpose|||Basic service/feature",
+              "id": "n570ccsw2ouvw11i",
+              "answers": [
+                {
+                  "text": "confirm your registration for an event",
+                  "answer_start": 159
+                },
+                {
+                  "text": "We use information to respond to your requests or questions. For example, we might use your information to confirm your registration for an event or contest. If you give us your friend's information, we will only use it to provide services you requested.",
+                  "answer_start": 52
+                }
+              ]
+            },
+            {
+              "question": "Why do you collect the my data?",
+              "type": "First Party Collection/Use|||Purpose|||Additional service/feature",
+              "id": "cohhoih0d3sab8lv",
+              "answers": [
+                {
+                  "text": "contest",
+                  "answer_start": 201
+                },
+                {
+                  "text": "to respond to your requests or questions. For example, we might use your information to confirm your registration for an event or contest. If you give us your friend's information, we will only use it to provide services you requested.",
+                  "answer_start": 71
+                }
+              ]
+            }
+          ],
+          "index": 10,
+          "context": "We use information as disclosed and described here. We use information to respond to your requests or questions. For example, we might use your information to confirm your registration for an event or contest. If you give us your friend's information, we will only use it to provide services you requested.",
+          "summary": [
+            "The site collects your unspecified information for a basic service or feature. Collection happens in an unspecified way. You can make a choice about the use of your information.",
+            "The site collects your unspecified information for an additional (non-basic) service or feature. Collection happens in an unspecified way. You can make a choice about the use of your information.",
+            "The site collects your unspecified information for an additional (non-basic) service or feature. Collection happens in an unspecified way.",
+            "The site collects your unspecified information for a basic service or feature. Collection happens in an unspecified way."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "Does you collect my information to enhance or personalize my experience?",
+              "type": "First Party Collection/Use|||Purpose|||Personalization/Customization",
+              "id": "km4077l14103blrk",
+              "answers": [
+                {
+                  "text": "We use information to improve our products and services. We might use your information to customize your experience with us. This could include displaying content based upon your preferences.",
+                  "answer_start": 0
+                },
+                {
+                  "text": "customize your experience with us. This could include displaying content based upon your preferences.",
+                  "answer_start": 90
+                }
+              ]
+            },
+            {
+              "question": "Does this website collect my information?",
+              "type": "First Party Collection/Use|||Does/Does Not|||Does",
+              "id": "tz3729pxw9s1jiuj",
+              "answers": [
+                {
+                  "text": "We use information",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "Does the company use user's information for analytics or research?",
+              "type": "First Party Collection/Use|||Purpose|||Analytics/Research",
+              "id": "sdqd1esidn0crkl8",
+              "answers": [
+                {
+                  "text": "improve our products and services",
+                  "answer_start": 22
+                }
+              ]
+            }
+          ],
+          "index": 11,
+          "context": "We use information to improve our products and services. We might use your information to customize your experience with us. This could include displaying content based upon your preferences.",
+          "summary": [
+            "The site collects your unspecified information for personalization or customization. Collection happens in an unspecified way.",
+            "The site collects your unspecified information for analytics or research. Collection happens in an unspecified way."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "Do you use my information for research?",
+              "type": "First Party Collection/Use|||Purpose|||Analytics/Research",
+              "id": "4uvmhyddyj5c8xyp",
+              "answers": [
+                {
+                  "text": "We use information to look at site trends and customer interests. We may use your information to make our website and products better.",
+                  "answer_start": 0
+                },
+                {
+                  "text": "look at site trends and customer interests. We may use your information to make our website and products better",
+                  "answer_start": 22
+                }
+              ]
+            },
+            {
+              "question": "Do you use my information?",
+              "type": "First Party Collection/Use|||Does/Does Not|||Does",
+              "id": "eapu92fm8s0vere5",
+              "answers": [
+                {
+                  "text": "We use information",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "Do you receive information from other sources?",
+              "type": "First Party Collection/Use|||Action First-Party|||Receive from other service/third-party (unnamed)",
+              "id": "bw9bayufxrgoyz8g",
+              "answers": [
+                {
+                  "text": "We may combine information we get from you with information about you we get from third parties",
+                  "answer_start": 135
+                }
+              ]
+            }
+          ],
+          "index": 12,
+          "context": "We use information to look at site trends and customer interests. We may use your information to make our website and products better. We may combine information we get from you with information about you we get from third parties.",
+          "summary": [
+            "The site collects your unspecified information for an unspecified purpose. Collection happens by an unnamed service or third party.",
+            "The site collects your unspecified information for analytics or research. Collection happens by some means outside of our label scheme.",
+            "The site collects your unspecified information for analytics or research. Collection happens in an unspecified way."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "Will they use the data collected from me?",
+              "type": "First Party Collection/Use|||Does/Does Not|||Does",
+              "id": "jjwss8a6wmyyc9c3",
+              "answers": [
+                {
+                  "text": "We use information",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "Does the company use users' information for website/app operation?",
+              "type": "First Party Collection/Use|||Purpose|||Service Operation and Security",
+              "id": "8e16joc3s041j2d2",
+              "answers": [
+                {
+                  "text": "security purposes. We may use information to protect our company, our customers, or our websites.",
+                  "answer_start": 23
+                },
+                {
+                  "text": "We use information for security purposes. We may use information to protect our company, our customers, or our websites.",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "Is my information secured and protected?",
+              "type": "Data Security|||Security Measure|||Generic",
+              "id": "j9pfbkdj2l2059t8",
+              "answers": [
+                {
+                  "text": "We use information for security purposes. We may use information to protect our company, our customers, or our websites.",
+                  "answer_start": 0
+                }
+              ]
+            }
+          ],
+          "index": 13,
+          "context": "We use information for security purposes. We may use information to protect our company, our customers, or our websites.",
+          "summary": [
+            "The policy makes generic security statements, e.g., \"we protect your data\" or \"we use technology/encryption to protect your data\".",
+            "The site collects your unspecified information for service operations or security. Collection happens in an unspecified way."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "Does the choice related to first party data use or collection?",
+              "type": "First Party Collection/Use|||Choice Scope|||Use",
+              "id": "5muku64b39y6esj6",
+              "answers": [
+                {
+                  "text": "use",
+                  "answer_start": 3
+                }
+              ]
+            },
+            {
+              "question": "Will you give me control over your data collection or use?",
+              "type": "First Party Collection/Use|||Choice Type|||Dont use service/feature",
+              "id": "0qx2h52bnfcm8jpq",
+              "answers": [
+                {
+                  "text": "if you buy tickets from us we'll enroll you in our newsletter.",
+                  "answer_start": 308
+                }
+              ]
+            },
+            {
+              "question": "Does this website use information collected from the user's?",
+              "type": "First Party Collection/Use|||Does/Does Not|||Does",
+              "id": "5ys4v44kbmln6jwr",
+              "answers": [
+                {
+                  "text": "We use information",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "Will you use my information for marketing or promotional services?",
+              "type": "First Party Collection/Use|||Purpose|||Marketing",
+              "id": "0djliniujzn5jbek",
+              "answers": [
+                {
+                  "text": "marketing purposes. For example, we might send you information about special promotions or offers. We might also tell you about new features or products. These might be our own offers or products, or third-party offers or products we think you might find interesting",
+                  "answer_start": 23
+                },
+                {
+                  "text": "send you alerts regarding local events",
+                  "answer_start": 453
+                },
+                {
+                  "text": "We use information for marketing purposes. For example, we might send you information about special promotions or offers. We might also tell you about new features or products. These might be our own offers or products, or third-party offers or products we think you might find interesting. Or, for example, if you buy tickets from us we'll enroll you in our newsletter. We may use push notifications and your location information on our mobile apps to send you alerts regarding local events.",
+                  "answer_start": 0
+                },
+                {
+                  "text": "for marketing purposes. For example, we might send you information about special promotions or offers. We might also tell you about new features or products. These might be our own offers or products, or third-party offers or products we think you might find interesting. Or, for example, if you buy tickets from us we'll enroll you in our newsletter. We may use push notifications and your location information on our mobile apps to send you alerts regarding local events. To learn about your choices for these communications, read the choices section below.",
+                  "answer_start": 19
+                }
+              ]
+            },
+            {
+              "question": "Do you use my information collected on your mobile app?",
+              "type": "First Party Collection/Use|||Action First-Party|||Collect in mobile app",
+              "id": "ltlm774f2zw1w8s9",
+              "answers": [
+                {
+                  "text": "our mobile apps",
+                  "answer_start": 434
+                }
+              ]
+            },
+            {
+              "question": "What types of user's information do you collect?",
+              "type": "First Party Collection/Use|||Personal Information Type|||Location",
+              "id": "xf7hbxx6u70tc1ra",
+              "answers": [
+                {
+                  "text": "your location information",
+                  "answer_start": 405
+                }
+              ]
+            },
+            {
+              "question": "Does the website offer privacy controls to the users? ",
+              "type": "First Party Collection/Use|||Choice Type|||Other",
+              "id": "e7vxojqhem397cat",
+              "answers": [
+                {
+                  "text": "To learn about your choices for these communications, read the choices section below.",
+                  "answer_start": 493
+                }
+              ]
+            },
+            {
+              "question": "What are the ways you are going to collect my data?",
+              "type": "First Party Collection/Use|||Action First-Party|||Other",
+              "id": "trwggemrergokf10",
+              "answers": [
+                {
+                  "text": "We use",
+                  "answer_start": 0
+                }
+              ]
+            }
+          ],
+          "index": 14,
+          "context": "We use information for marketing purposes. For example, we might send you information about special promotions or offers. We might also tell you about new features or products. These might be our own offers or products, or third-party offers or products we think you might find interesting. Or, for example, if you buy tickets from us we'll enroll you in our newsletter. We may use push notifications and your location information on our mobile apps to send you alerts regarding local events. To learn about your choices for these communications, read the choices section below.",
+          "summary": [
+            "The site collects your unspecified information for marketing purposes. Collection happens in an unspecified way. You can configure your privacy using a method outside our label scheme.",
+            "The site collects your unspecified information for marketing purposes. Collection happens in an unspecified way. You can choose not to use the service or feature for the use of your information.",
+            "The site collects your unspecified information for marketing purposes. Collection happens by some means outside of our label scheme.",
+            "The site collects your location information for marketing purposes. Collection happens in the mobile app. You can make a choice about the use of your information."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "Do you use my information?",
+              "type": "First Party Collection/Use|||Does/Does Not|||Does",
+              "id": "09awi99xxn4c0u48",
+              "answers": [
+                {
+                  "text": "We use information",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "Does the website collect user's information to provide basic services?",
+              "type": "First Party Collection/Use|||Purpose|||Basic service/feature",
+              "id": "vzhxn3zpmocnznji",
+              "answers": [
+                {
+                  "text": "transactional communications. For example, we might send you emails about your account or a ticket purchase. We might also contact you about this policy or our website terms.",
+                  "answer_start": 31
+                },
+                {
+                  "text": "to send you transactional communications. For example, we might send you emails about your account or a ticket purchase. We might also contact you about this policy or our website terms.",
+                  "answer_start": 19
+                }
+              ]
+            },
+            {
+              "question": "Do you collect or use my information? If yes, then what type?",
+              "type": "First Party Collection/Use|||Personal Information Type|||Contact",
+              "id": "z4sqrw86gm7ko99j",
+              "answers": [
+                {
+                  "text": "to send you transactional communications.",
+                  "answer_start": 19
+                }
+              ]
+            },
+            {
+              "question": "For what purpose do you use or collect my data?",
+              "type": "First Party Collection/Use|||Purpose|||Service Operation and Security",
+              "id": "h4gn7s4ngw9o4kwj",
+              "answers": [
+                {
+                  "text": "We use information to send you transactional communications. For example, we might send you emails about your account or a ticket purchase. We might also contact you about this policy or our website terms.",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "What are the ways you are going to collect my data?",
+              "type": "First Party Collection/Use|||Action First-Party|||Other",
+              "id": "sso28sxr8xv9mq18",
+              "answers": [
+                {
+                  "text": "We use",
+                  "answer_start": 0
+                }
+              ]
+            }
+          ],
+          "index": 15,
+          "context": "We use information to send you transactional communications. For example, we might send you emails about your account or a ticket purchase. We might also contact you about this policy or our website terms.",
+          "summary": [
+            "The site collects your unspecified information for a basic service or feature. Collection happens by some means outside of our label scheme.",
+            "The site collects your contact information for service operations or security. Collection happens in an unspecified way.",
+            "The site collects your unspecified information for a basic service or feature. Collection happens in an unspecified way."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "Will they use the data collected from me?",
+              "type": "First Party Collection/Use|||Does/Does Not|||Does",
+              "id": "661im2g3lxchkyvn",
+              "answers": [
+                {
+                  "text": "We use information",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "Will you collect my data? If yes, how?",
+              "type": "First Party Collection/Use|||Action First-Party|||Other",
+              "id": "mlq3pu3mu4x4yehx",
+              "answers": [
+                {
+                  "text": "We use",
+                  "answer_start": 0
+                }
+              ]
+            }
+          ],
+          "index": 16,
+          "context": "We use information as otherwise permitted by law.",
+          "summary": [
+            "The site collects your unspecified information for an unspecified purpose. Collection happens in an unspecified way.",
+            "The site collects your unspecified information for an unspecified purpose. Collection happens by some means outside of our label scheme."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "Can other parts of the company access my data? ",
+              "type": "Third Party Sharing/Collection|||Third Party Entity|||Other part of company/affiliate",
+              "id": "cibp9vhlf8qsmkpq",
+              "answers": [
+                {
+                  "text": "Live Nation family of companies. This may include Ticketmaster and Live Nation-owned or operated venues, for example.",
+                  "answer_start": 82
+                },
+                {
+                  "text": "We will share information within the Live Nation family of companies. This may include Ticketmaster and Live Nation-owned or operated venues, for example.",
+                  "answer_start": 45
+                },
+                {
+                  "text": "within the Live Nation family of companies",
+                  "answer_start": 71
+                }
+              ]
+            },
+            {
+              "question": "Do you share my information with others?",
+              "type": "Third Party Sharing/Collection|||Does/Does Not|||Does",
+              "id": "5kejkmepqpqyhngp",
+              "answers": [
+                {
+                  "text": "We will share information",
+                  "answer_start": 45
+                }
+              ]
+            },
+            {
+              "question": "How does a third party receive my data from you?",
+              "type": "Third Party Sharing/Collection|||Action Third Party|||Receive/Shared with",
+              "id": "g5rmp3f867wiajxa",
+              "answers": [
+                {
+                  "text": "share information",
+                  "answer_start": 53
+                },
+                {
+                  "text": "We will share information",
+                  "answer_start": 45
+                },
+                {
+                  "text": "We may share information",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "Who do you share my information with?",
+              "type": "Third Party Sharing/Collection|||Third Party Entity|||Unnamed third party",
+              "id": "ihq73j2y2j2mntwr",
+              "answers": [
+                {
+                  "text": "with third parties",
+                  "answer_start": 25
+                }
+              ]
+            }
+          ],
+          "index": 17,
+          "context": "We may share information with third parties. We will share information within the Live Nation family of companies. This may include Ticketmaster and Live Nation-owned or operated venues, for example.",
+          "summary": [
+            "Another part of the company or institution does receive unspecified information about you for an unspecified purpose.",
+            "An unnamed third party does receive unspecified information about you for an unspecified purpose."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "Does the company share user's information with a third party?",
+              "type": "Third Party Sharing/Collection|||Third Party Entity|||Unnamed third party",
+              "id": "3wrxxi4qxk2sohwi",
+              "answers": [
+                {
+                  "text": "third parties who perform services on our behalf.",
+                  "answer_start": 31
+                }
+              ]
+            },
+            {
+              "question": "Does the company share user's data to provide basic services?",
+              "type": "Third Party Sharing/Collection|||Purpose|||Basic service/feature",
+              "id": "ajnvi1eids3vcmql",
+              "answers": [
+                {
+                  "text": "vendors who help us manage our online registration process or who fulfill your purchases",
+                  "answer_start": 120
+                }
+              ]
+            },
+            {
+              "question": "Is my information shared with others?",
+              "type": "Third Party Sharing/Collection|||Does/Does Not|||Does",
+              "id": "0j6ssoohdbr1d3dv",
+              "answers": [
+                {
+                  "text": "We will share information",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "How can a third party see my information?",
+              "type": "Third Party Sharing/Collection|||Action Third Party|||Receive/Shared with",
+              "id": "211jff5do0ad4xxa",
+              "answers": [
+                {
+                  "text": "share",
+                  "answer_start": 8
+                },
+                {
+                  "text": "We will share information",
+                  "answer_start": 0
+                },
+                {
+                  "text": "We will share",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "Why do you share my data with others?",
+              "type": "Third Party Sharing/Collection|||Purpose|||Additional service/feature",
+              "id": "t99e95xiwpx1a3p2",
+              "answers": [
+                {
+                  "text": "For example, we share information with vendors who help us manage our online registration process or who fulfill your purchases. Some vendors may be located outside of the United States.",
+                  "answer_start": 81
+                }
+              ]
+            },
+            {
+              "question": "Does the company share my information with a third party?",
+              "type": "Third Party Sharing/Collection|||Third Party Entity|||Named third party",
+              "id": "0xusplmj0l2ycc0v",
+              "answers": [
+                {
+                  "text": "third parties who perform services on our behalf",
+                  "answer_start": 31
+                }
+              ]
+            }
+          ],
+          "index": 18,
+          "context": "We will share information with third parties who perform services on our behalf. For example, we share information with vendors who help us manage our online registration process or who fulfill your purchases. Some vendors may be located outside of the United States.",
+          "summary": [
+            "An unnamed third party does receive unspecified information about you for an additional (non-basic) service or feature.",
+            "An unnamed third party does receive unspecified information about you for a basic service or feature.",
+            "A named third party does receive unspecified information about you for an unspecified purpose."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "Is my information shared with others? If yes, then who?",
+              "type": "Third Party Sharing/Collection|||Third Party Entity|||Unnamed third party",
+              "id": "ie055u6edwsodi49",
+              "answers": [
+                {
+                  "text": "business partners",
+                  "answer_start": 35
+                },
+                {
+                  "text": "with our business partners",
+                  "answer_start": 26
+                }
+              ]
+            },
+            {
+              "question": "Does the user's choice applicable to third party collection of data?",
+              "type": "Third Party Sharing/Collection|||Choice Scope|||Use",
+              "id": "bqbw4nnxn26ycta6",
+              "answers": [
+                {
+                  "text": "share information",
+                  "answer_start": 8
+                }
+              ]
+            },
+            {
+              "question": "What is the purpose of sharing my data with others?",
+              "type": "Third Party Sharing/Collection|||Purpose|||Basic service/feature",
+              "id": "dphrskb55qb9l4rg",
+              "answers": [
+                {
+                  "text": "provides or sponsors an event, or who operates a venue where we hold events",
+                  "answer_start": 86
+                }
+              ]
+            },
+            {
+              "question": "Do you share my information with others?",
+              "type": "Third Party Sharing/Collection|||Does/Does Not|||Does",
+              "id": "cytru6thxu8kujvz",
+              "answers": [
+                {
+                  "text": "We will share information",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "What are the ways third parties obtain our information?",
+              "type": "Third Party Sharing/Collection|||Action Third Party|||Receive/Shared with",
+              "id": "7tpg762yksibqg4e",
+              "answers": [
+                {
+                  "text": "share",
+                  "answer_start": 8
+                },
+                {
+                  "text": "We will share information",
+                  "answer_start": 0
+                },
+                {
+                  "text": "We will share",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "Who receives my information from this website?",
+              "type": "Third Party Sharing/Collection|||Third Party Entity|||Named third party",
+              "id": "yz4ly3f2yjmt4y2n",
+              "answers": [
+                {
+                  "text": "with our business partners.",
+                  "answer_start": 26
+                }
+              ]
+            }
+          ],
+          "index": 19,
+          "context": "We will share information with our business partners. This includes a third party who provides or sponsors an event, or who operates a venue where we hold events. Our partners use the information we give them as described in their privacy policies. You should read those polices to learn how they treat your information.",
+          "summary": [
+            "An unnamed third party does receive unspecified information about you for a basic service or feature. You can make a choice about the use of your information.",
+            "A named third party does receive unspecified information about you for an unspecified purpose.",
+            "An unnamed third party does receive unspecified information about you for an unspecified purpose."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "Does my data shared with others? If yes, who are they?",
+              "type": "Third Party Sharing/Collection|||Third Party Entity|||Other",
+              "id": "rv5gjlealyn84p52",
+              "answers": [
+                {
+                  "text": "government agency or investigatory body",
+                  "answer_start": 211
+                }
+              ]
+            },
+            {
+              "question": "Will you share my information for law enforcement or fraud prevention?",
+              "type": "Third Party Sharing/Collection|||Purpose|||Service operation and security",
+              "id": "6sv26m8oot97cvmr",
+              "answers": [
+                {
+                  "text": "when we are investigating potential fraud. This might include fraud we think has happened during a sweepstakes or promotion.",
+                  "answer_start": 297
+                },
+                {
+                  "text": "we might also share information when we are investigating potential fraud. This might include fraud we think has happened during a sweepstakes or promotion.",
+                  "answer_start": 265
+                }
+              ]
+            },
+            {
+              "question": "Will they disclose my data?",
+              "type": "Third Party Sharing/Collection|||Does/Does Not|||Does",
+              "id": "9ouesazlchr4s060",
+              "answers": [
+                {
+                  "text": "We may share",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "How can a third party see my information?",
+              "type": "Third Party Sharing/Collection|||Action Third Party|||Receive/Shared with",
+              "id": "3eh101mzqtuu7qnv",
+              "answers": [
+                {
+                  "text": "share",
+                  "answer_start": 7
+                },
+                {
+                  "text": "We may share information",
+                  "answer_start": 0
+                },
+                {
+                  "text": "We may share",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "If the law requires you to dislose my data, will you do that?",
+              "type": "Third Party Sharing/Collection|||Purpose|||Legal requirement",
+              "id": "ckyy8jsx9hy7sep2",
+              "answers": [
+                {
+                  "text": "respond to a court order or subpoena",
+                  "answer_start": 147
+                },
+                {
+                  "text": "We may share information if we think we have to in order to comply with the law or to protect ourselves. For example, we will share information to respond to a court order or subpoena. We may also share it if a government agency or investigatory body requests. Or, we might also share information when we are investigating potential fraud. This might include fraud we think has happened during a sweepstakes or promotion.",
+                  "answer_start": 0
+                },
+                {
+                  "text": "if we think we have to in order to comply with the law or to protect ourselves. For example, we will share information to respond to a court order or subpoena. We may also share it if a government agency or investigatory body requests.",
+                  "answer_start": 25
+                }
+              ]
+            },
+            {
+              "question": "Who exactly do you share my information with?",
+              "type": "Third Party Sharing/Collection|||Third Party Entity|||Named third party",
+              "id": "zbj0a7s0jv883jep",
+              "answers": [
+                {
+                  "text": "government agency or investigatory body requests.",
+                  "answer_start": 211
+                }
+              ]
+            }
+          ],
+          "index": 20,
+          "context": "We may share information if we think we have to in order to comply with the law or to protect ourselves. For example, we will share information to respond to a court order or subpoena. We may also share it if a government agency or investigatory body requests. Or, we might also share information when we are investigating potential fraud. This might include fraud we think has happened during a sweepstakes or promotion.",
+          "summary": [
+            "A named third party does receive unspecified information about you for service operations or security.",
+            "A third party outside of our label scheme does receive unspecified information about you for legal requirements.",
+            "A third party outside of our label scheme does receive unspecified information about you for service operations or security.",
+            "A named third party does receive unspecified information about you for legal requirements."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "What types of third parties collect my information?",
+              "type": "Third Party Sharing/Collection|||Third Party Entity|||Other",
+              "id": "0xyeuoieqkgx0xbv",
+              "answers": [
+                {
+                  "text": "any successor to all or part of our business",
+                  "answer_start": 30
+                }
+              ]
+            },
+            {
+              "question": "What happen to my data if your business is sold or transferred?",
+              "type": "Third Party Sharing/Collection|||Purpose|||Merger/Acquisition",
+              "id": "m6cp4rrussmytc62",
+              "answers": [
+                {
+                  "text": "if part of our business is sold",
+                  "answer_start": 89
+                },
+                {
+                  "text": "For example, if part of our business is sold we may give our customer list as part of that transaction.",
+                  "answer_start": 76
+                }
+              ]
+            },
+            {
+              "question": "Do you share my data with others? If yes, what is the type of data?",
+              "type": "Third Party Sharing/Collection|||Personal Information Type|||Other",
+              "id": "soe4079xcoicplsx",
+              "answers": [
+                {
+                  "text": "customer list",
+                  "answer_start": 137
+                }
+              ]
+            },
+            {
+              "question": "Does the company share user's information with third party companies?",
+              "type": "Third Party Sharing/Collection|||Does/Does Not|||Does",
+              "id": "zfs33xbad291df0r",
+              "answers": [
+                {
+                  "text": "We may share",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "How does a third party receive my data from you?",
+              "type": "Third Party Sharing/Collection|||Action Third Party|||Receive/Shared with",
+              "id": "0r2vexmdhtoyrqf7",
+              "answers": [
+                {
+                  "text": "share",
+                  "answer_start": 7
+                },
+                {
+                  "text": "We may share information",
+                  "answer_start": 0
+                },
+                {
+                  "text": "We may share",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "Does the website mention the name of third parities, who gets my data?",
+              "type": "Third Party Sharing/Collection|||Third Party Entity|||Named third party",
+              "id": "tp669gz4wrn1fjt9",
+              "answers": [
+                {
+                  "text": "any successor to all or part of our business.",
+                  "answer_start": 30
+                },
+                {
+                  "text": "with any successor to all or part of our business",
+                  "answer_start": 25
+                }
+              ]
+            }
+          ],
+          "index": 21,
+          "context": "We may share information with any successor to all or part of our business. For example, if part of our business is sold we may give our customer list as part of that transaction.",
+          "summary": [
+            "A named third party does receive unspecified information about you for mergers or acquisitions.",
+            "A third party outside of our label scheme does receive information about you not covered by our label scheme for mergers or acquisitions."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "Do you share my information with others?",
+              "type": "Third Party Sharing/Collection|||Does/Does Not|||Does",
+              "id": "bqkq8ib4a9guvlvt",
+              "answers": [
+                {
+                  "text": "We may share your information",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "How can a third party see my information?",
+              "type": "Third Party Sharing/Collection|||Action Third Party|||Receive/Shared with",
+              "id": "ekdalnj6d0ncr7ut",
+              "answers": [
+                {
+                  "text": "share",
+                  "answer_start": 7
+                },
+                {
+                  "text": "We may share your information",
+                  "answer_start": 0
+                },
+                {
+                  "text": "We may share",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "What is the purpose of sharing my data with others?",
+              "type": "Third Party Sharing/Collection|||Purpose|||Other",
+              "id": "mm02kxgduqvz777g",
+              "answers": [
+                {
+                  "text": "for reasons not described in this policy. We will tell you before we do this.",
+                  "answer_start": 30
+                }
+              ]
+            },
+            {
+              "question": "Do we have any choices for third party data collection? If yes, what are they?",
+              "type": "Third Party Sharing/Collection|||Choice Type|||Other",
+              "id": "c96q0jfr4i1xjkwg",
+              "answers": [
+                {
+                  "text": "We will tell you before we do this.",
+                  "answer_start": 72
+                }
+              ]
+            }
+          ],
+          "index": 22,
+          "context": "We may share your information for reasons not described in this policy. We will tell you before we do this.",
+          "summary": [
+            "An unspecified third party does receive unspecified information about you for an unspecified purpose.",
+            "An unspecified third party does receive unspecified information about you for a purpose outside of our label scheme. You can configure your privacy using a method outside our label scheme."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "How do I opt out of the company's service?",
+              "type": "User Choice/Control|||Choice Type|||Opt-out link",
+              "id": "2937mp0ykmntwi51",
+              "answers": [
+                {
+                  "text": "click here or follow the instructions in any promotional message you get from us.",
+                  "answer_start": 153
+                },
+                {
+                  "text": "To stop receiving our promotional emails, click here or follow the instructions in any promotional message you get from us.",
+                  "answer_start": 111
+                },
+                {
+                  "text": "You can opt out of receiving our marketing emails. To stop receiving our promotional emails, click here or follow the instructions in any promotional message you get from us.",
+                  "answer_start": 60
+                }
+              ]
+            },
+            {
+              "question": "Does my choice applicable to first party use?",
+              "type": "User Choice/Control|||Choice Scope|||First party use",
+              "id": "1wgl8wgzalw9qxdl",
+              "answers": [
+                {
+                  "text": "stop receiving our promotional emails",
+                  "answer_start": 114
+                },
+                {
+                  "text": "You can opt out of receiving our marketing emails.",
+                  "answer_start": 60
+                },
+                {
+                  "text": "push notifications.",
+                  "answer_start": 312
+                },
+                {
+                  "text": "receiving our marketing emails",
+                  "answer_start": 79
+                }
+              ]
+            },
+            {
+              "question": "What are the users's choices for the data used in marketing?",
+              "type": "User Choice/Control|||Purpose|||Marketing",
+              "id": "14q4zmu141so8g9f",
+              "answers": [
+                {
+                  "text": "marketing emails",
+                  "answer_start": 93
+                },
+                {
+                  "text": "marketing emails.",
+                  "answer_start": 93
+                },
+                {
+                  "text": "marketing",
+                  "answer_start": 93
+                }
+              ]
+            },
+            {
+              "question": "What category of information does the user choice apply to?",
+              "type": "User Choice/Control|||Personal Information Type|||Contact",
+              "id": "87g9dapy95d91lq6",
+              "answers": [
+                {
+                  "text": "emails",
+                  "answer_start": 103
+                }
+              ]
+            },
+            {
+              "question": "Does they have user choice on the use of mobile device's privacy settings?",
+              "type": "User Choice/Control|||Choice Type|||Browser/device privacy controls",
+              "id": "tifr2dcwrf9q6vj7",
+              "answers": [
+                {
+                  "text": "device settings should provide you with instructions on how to turn off push notifications.",
+                  "answer_start": 240
+                },
+                {
+                  "text": "Your device settings should provide you with instructions on how to turn off push notifications.",
+                  "answer_start": 235
+                }
+              ]
+            },
+            {
+              "question": "Does the website provide control on their practices to the users?",
+              "type": "User Choice/Control|||User Type|||Other",
+              "id": "y7tiee6w1sv0405q",
+              "answers": [
+                {
+                  "text": "we will still be sure to send you transactional messages. For example, we may still contact you about your orders.",
+                  "answer_start": 448
+                }
+              ]
+            }
+          ],
+          "index": 23,
+          "context": "You have certain choices about how we use your information. You can opt out of receiving our marketing emails. To stop receiving our promotional emails, click here or follow the instructions in any promotional message you get from us. Your device settings should provide you with instructions on how to turn off push notifications. It may take about ten days to process your request. Don't worry! Even if you opt out of getting marketing messages, we will still be sure to send you transactional messages. For example, we may still contact you about your orders.",
+          "summary": [
+            "You can opt out (via a link) from the use of contact information by the site, which uses it for marketing purposes.",
+            "A user type outside of our label scheme can use privacy configuration settings (in your browser or on your device) to control the use of unspecified information by the site, which uses it for an unspecified purpose.",
+            "You can opt out (via a link) from the use of unspecified information by the site, which uses it for marketing purposes.",
+            "You can use privacy configuration settings (in your browser or on your device) to control the use of unspecified information by the site, which uses it for marketing purposes.",
+            "You can use privacy configuration settings (in your browser or on your device) to control the use of contact information by the site, which uses it for marketing purposes."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "Can I update, change or modify my information?",
+              "type": "User Access, Edit and Deletion|||Access Type|||Edit information",
+              "id": "8hr0c1fyyhdlnv9w",
+              "answers": [
+                {
+                  "text": "correct or delete information or update account settings",
+                  "answer_start": 49
+                },
+                {
+                  "text": "You can modify information you have given us. To correct or delete information or update account settings, log into your account and follow the instructions. We make changes as soon as we can. This information may stay in our backup files. If we cannot make the changes you want, we will let you know and explain why. If you contact us requesting access to your information, we will respond within 30 days.",
+                  "answer_start": 0
+                },
+                {
+                  "text": "You can modify information you have given us. To correct or delete information or update account settings,",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "Does the website allow the registered users to edit or delete their data?",
+              "type": "User Access, Edit and Deletion|||User Type|||User with account",
+              "id": "6ku080zg6rdn92ra",
+              "answers": [
+                {
+                  "text": "log into your account and follow the instructions",
+                  "answer_start": 107
+                },
+                {
+                  "text": "log into your account",
+                  "answer_start": 107
+                }
+              ]
+            },
+            {
+              "question": "What type of data I can access that you have about me?",
+              "type": "User Access, Edit and Deletion|||Access Scope|||User account data",
+              "id": "zm5ok6x1oegyr5zn",
+              "answers": [
+                {
+                  "text": "correct or delete information or update account settings",
+                  "answer_start": 49
+                },
+                {
+                  "text": "information you have given us. To correct or delete information or update account settings,",
+                  "answer_start": 15
+                },
+                {
+                  "text": "To correct or delete information or update account settings",
+                  "answer_start": 46
+                }
+              ]
+            }
+          ],
+          "index": 24,
+          "context": "You can modify information you have given us. To correct or delete information or update account settings, log into your account and follow the instructions. We make changes as soon as we can. This information may stay in our backup files. If we cannot make the changes you want, we will let you know and explain why. If you contact us requesting access to your information, we will respond within 30 days.",
+          "summary": [
+            "A user's unspecified information is retained for an unspecified duration to fulfill an unspecified purpose.",
+            "Users with accounts can edit their information, within the scope of information explicitly provided by the user.",
+            "A user can edit their information, within the scope of information explicitly provided by the user."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "Does the user's choice applicable to first party use of data?",
+              "type": "User Choice/Control|||Choice Scope|||First party use",
+              "id": "p0a40syu2cv75hzm",
+              "answers": [
+                {
+                  "text": "control cookies and tracking tools. To learn how to manage how we",
+                  "answer_start": 8
+                },
+                {
+                  "text": "To learn how to manage how we - and our vendors - use",
+                  "answer_start": 44
+                }
+              ]
+            },
+            {
+              "question": "Does the user's choice applicable to data used by a third party?",
+              "type": "User Choice/Control|||Choice Scope|||Third party use",
+              "id": "qug4drfn7uc38rvn",
+              "answers": [
+                {
+                  "text": "and our vendors",
+                  "answer_start": 76
+                }
+              ]
+            },
+            {
+              "question": "What are the users' choices on the usage of cookies?",
+              "type": "User Choice/Control|||Personal Information Type|||Cookies and tracking elements",
+              "id": "7n2xsi7xtvo2igea",
+              "answers": [
+                {
+                  "text": "You can control cookies and tracking tools.",
+                  "answer_start": 0
+                },
+                {
+                  "text": "cookies and tracking tools",
+                  "answer_start": 16
+                }
+              ]
+            },
+            {
+              "question": "Do the choices apply to the collection of information by the company?",
+              "type": "User Choice/Control|||Choice Scope|||First party collection",
+              "id": "h6lbqdpx8nju7sdp",
+              "answers": [
+                {
+                  "text": "cookies and tracking tools",
+                  "answer_start": 16
+                }
+              ]
+            }
+          ],
+          "index": 25,
+          "context": "You can control cookies and tracking tools. To learn how to manage how we - and our vendors - use cookies and other tracking tools, please click here.",
+          "summary": [
+            "You can make no specified choices about the use of cookies and tracking elements by the site, which collects it for an unspecified purpose.",
+            "You can make no specified choices about the use of unspecified information by the site, which uses it for an unspecified purpose.",
+            "You can make no specified choices about the use of cookies and tracking elements by the site, which uses it for an unspecified purpose.",
+            "You can make no specified choices about the use of unspecified information by a third party, which uses it for an unspecified purpose."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "Does the website have user choice on the use of browser’s privacy settings?",
+              "type": "User Choice/Control|||Choice Type|||Browser/device privacy controls",
+              "id": "gqdjwix4sc5brtv3",
+              "answers": [
+                {
+                  "text": "You can control tools on your mobile devices.",
+                  "answer_start": 0
+                },
+                {
+                  "text": "You can control tools on your mobile devices. For example, you can turn off the GPS locator or push notifications on your phone.",
+                  "answer_start": 0
+                },
+                {
+                  "text": "You can control tools on your mobile devices. For example, you can turn off the GPS locator or push notifications on your phone. Each push notification has an \"unsubscribe\" link.",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "What scope does the user choice or control apply to?",
+              "type": "User Choice/Control|||Choice Scope|||First party use",
+              "id": "4n8lvbs7ra2bwt7d",
+              "answers": [
+                {
+                  "text": "turn off the GPS locator or push notifications on your phone",
+                  "answer_start": 67
+                }
+              ]
+            },
+            {
+              "question": "Do the users have choice on their location data usage?",
+              "type": "User Choice/Control|||Personal Information Type|||Location",
+              "id": "hq2nu0afmb2hupf6",
+              "answers": [
+                {
+                  "text": "GPS locator",
+                  "answer_start": 80
+                }
+              ]
+            },
+            {
+              "question": "How do I opt out of the company's service?",
+              "type": "User Choice/Control|||Choice Type|||Opt-out link",
+              "id": "es1nc8sbe3owobnx",
+              "answers": [
+                {
+                  "text": "\"unsubscribe\" link.",
+                  "answer_start": 159
+                },
+                {
+                  "text": "Each push notification has an \"unsubscribe\" link.",
+                  "answer_start": 129
+                }
+              ]
+            }
+          ],
+          "index": 26,
+          "context": "You can control tools on your mobile devices. For example, you can turn off the GPS locator or push notifications on your phone. Each push notification has an \"unsubscribe\" link.",
+          "summary": [
+            "You can use privacy configuration settings (in your browser or on your device) to control the use of unspecified information by an unspecified party for an unspecified purpose.",
+            "You can opt out (via a link) from the use of unspecified information by an unspecified party for an unspecified purpose.",
+            "You can use privacy configuration settings (in your browser or on your device) to control the use of location information by an unspecified party for an unspecified purpose.",
+            "You can opt out (via a link) from the use of unspecified information by the site, which uses it for an unspecified purpose.",
+            "You can use privacy configuration settings (in your browser or on your device) to control the use of location information by the site, which uses it for an unspecified purpose."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "What is the data practice regarding to Californian users?",
+              "type": "International and Specific Audiences|||Audience Type|||Californians",
+              "id": "i44c7j6yid4k7voz",
+              "answers": [
+                {
+                  "text": "Your California Privacy Rights. If you live in California and have an established business relationship with us, you can request a list of the personal information we have shared with third parties for their marketing purposes. We will also give you a list of the third parties that have received your information. You can make a request one time each year.",
+                  "answer_start": 0
+                },
+                {
+                  "text": "If you live in California and have an established business relationship with us, you can request a list of the personal information we have shared with third parties for their marketing purposes. We will also give you a list of the third parties that have received your information. You can make a request one time each year.",
+                  "answer_start": 32
+                }
+              ]
+            }
+          ],
+          "index": 27,
+          "context": "Your California Privacy Rights. If you live in California and have an established business relationship with us, you can request a list of the personal information we have shared with third parties for their marketing purposes. We will also give you a list of the third parties that have received your information. You can make a request one time each year.",
+          "summary": [
+            "The policy makes a statement about how data from Californian users is treated (e.g., California privacy rights)."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "What should the users in California pay attention to?",
+              "type": "International and Specific Audiences|||Audience Type|||Californians",
+              "id": "7fsh7awa29krkmcl",
+              "answers": [
+                {
+                  "text": "To exercise your rights, you can email us or write to us at the address below. Mention in your letter that you are making a \"California Shine the Light\" inquiry. We will respond within 30 days.",
+                  "answer_start": 0
+                }
+              ]
+            }
+          ],
+          "index": 28,
+          "context": "To exercise your rights, you can email us or write to us at the address below. Mention in your letter that you are making a \"California Shine the Light\" inquiry. We will respond within 30 days.",
+          "summary": [
+            "The policy makes a statement about how data from Californian users is treated (e.g., California privacy rights)."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "Does the company collect or protect information from children?",
+              "type": "International and Specific Audiences|||Audience Type|||Children",
+              "id": "08nj10bt2klacpeb",
+              "answers": [
+                {
+                  "text": "These sites and apps are not intended for children. Our sites and apps are meant for adults. We do not knowingly collect personally identifiable information from children under 13. If you are a parent or legal guardian and think your child under 13 has given us information, you can email us here. You can also write to us at the address listed at the end of this policy. Please mark your inquiries \"COPPA Information Request.\"",
+                  "answer_start": 0
+                }
+              ]
+            }
+          ],
+          "index": 29,
+          "context": "These sites and apps are not intended for children. Our sites and apps are meant for adults. We do not knowingly collect personally identifiable information from children under 13. If you are a parent or legal guardian and think your child under 13 has given us information, you can email us here. You can also write to us at the address listed at the end of this policy. Please mark your inquiries \"COPPA Information Request.\"",
+          "summary": [
+            "The policy makes a statement about how data from children is treated."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "Does the privacy policy mention anything about children?",
+              "type": "International and Specific Audiences|||Audience Type|||Children",
+              "id": "thtol5gw2vgsdxcz",
+              "answers": [
+                {
+                  "text": "Learn more about COPPA here.",
+                  "answer_start": 0
+                }
+              ]
+            }
+          ],
+          "index": 30,
+          "context": "Learn more about COPPA here.",
+          "summary": [
+            "The policy makes a statement about how data from children is treated."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "What steps do you take to protect the user's data?",
+              "type": "Data Security|||Security Measure|||Generic",
+              "id": "72s1empx5ijygh6e",
+              "answers": [
+                {
+                  "text": "We have security measures in place to protect your information. The standard security measures we use will depend on the type of information collected.",
+                  "answer_start": 35
+                },
+                {
+                  "text": "We use standard security measures. We have security measures in place to protect your information. The standard security measures we use will depend on the type of information collected. However, the Internet is not 100% secure. We cannot promise that your use of our sites will be completely safe. We encourage you to use caution when using the Internet. This includes not sharing your passwords. If you think that an unauthorized account has been created using your name, contact us at the address below.",
+                  "answer_start": 0
+                }
+              ]
+            }
+          ],
+          "index": 31,
+          "context": "We use standard security measures. We have security measures in place to protect your information. The standard security measures we use will depend on the type of information collected. However, the Internet is not 100% secure. We cannot promise that your use of our sites will be completely safe. We encourage you to use caution when using the Internet. This includes not sharing your passwords. If you think that an unauthorized account has been created using your name, contact us at the address below.",
+          "summary": [
+            "The policy makes generic security statements, e.g., \"we protect your data\" or \"we use technology/encryption to protect your data\"."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "How do you protect my data from unauthorized access?",
+              "type": "Data Security|||Security Measure|||Privacy/Security program",
+              "id": "v4ugr1eenhf2czki",
+              "answers": [
+                {
+                  "text": "We are TRUSTe certified.",
+                  "answer_start": 0
+                }
+              ]
+            }
+          ],
+          "index": 32,
+          "context": "We are TRUSTe certified.",
+          "summary": [
+            "The text describes a specific data practice that is not covered by our label scheme.",
+            "The company/organization has a privacy or security program/organization in place addressing, for example, how to protect data against unauthorized access or privacy training for employees."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "What security measures does the website take to protect my data?",
+              "type": "Data Security|||Security Measure|||Privacy/Security program",
+              "id": "s6c5d27qvx4wkzgx",
+              "answers": [
+                {
+                  "text": "TRUSTe has awarded Live Nation the TRUSTe's Privacy Seal. This means TRUSTe independently reviewed this Policy and the practices on Live Nation and Ticketmaster sites and apps to make sure they meet TRUSTE's requirements. The seal applies to our practices for information collected on U.S., UK, Ireland sites and apps.",
+                  "answer_start": 0
+                }
+              ]
+            }
+          ],
+          "index": 33,
+          "context": "TRUSTe has awarded Live Nation the TRUSTe's Privacy Seal. This means TRUSTe independently reviewed this Policy and the practices on Live Nation and Ticketmaster sites and apps to make sure they meet TRUSTE's requirements. The seal applies to our practices for information collected on U.S., UK, Ireland sites and apps.",
+          "summary": [
+            "The text describes a specific data practice that is not covered by our label scheme.",
+            "The company/organization has a privacy or security program/organization in place addressing, for example, how to protect data against unauthorized access or privacy training for employees."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "Does the website store any generic personal information about users?",
+              "type": "Data Retention|||Personal Information Type|||Generic personal information",
+              "id": "igmyomf978bn1n4i",
+              "answers": [
+                {
+                  "text": "personal information",
+                  "answer_start": 8
+                }
+              ]
+            },
+            {
+              "question": "What is their rule for data retention period?",
+              "type": "Data Retention|||Retention Period|||Other",
+              "id": "biq157ac4xcvk2e2",
+              "answers": [
+                {
+                  "text": "as long as it is necessary or relevant",
+                  "answer_start": 29
+                }
+              ]
+            },
+            {
+              "question": "Does the company retain my information to provide me services?",
+              "type": "Data Retention|||Retention Purpose|||Perform service",
+              "id": "5o3m61um34q8bfn3",
+              "answers": [
+                {
+                  "text": "for our business",
+                  "answer_start": 68
+                }
+              ]
+            },
+            {
+              "question": "Why do you keep my data?",
+              "type": "Data Retention|||Retention Purpose|||Service operation and security",
+              "id": "36z4l84uoe8namj4",
+              "answers": [
+                {
+                  "text": "resolve disputes, enforce our agreements",
+                  "answer_start": 114
+                },
+                {
+                  "text": "for our business. We also keep information to resolve disputes, enforce our agreements and as otherwise required by law.",
+                  "answer_start": 68
+                },
+                {
+                  "text": "to resolve disputes, enforce our agreements and as otherwise required by law.",
+                  "answer_start": 111
+                }
+              ]
+            },
+            {
+              "question": "Will you save my data? If yes, why?",
+              "type": "Data Retention|||Retention Purpose|||Legal requirement",
+              "id": "flhqa8c966e03r2v",
+              "answers": [
+                {
+                  "text": "otherwise required by law",
+                  "answer_start": 162
+                },
+                {
+                  "text": "as otherwise required by law.",
+                  "answer_start": 159
+                }
+              ]
+            },
+            {
+              "question": "How long they will keep my data in their server?",
+              "type": "Data Retention|||Retention Period|||Indefinitely",
+              "id": "tyk84zsoj09cbmrb",
+              "answers": [
+                {
+                  "text": "We keep personal information as long as it is necessary or relevant for our business.",
+                  "answer_start": 0
+                }
+              ]
+            },
+            {
+              "question": "For what time period, they will store my information?",
+              "type": "Data Retention|||Retention Period|||Limited",
+              "id": "z620fyxcivfrvu7n",
+              "answers": [
+                {
+                  "text": "We keep personal information as long as it is necessary or relevant for our business.",
+                  "answer_start": 0
+                }
+              ]
+            }
+          ],
+          "index": 34,
+          "context": "We keep personal information as long as it is necessary or relevant for our business. We also keep information to resolve disputes, enforce our agreements and as otherwise required by law.",
+          "summary": [
+            "A user's generic personal information is retained for a duration not covered by our label scheme to meet legal or law enforcement requirements, and then it is deleted..",
+            "A user's unspecified information is retained indefinitely to meet legal or law enforcement requirements, and then it is deleted..",
+            "A user's generic personal information is retained for a duration not covered by our label scheme to perform a requested service, and then it is deleted..",
+            "A user's unspecified information is retained for a limited (but unspecified) period of time to maintain service operations or security.",
+            "A user's generic personal information is retained for a duration not covered by our label scheme to maintain service operations or security.",
+            "A user's unspecified information is retained indefinitely to maintain service operations or security."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "Do they have provisions for audiences from countries other than U.S. or Europe?",
+              "type": "International and Specific Audiences|||Audience Type|||Citizens from other countries",
+              "id": "xbxn26en7ldvf84e",
+              "answers": [
+                {
+                  "text": "If you live outside of the United States, you understand and agree that we may transfer your information to the United States. This site is subject to U.S. laws, which may not afford the same level of protection of those in your country.",
+                  "answer_start": 63
+                }
+              ]
+            },
+            {
+              "question": "How the website ensures security of the user's data?",
+              "type": "Data Security|||Security Measure|||Other",
+              "id": "68xdh5mwt7i8es4d",
+              "answers": [
+                {
+                  "text": "We store information both in and outside of the United States. If you live outside of the United States, you understand and agree that we may transfer your information to the United States. This site is subject to U.S. laws, which may not afford the same level of protection of those in your country.",
+                  "answer_start": 0
+                }
+              ]
+            }
+          ],
+          "index": 35,
+          "context": "We store information both in and outside of the United States. If you live outside of the United States, you understand and agree that we may transfer your information to the United States. This site is subject to U.S. laws, which may not afford the same level of protection of those in your country.",
+          "summary": [
+            "The policy makes specific provisions for international audiences, non-US citizens, or non-European citizens (e.g., about international data transfer).",
+            "A specific security measure not covered above."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "What should other international (non-U.S.) citizens notice?",
+              "type": "International and Specific Audiences|||Audience Type|||Citizens from other countries",
+              "id": "3mwjrdykqn9a57uw",
+              "answers": [
+                {
+                  "text": "Live Nation complies with the U.S.-EU Safe Harbor Framework as set forth by the U.S. Department of Commerce regarding the collection, use and retention of personal information from European Union member countries. Live Nation has certified that it adheres to the Safe Harbor Privacy Principles of notice, choice, onward transfer, security, data integrity, access, and enforcement. To learn more about the Safe Harbor program, and to view Live Nation's certification, please visit http://www.export.gov/safeharbor.",
+                  "answer_start": 0
+                }
+              ]
+            }
+          ],
+          "index": 36,
+          "context": "Live Nation complies with the U.S.-EU Safe Harbor Framework as set forth by the U.S. Department of Commerce regarding the collection, use and retention of personal information from European Union member countries. Live Nation has certified that it adheres to the Safe Harbor Privacy Principles of notice, choice, onward transfer, security, data integrity, access, and enforcement. To learn more about the Safe Harbor program, and to view Live Nation's certification, please visit http://www.export.gov/safeharbor.",
+          "summary": [
+            "The policy makes specific provisions for international audiences, non-US citizens, or non-European citizens (e.g., about international data transfer).",
+            "The policy makes a statement about how data from European users is treated (e.g., Safe Harbor provisions)."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "Is my information shared with others? If yes, then who?",
+              "type": "Third Party Sharing/Collection|||Third Party Entity|||Unnamed third party",
+              "id": "wu2pxkwxw432991b",
+              "answers": [
+                {
+                  "text": "third party sites or services we don't control.",
+                  "answer_start": 15
+                }
+              ]
+            },
+            {
+              "question": "How the third party collects or receives user information?",
+              "type": "Third Party Sharing/Collection|||Action Third Party|||Other",
+              "id": "86uhtgikn5299wp7",
+              "answers": [
+                {
+                  "text": "If you click on one of those links, you will be taken to websites we do not control. This policy does not apply to the privacy practices of those websites. Read the privacy policy of other websites carefully. We are not responsible for these third party sites.",
+                  "answer_start": 63
+                }
+              ]
+            }
+          ],
+          "index": 37,
+          "context": "We may link to third party sites or services we don't control. If you click on one of those links, you will be taken to websites we do not control. This policy does not apply to the privacy practices of those websites. Read the privacy policy of other websites carefully. We are not responsible for these third party sites.",
+          "summary": [
+            "The text does not fit into our label scheme.",
+            "The text introduces the policy, a section, or a group of practices, but it does not mention a specific practice.",
+            "An unnamed third party does do something outside of our label scheme with unspecified information about you for an unspecified purpose."
+          ]
+        },
+        {
+          "qas": [
+            {
+              "question": "For what type of policy changes, I will be notified?",
+              "type": "Policy Change|||Change Type|||Privacy relevant change",
+              "id": "5anliayfg4nflqjv",
+              "answers": [
+                {
+                  "text": "we may change our privacy practices.",
+                  "answer_start": 72
+                },
+                {
+                  "text": "We will notify you of any material changes to this policy as required by law.",
+                  "answer_start": 109
+                },
+                {
+                  "text": "any material changes",
+                  "answer_start": 131
+                }
+              ]
+            },
+            {
+              "question": "Will you notify me via email if policy changes?",
+              "type": "Policy Change|||Notification Type|||Personal notice",
+              "id": "cj0gxx61jgj4sx4b",
+              "answers": [
+                {
+                  "text": "We will notify you of any material changes to this policy as required by law.",
+                  "answer_start": 109
+                }
+              ]
+            },
+            {
+              "question": "Will you notify me if your policy changes?",
+              "type": "Policy Change|||Notification Type|||Other",
+              "id": "qwrqodamaddvuxvo",
+              "answers": [
+                {
+                  "text": "We will also post an updated copy on our website.",
+                  "answer_start": 187
+                }
+              ]
+            },
+            {
+              "question": "How will you notify me if the policy changes?",
+              "type": "Policy Change|||Notification Type|||General notice on website",
+              "id": "g48v8dubf6r60suk",
+              "answers": [
+                {
+                  "text": "What we will do if there is an update to this policy. From time to time we may change our privacy practices. We will notify you of any material changes to this policy as required by law. We will also post an updated copy on our website. Please check our site periodically for updates.",
+                  "answer_start": 0
+                },
+                {
+                  "text": "We will also post an updated copy on our website",
+                  "answer_start": 187
+                }
+              ]
+            }
+          ],
+          "index": 39,
+          "context": "What we will do if there is an update to this policy. From time to time we may change our privacy practices. We will notify you of any material changes to this policy as required by law. We will also post an updated copy on our website. Please check our site periodically for updates.",
+          "summary": [
+            "When a change is made to the privacy policy that significantly affects data practices, users are notified in a manner outside of our label scheme. Users' choices regarding policy changes are not mentioned or are unclear.",
+            "When a change is made to the privacy policy that significantly affects data practices, users are personally notified. Users' choices regarding policy changes are not mentioned or are unclear.",
+            "When a change is made to the privacy policy that significantly affects data practices, users are notified when visiting the website. Users' choices regarding policy changes are not mentioned or are unclear."
+          ]
+        }
+      ]
+    }
+  ]
+}
