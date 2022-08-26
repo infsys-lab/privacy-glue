@@ -22,9 +22,7 @@ def load_policy_ie_a(directory: str) -> datasets.DatasetDict:
 
     # load tokens which are common for all sub-tasks
     tokens = datasets.load_dataset(
-        "text", data_files=file_mapping(directory, "seq.in")).map(
-            lambda example: {"tokens": example["text"].split()},
-            remove_columns=["text"])
+        "text", data_files=file_mapping(directory, "seq.in"))
 
     # since this is task A, only load labels
     labels = datasets.load_dataset(
