@@ -8,8 +8,7 @@ import os
 def test_load_piextract():
     # load sample data
     data = load_piextract(
-        os.path.join(os.path.dirname(os.path.dirname(__file__)), "data",
-                     "piextract"))
+        os.path.join(os.path.dirname(__file__), "data", "piextract"))
 
     # check that all three splits are included
     assert set(data.keys()) == {"train", "test"}
