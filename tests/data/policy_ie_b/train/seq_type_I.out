@@ -1,0 +1,10 @@
+B-data-sharer.first-party-entity O O B-action B-data-provider.user B-data-shared.data-general I-data-shared.data-general O O O O O O O O O O O O O O O O O O O O O O O O O
+O B-data-receiver.third-party-entity O B-data-receiver.third-party-entity I-data-receiver.third-party-entity O O B-action O B-data-provider.user B-data-shared.data-general I-data-shared.data-general O O O O O O O O B-data-sharer.first-party-entity O
+O B-data-sharer.first-party-entity O B-action B-data-provider.user B-data-shared.data-general O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O
+O O B-action B-data-shared.data-general O B-data-receiver.third-party-entity I-data-receiver.third-party-entity I-data-receiver.third-party-entity I-data-receiver.third-party-entity O O O O
+O O O O B-data-sharer.first-party-entity O O O O B-action B-data-shared.data-general I-data-shared.data-general O O O O O O O O O O O O O O O
+O B-data-sharer.first-party-entity O B-action B-data-provider.user B-data-shared.data-general O O O O O O O O O O O O O O O O O O O O O O O O O B-data-receiver.third-party-entity I-data-receiver.third-party-entity O
+O B-data-sharer.first-party-entity O B-action B-data-shared.data-aggregated-nonidentifiable I-data-shared.data-aggregated-nonidentifiable I-data-shared.data-aggregated-nonidentifiable I-data-shared.data-aggregated-nonidentifiable O B-data-provider.user O B-data-receiver.third-party-entity O B-data-receiver.third-party-entity O B-data-receiver.third-party-entity I-data-receiver.third-party-entity O B-data-receiver.third-party-entity O O B-data-receiver.third-party-entity I-data-receiver.third-party-entity I-data-receiver.third-party-entity O
+O O O O O O O O O O O
+O O O O O O O O O O O O
+O O O O O O O O O O O O O O O O O O O O O O O O O
