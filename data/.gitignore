@@ -1,8 +1,7 @@
-privacy_qa/
-policy_qa/
+opp_115/
+piextract/
+policy_detection/
 policy_ie_a/
 policy_ie_b/
-policy_detection/
-opp_115/
-app_350
-piextract/
+policy_qa/
+privacy_qa/

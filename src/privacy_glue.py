@@ -6,7 +6,6 @@ from transformers.trainer_utils import get_last_checkpoint
 from utils.logging_utils import (add_stream_handler, add_file_handler,
                                  remove_all_file_handlers)
 from parser import ModelArguments, DataArguments, Task, get_parser
-from tasks.app_350 import load_app_350
 from tasks.opp_115 import load_opp_115
 from tasks.piextract import load_piextract
 from tasks.policy_detection import load_policy_detection
@@ -113,9 +112,7 @@ def train(model_args: ModelArguments, data_args: DataArguments,
     data_args.task_dir = os.path.join(data_args.data_dir, data_args.task)
 
     # load dataset based on task name
-    if data_args.task == "app_350":
-        data = load_app_350(data_args.task_dir)
-    elif data_args.task == "opp_115":
+    if data_args.task == "opp_115":
         data = load_opp_115(data_args.task_dir)
     elif data_args.task == "piextract":
         data = load_piextract(data_args.task_dir)

@@ -21,7 +21,6 @@ class Model(Enum):
 
 
 class Task(Enum):
-    app_350: str = "app_350"
     opp_115: str = "opp_115"
     piextract: str = "piextract"
     policy_detection: str = "policy_detection"

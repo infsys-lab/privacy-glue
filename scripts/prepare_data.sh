@@ -33,20 +33,9 @@ policy_detection() {
     --strip-components 1 "dataset/1301_dataset.csv"
 }
 
-app_350() {
-  local target="./data/app_350"
-  mkdir -p "$target"
-  wget -N -P "$target" "https://usableprivacy.org/static/data/APP-350_v1.1.zip"
-  unzip -o "$target/APP-350_v1.1.zip" -d "$target"
-  cp -rf "$target/APP-350_v1.1/"* "$target"
-  rm -rf "$target/APP-350_v1.1"
-  rm -rf "$target/__MACOSX"
-}
-
 # define main function
 main() {
   policy_detection
-  app_350
 }
 
 # execute all functions
