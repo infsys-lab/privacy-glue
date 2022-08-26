@@ -26,21 +26,17 @@ def load_policy_ie_b(directory: str) -> datasets.DatasetDict:
             remove_columns=["text"])
 
     # zip together data in splits
-    for (split,
-         tokens_split), (_,
-                         ner_tags_first_split), (_,
-                                                 ner_tags_second_split) in zip(
-                                                     tokens.items(),
-                                                     ner_tags_first.items(),
-                                                     ner_tags_second.items()):
+    for split in ["train", "validation", "test"]:
         combined[split] = datasets.concatenate_datasets(
-            [tokens_split, ner_tags_first_split, ner_tags_second_split],
+            [tokens[split], ner_tags_first[split], ner_tags_second[split]],
             axis=1)
 
     # merge NER tags and drop old ones
-    combined = combined.map(lambda x: {
-        "ner_tags":
-        list(zip(x["ner_tags_type_one"], x["ner_tags_type_two"]))
-    }, remove_columns=["ner_tags_type_one", "ner_tags_type_two"])
+    combined = combined.map(
+        lambda x: {
+            "ner_tags": list(
+                zip(x["ner_tags_type_one"], x["ner_tags_type_two"]))
+        },
+        remove_columns=["ner_tags_type_one", "ner_tags_type_two"])
 
     return combined

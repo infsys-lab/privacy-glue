@@ -21,8 +21,9 @@ def load_policy_ie_a(directory: str) -> datasets.DatasetDict:
     combined = datasets.DatasetDict()
 
     # load tokens which are common for all sub-tasks
-    tokens = datasets.load_dataset(
-        "text", data_files=file_mapping(directory, "seq.in"))
+    tokens = datasets.load_dataset("text",
+                                   data_files=file_mapping(
+                                       directory, "seq.in"))
 
     # since this is task A, only load labels
     labels = datasets.load_dataset(
@@ -31,10 +32,8 @@ def load_policy_ie_a(directory: str) -> datasets.DatasetDict:
                                 "label")).rename_column("text", "label")
 
     # zip together data
-    for (split,
-            tokens_split), (_, labels_split) in zip(tokens.items(),
-                                                    labels.items()):
+    for split in ["train", "validation", "test"]:
         combined[split] = datasets.concatenate_datasets(
-            [tokens_split, labels_split], axis=1)
+            [tokens[split], labels[split]], axis=1)
 
     return combined
