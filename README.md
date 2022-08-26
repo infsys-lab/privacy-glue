@@ -34,8 +34,14 @@ $ pip install -r requirements.txt
 
 ## Test :microscope:
 
-To run a `mypy` type-integrity test, execute:
+1. To run unit and integration tests, execute:
 
-```
-$ mypy
-```
+    ```
+    $ pytest
+    ```
+
+2. To run a `mypy` type-integrity test, execute:
+
+    ```
+    $ mypy
+    ```
