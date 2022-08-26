@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from glob import glob
 import datasets
 import os
@@ -35,7 +35,7 @@ def read_conll_file(file_path: str) -> Dict[str, List[List[str]]]:
     return data
 
 
-def merge_ner_tags(ner_tags: List[List[str]]) -> List[List[str]]:
+def merge_ner_tags(ner_tags: List[List[str]]) -> List[List[Tuple[str, ...]]]:
     # perform a nested zip operation to combine token-level NER tags
     return [list(zip(*ner_tag)) for ner_tag in list(zip(*ner_tags))]
 
