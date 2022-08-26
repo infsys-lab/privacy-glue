@@ -17,8 +17,8 @@ nltk = "^3.7"
 
 [tool.poetry.dev-dependencies]
 ipdb = "^0.13.9"
-pytest = "^6.2.5"
 mypy = "0.960"
+pytest = "^7.1.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -26,6 +26,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = [".", "src"]
 
 [tool.mypy]
 allow_redefinition = true
@@ -35,9 +36,6 @@ files = "src"
 module = [
     "ipdb",
     "tqdm.*",
-    "sklearn.*",
-    "scipy.*",
-    "pandas",
-    "sentence_transformers.*"
+    "pandas"
 ]
 ignore_missing_imports = true
