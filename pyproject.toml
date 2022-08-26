@@ -25,7 +25,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = [".", "src"]
+pythonpath = ["src"]
 
 [tool.mypy]
 allow_redefinition = true
