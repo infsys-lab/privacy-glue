@@ -29,7 +29,6 @@ build-backend = "poetry.core.masonry.api"
 target-version = ["py38"]
 quiet = true
 
-[tool.coverage]
 [tool.coverage.run]
 branch = true
 source = ["src"]
