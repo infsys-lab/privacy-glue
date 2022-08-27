@@ -8,7 +8,8 @@ import os
 def test_load_policy_ie_a():
     # load sample data
     data = load_policy_ie_a(
-        os.path.join(os.path.dirname(__file__), "data", "policy_ie_a"))
+        os.path.join(os.path.dirname(__file__), "data", "policy_ie_a")
+    )
 
     # check that all three splits are included
     assert set(data.keys()) == {"train", "validation", "test"}

@@ -7,8 +7,7 @@ import os
 
 def test_load_opp_115():
     # load sample data
-    data = load_opp_115(
-        os.path.join(os.path.dirname(__file__), "data", "opp_115"))
+    data = load_opp_115(os.path.join(os.path.dirname(__file__), "data", "opp_115"))
 
     # check that all three splits are included
     assert set(data.keys()) == {"train", "validation", "test"}

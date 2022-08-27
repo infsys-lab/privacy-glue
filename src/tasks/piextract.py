@@ -42,9 +42,7 @@ def merge_ner_tags(ner_tags: List[List[str]]) -> List[List[Tuple[str, ...]]]:
 
 def load_piextract(directory: str) -> datasets.DatasetDict:
     # define task loading order (necessary for multi-label task)
-    task_order = [
-        "CollectUse_true", "CollectUse_false", "Share_true", "Share_false"
-    ]
+    task_order = ["CollectUse_true", "CollectUse_false", "Share_true", "Share_false"]
 
     # define global data dictionary
     data = {"train": [], "test": []}
@@ -66,9 +64,7 @@ def load_piextract(directory: str) -> datasets.DatasetDict:
     # loop over each data split
     for split, data_split in data.items():
         # flatten tokens from all four tasks in this split
-        all_tokens = [
-            data_split_subset["tokens"] for data_split_subset in data_split
-        ]
+        all_tokens = [data_split_subset["tokens"] for data_split_subset in data_split]
 
         # flatten NER tags from all four tasks in this split
         all_ner_tags = [
@@ -82,11 +78,8 @@ def load_piextract(directory: str) -> datasets.DatasetDict:
         merged_ner_tags = merge_ner_tags(all_ner_tags)
 
         # convert dictionary into HF dataset and insert into DatasetDict
-        combined[split] = datasets.Dataset.from_dict({
-            "tokens":
-            all_tokens[0],
-            "ner_tags":
-            merged_ner_tags
-        })
+        combined[split] = datasets.Dataset.from_dict(
+            {"tokens": all_tokens[0], "ner_tags": merged_ner_tags}
+        )
 
     return combined

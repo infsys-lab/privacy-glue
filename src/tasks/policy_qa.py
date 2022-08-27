@@ -15,8 +15,11 @@ def load_policy_qa(directory: str) -> datasets.DatasetDict:
     for json_file in glob(os.path.join(directory, "*.json")):
         # infer split from filename
         filename = os.path.basename(json_file)
-        split = "validation" if filename.startswith(
-            "dev") else filename.replace(".json", "")
+        split = (
+            "validation"
+            if filename.startswith("dev")
+            else filename.replace(".json", "")
+        )
 
         # define temporarily dictionary
         temp_dict = {
@@ -24,7 +27,7 @@ def load_policy_qa(directory: str) -> datasets.DatasetDict:
             "title": [],
             "context": [],
             "question": [],
-            "answers": []
+            "answers": [],
         }
 
         # read JSON file
@@ -38,9 +41,7 @@ def load_policy_qa(directory: str) -> datasets.DatasetDict:
                 context = paragraph["context"]
                 answers = {}
                 for qa in paragraph["qas"]:
-                    answers["text"] = [
-                        answer["text"] for answer in qa["answers"]
-                    ]
+                    answers["text"] = [answer["text"] for answer in qa["answers"]]
                     answers["answer_start"] = [
                         answer["answer_start"] for answer in qa["answers"]
                     ]

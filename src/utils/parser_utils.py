@@ -9,7 +9,7 @@ import re
 
 
 def dir_path(path: str) -> str:
-    """ Argparse type helper to ensure directory exists """
+    """Argparse type helper to ensure directory exists"""
     if os.path.isdir(path):
         return path
     else:
@@ -17,7 +17,7 @@ def dir_path(path: str) -> str:
 
 
 def file_path(path: str) -> str:
-    """ Argparse type helper to ensure file exists """
+    """Argparse type helper to ensure file exists"""
     if os.path.isfile(path):
         return path
     else:
@@ -25,18 +25,22 @@ def file_path(path: str) -> str:
 
 
 class Sorting_Help_Formatter(argparse.HelpFormatter):
-    """ Formatter for sorting argument options alphabetically """
+    """Formatter for sorting argument options alphabetically"""
 
     # source: https://stackoverflow.com/a/12269143
     def add_arguments(self, actions: Iterable[argparse.Action]) -> None:
         actions = sorted(actions, key=attrgetter("option_strings"))
         super(Sorting_Help_Formatter, self).add_arguments(actions)
 
-    def _format_usage(self, usage: str, actions: Iterable[argparse.Action],
-                      groups: Iterable[argparse._ArgumentGroup],
-                      prefix: Optional[str]) -> str:
+    def _format_usage(
+        self,
+        usage: str,
+        actions: Iterable[argparse.Action],
+        groups: Iterable[argparse._ArgumentGroup],
+        prefix: Optional[str],
+    ) -> str:
         if prefix is None:
-            prefix = ("usage: ")
+            prefix = "usage: "
 
         # if usage is specified, use that
         if usage is not None:
@@ -55,17 +59,19 @@ class Sorting_Help_Formatter(argparse.HelpFormatter):
             positionals = []
 
             # split actions temporarily
-            help_action = [
-                action for action in actions if action.dest == "help"
-            ]
+            help_action = [action for action in actions if action.dest == "help"]
             required_actions = sorted(
                 [action for action in actions if action.required],
-                key=attrgetter("option_strings"))
-            optional_actions = sorted([
-                action for action in actions
-                if not action.required and action.dest != "help"
-            ],
-                                      key=attrgetter("option_strings"))
+                key=attrgetter("option_strings"),
+            )
+            optional_actions = sorted(
+                [
+                    action
+                    for action in actions
+                    if not action.required and action.dest != "help"
+                ],
+                key=attrgetter("option_strings"),
+            )
 
             # combine actions back
             actions = help_action + required_actions + optional_actions
@@ -87,9 +93,7 @@ class Sorting_Help_Formatter(argparse.HelpFormatter):
             if len(prefix) + len(usage) > text_width:
 
                 # break usage into wrappable parts
-                part_regexp = (r"\(.*?\)+(?=\s|$)|"
-                               r"\[.*?\]+(?=\s|$)|"
-                               r"\S+")
+                part_regexp = r"\(.*?\)+(?=\s|$)|" r"\[.*?\]+(?=\s|$)|" r"\S+"
                 opt_usage = format(optionals, groups)
                 pos_usage = format(positionals, groups)
                 opt_parts = re.findall(part_regexp, opt_usage)
@@ -115,7 +119,7 @@ class Sorting_Help_Formatter(argparse.HelpFormatter):
                     if line:
                         lines.append(indent + " ".join(line))
                     if prefix is not None:
-                        lines[0] = lines[0][len(indent):]
+                        lines[0] = lines[0][len(indent) :]
                     return lines
 
                 # if prog is short, follow it with optionals or positionals
@@ -156,8 +160,7 @@ class Metavar_Circum_Symbols(argparse.HelpFormatter):
     provided by the class are considered an implementation detail.
     """
 
-    def _get_default_metavar_for_optional(self,
-                                          action: argparse.Action) -> str:
+    def _get_default_metavar_for_optional(self, action: argparse.Action) -> str:
         """
         Function to return option metavariable type with circum-symbols
         """
@@ -167,8 +170,7 @@ class Metavar_Circum_Symbols(argparse.HelpFormatter):
             action.metavar = cast(str, action.metavar)
             return action.metavar
 
-    def _get_default_metavar_for_positional(self,
-                                            action: argparse.Action) -> str:
+    def _get_default_metavar_for_positional(self, action: argparse.Action) -> str:
         """
         Function to return positional metavariable type with circum-symbols
         """
@@ -192,8 +194,7 @@ class Metavar_Indenter(argparse.HelpFormatter):
         Function to define how actions are printed in help message
         """
         # determine the required width and the entry label
-        help_position = min(self._action_max_length + 2,
-                            self._max_help_position + 5)
+        help_position = min(self._action_max_length + 2, self._max_help_position + 5)
         help_width = max(self._width - help_position, 11)
         action_width = help_position - self._current_indent - 2
         action_header = self._format_action_invocation(action)
@@ -205,8 +206,12 @@ class Metavar_Indenter(argparse.HelpFormatter):
 
         # short action name; start on the same line and pad two spaces
         elif len(action_header) <= action_width:
-            tup = (self._current_indent, "", action_width, action_header
-                   )  # type: ignore
+            tup = (
+                self._current_indent,
+                "",
+                action_width,
+                action_header,
+            )  # type: ignore
             action_header = "%*s%-*s  " % tup  # type: ignore
             indent_first = 0
 
@@ -250,7 +255,7 @@ class Metavar_Indenter(argparse.HelpFormatter):
         """
         if not action.option_strings:
             default = self._get_default_metavar_for_positional(action)
-            metavar, = self._metavar_formatter(action, default)(1)
+            (metavar,) = self._metavar_formatter(action, default)(1)
             return metavar
         else:
             parts = []  # type: ignore
@@ -258,11 +263,15 @@ class Metavar_Indenter(argparse.HelpFormatter):
             return ", ".join(parts)
 
 
-class ArgparseFormatter(argparse.ArgumentDefaultsHelpFormatter,
-                        Metavar_Circum_Symbols, Metavar_Indenter,
-                        Sorting_Help_Formatter):
+class ArgparseFormatter(
+    argparse.ArgumentDefaultsHelpFormatter,
+    Metavar_Circum_Symbols,
+    Metavar_Indenter,
+    Sorting_Help_Formatter,
+):
     """
     Class to combine argument parsers in order to display meta-variables
     and defaults for arguments
     """
+
     pass

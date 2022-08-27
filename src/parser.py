@@ -35,85 +35,88 @@ class Task(Enum):
 class ModelArguments:
     model_name_or_path: Model = field(
         metadata={
-            "help":
-            "Path to pretrained model or model identifier from "
+            "help": "Path to pretrained model or model identifier from "
             "huggingface.co/models"
-        })
+        }
+    )
     config_name: Optional[str] = field(
         default=None,
         metadata={
-            "help":
-            "Pretrained config name or path if not the same as "
+            "help": "Pretrained config name or path if not the same as "
             "model_name_or_path"
-        })
+        },
+    )
     tokenizer_name: Optional[str] = field(
         default=None,
         metadata={
-            "help":
-            "Pretrained tokenizer name or path if not the same as "
+            "help": "Pretrained tokenizer name or path if not the same as "
             "model_name_or_path"
-        })
+        },
+    )
     cache_dir: Optional[str] = field(
         default=None,
         metadata={
-            "help":
-            "Where do you want to store the pretrained models downloaded "
+            "help": "Where do you want to store the pretrained models downloaded "
             "from huggingface.co"
-        })
+        },
+    )
     use_fast_tokenizer: bool = field(
         default=True,
         metadata={
-            "help":
-            "Whether to use one of the fast tokenizer (backed by the "
+            "help": "Whether to use one of the fast tokenizer (backed by the "
             "tokenizers library) or not"
-        })
+        },
+    )
     random_seed_iterations: int = field(
-        default=5,
-        metadata={"help": "Number of random seed iterations to run"})
+        default=5, metadata={"help": "Number of random seed iterations to run"}
+    )
     early_stopping_patience: int = field(
-        default=3, metadata={"help": "Early stopping patience value"})
+        default=3, metadata={"help": "Early stopping patience value"}
+    )
     do_summarize: bool = field(
-        default=False, metadata={"help": "Summarize over all random seeds"})
+        default=False, metadata={"help": "Summarize over all random seeds"}
+    )
     do_clean: bool = field(
-        default=False,
-        metadata={"help": "Clean all old checkpoints after training"})
+        default=False, metadata={"help": "Clean all old checkpoints after training"}
+    )
 
 
 @dataclass
 class DataArguments:
-    task: Task = field(
-        metadata={"help": "The name of the task for fine-tuning"})
+    task: Task = field(metadata={"help": "The name of the task for fine-tuning"})
     data_dir: dir_path = field(
         default=os.path.relpath(
-            os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")),
-        metadata={"help": "Path to directory containing task input data"})
+            os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
+        ),
+        metadata={"help": "Path to directory containing task input data"},
+    )
     overwrite_cache: bool = field(
         default=False,
         metadata={
-            "help":
-            "Overwrite the cached training, evaluation and prediction sets"
-        })
+            "help": "Overwrite the cached training, evaluation and prediction sets"
+        },
+    )
     max_train_samples: Optional[int] = field(
         default=None,
         metadata={
-            "help":
-            "For debugging purposes or quicker training, truncate the "
+            "help": "For debugging purposes or quicker training, truncate the "
             "number of training examples to this value if set"
-        })
+        },
+    )
     max_eval_samples: Optional[int] = field(
         default=None,
         metadata={
-            "help":
-            "For debugging purposes or quicker training, truncate the "
+            "help": "For debugging purposes or quicker training, truncate the "
             "number of evaluation examples to this value if set"
-        })
+        },
+    )
     max_predict_samples: Optional[int] = field(
         default=None,
         metadata={
-            "help":
-            "For debugging purposes or quicker training, truncate the "
+            "help": "For debugging purposes or quicker training, truncate the "
             "number of prediction examples to this value if set"
-        })
+        },
+    )
 
 
 def get_parser() -> HfArgumentParser:

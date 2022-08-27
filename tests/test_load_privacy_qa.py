@@ -8,7 +8,8 @@ import os
 def test_load_privacy_qa():
     # load sample data
     data = load_privacy_qa(
-        os.path.join(os.path.dirname(__file__), "data", "privacy_qa"))
+        os.path.join(os.path.dirname(__file__), "data", "privacy_qa")
+    )
 
     # check that all three splits are included
     assert set(data.keys()) == {"train", "test"}
@@ -20,8 +21,7 @@ def test_load_privacy_qa():
 
         # ensure all questions are composed of strings and not array-like
         # objects
-        assert all(
-            [isinstance(question, str) for question in data_split["question"]])
+        assert all([isinstance(question, str) for question in data_split["question"]])
 
         # ensure all text is composed of strings and not array-like objects
         assert all([isinstance(text, str) for text in data_split["text"]])

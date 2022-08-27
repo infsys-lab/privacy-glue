@@ -12,10 +12,7 @@ def load_policy_detection(directory: str) -> datasets.DatasetDict:
     df = df[["policy_text", "is_policy"]]
 
     # replace labels from boolean to strings for consistency
-    df["is_policy"] = df["is_policy"].replace({
-        True: "Policy",
-        False: "Not Policy"
-    })
+    df["is_policy"] = df["is_policy"].replace({True: "Policy", False: "Not Policy"})
 
     # rename columns for consistency
     df = df.rename(columns={"policy_text": "text", "is_policy": "label"})
