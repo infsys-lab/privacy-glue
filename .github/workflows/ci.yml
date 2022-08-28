@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+steps:
+  - uses: actions/checkout@v2
+
+  - name: Set up Python 3.8.12
+    uses: actions/setup-python@v2
+    with:
+      python-version: "3.8.12"
+
+  - name: Cache poetry virtualenv
+    uses: actions/cache@v2
+    id: cache
+    with:
+      path: ${{ env.pythonLocation }}
+      key: ${{ runner.os }}-python-${{ env.pythonLocation }}-${{ hashFiles("poetry.lock") }}
+
+  - name: Install poetry
+    if: steps.cache.outputs.cache-hit != "true"
+    run: |
+      python3 -m pip install --upgrade pip
+      python3 -m pip install poetry
+
+  - name: Set poetry config
+    run: python -m poetry config virtualenvs.create false
+
+  - name: Install dependencies
+    if: steps.cache.outputs.cache-hit != "true"
+    run: python -m poetry install
+
+  - name: Format with black
+    run: |
+      poetry run black --diff --check .
+
+  - name: Lint with flake8
+    run: |
+      poetry run flake8 --count --show-source --statistics .
+
+  - name: Test with pytest
+    run: poetry run pytest
