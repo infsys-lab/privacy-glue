@@ -119,7 +119,7 @@ class Sorting_Help_Formatter(argparse.HelpFormatter):
                     if line:
                         lines.append(indent + " ".join(line))
                     if prefix is not None:
-                        lines[0] = lines[0][len(indent) :]
+                        lines[0] = lines[0][len(indent) :]  # noqa: E203
                     return lines
 
                 # if prog is short, follow it with optionals or positionals
