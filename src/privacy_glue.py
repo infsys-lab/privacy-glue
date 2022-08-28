@@ -151,9 +151,6 @@ def train(
         data = load_privacy_qa(data_args.task_dir)
 
     print(data)
-    import ipdb
-
-    ipdb.set_trace()
 
     # NOTE: temporarily raise error
     raise NotImplementedError
