@@ -5,10 +5,10 @@ name: Python CI
 
 on:
   pull_request:
-    paths: ['src/**', 'tests/**', 'pyproject.toml', 'poetry.lock']
+    paths: ['src/**', 'tests/**', 'pyproject.toml', 'poetry.lock', '.flake8']
   push:
     branches: main
-    paths: ['src/**', 'tests/**', 'pyproject.toml', 'poetry.lock']
+    paths: ['src/**', 'tests/**', 'pyproject.toml', 'poetry.lock', '.flake8']
 
 concurrency:
   # new commit on branch cancels running workflows of the same branch
