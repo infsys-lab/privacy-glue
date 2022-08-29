@@ -42,8 +42,8 @@ jobs:
 
       - name: Set poetry config
         run: |
-          poetry config virtualenvs.create true
-          poetry config virtualenvs.in-project true
+          python3 -m poetry config virtualenvs.create true
+          python3 -m poetry config virtualenvs.in-project true
 
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
