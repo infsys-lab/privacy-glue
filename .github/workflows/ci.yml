@@ -8,7 +8,7 @@ on:
     branches: main
 
 jobs:
-  build:
+  python-build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -49,3 +49,15 @@ jobs:
 
       - name: Test with pytest
         run: poetry run pytest
+
+  shell-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Run sh-checker
+        uses: luizm/action-sh-checker@master
+        with:
+          sh_checker_exclude: |
+            '^cov_html/ ^data/ ^hooks/ ^runs/ ^src/ ^submodules/ ^tests/'
