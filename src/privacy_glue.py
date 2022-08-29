@@ -151,6 +151,7 @@ def train(
         data = load_privacy_qa(data_args.task_dir)
 
     print(data)
+    print(data)
 
     # NOTE: temporarily raise error
     raise NotImplementedError
