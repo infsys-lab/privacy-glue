@@ -1,4 +1,4 @@
-name: Check shell script style and lint
+name: Shell checks
 
 on: workflow_call
 

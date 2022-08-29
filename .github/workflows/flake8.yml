@@ -1,4 +1,4 @@
-name: Use flake8 to lint code
+name: Lint
 
 on: workflow_call
 

@@ -1,4 +1,4 @@
-name: Use black to check code style
+name: Style
 
 on: workflow_call
 
