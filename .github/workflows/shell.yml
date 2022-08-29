@@ -1,0 +1,28 @@
+name: Shell CI
+
+on:
+  pull_request:
+    paths: ['scripts/**']
+  push:
+    branches: main
+    paths: ['scripts/**']
+
+concurrency:
+  # new commit on branch cancels running workflows of the same branch
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sh-checker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Run sh-checker
+        uses: luizm/action-sh-checker@master
+        env:
+          SHFMT_OPTS: -i 2
+        with:
+          sh_checker_exclude: |
+            '^data/ ^hooks/ ^runs/ ^src/ ^submodules/ ^tests/'
