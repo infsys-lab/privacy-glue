@@ -1,4 +1,5 @@
 # Adapted from: https://github.com/zenml-io/zenml
+# Adapted from: https://luminousmen.com/post/making-ci-workflow-faster-with-github-actions
 
 name: CI
 
@@ -15,20 +16,60 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  poetry-install:
-    uses: ./.github/workflows/poetry-install.yml
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.8.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8.12'
+
+      - name: Cache poetry virtualenv
+        uses: actions/cache@v3
+        id: cache
+        with:
+          path: .venv
+          key: ${{ runner.os }}-python-${{ env.pythonLocation }}-${{ hashFiles('poetry.lock') }}
+
+      - name: Install poetry
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install poetry
+
+      - name: Set poetry config
+        run: |
+          poetry config virtualenvs.create true
+          poetry config virtualenvs.in-project true
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: poetry install
+
+      - name: Format with black
+        run: |
+          poetry run black --diff --check .
+
+      - name: Lint with flake8
+        run: |
+          poetry run flake8 --show-source --statistics .
+
+      - name: Test with pytest
+        run: poetry run pytest
 
   sh-checker:
-    uses: ./.github/workflows/sh-checker.yml
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-  black:
-    needs: poetry-install
-    uses: ./.github/workflows/black.yml
-
-  flake8:
-    needs: poetry-install
-    uses: ./.github/workflows/flake8.yml
-
-  pytest:
-    needs: poetry-install
-    uses: ./.github/workflows/pytest.yml
+      - name: Run sh-checker
+        uses: luizm/action-sh-checker@master
+        env:
+          SHFMT_OPTS: -i 2
+        with:
+          sh_checker_exclude: |
+            '^cov_html/ ^data/ ^hooks/ ^runs/ ^src/ ^submodules/ ^tests/'
