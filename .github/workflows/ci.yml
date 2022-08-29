@@ -1,3 +1,5 @@
+# Adapted from: https://luminousmen.com/post/making-ci-workflow-faster-with-github-actions
+
 name: CI
 
 on:
@@ -12,16 +14,29 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install poetry
-        run: pipx install poetry
-
-      - name: Setup python
+      - name: Set up Python 3.8.12
         uses: actions/setup-python@v4
         with:
           python-version: '3.8.12'
-          cache: 'poetry'
+
+      - name: Cache poetry virtualenv
+        uses: actions/cache@v3
+        id: cache
+        with:
+          path: ${{ env.pythonLocation }}
+          key: ${{ runner.os }}-python-${{ env.pythonLocation }}-${{ hashFiles('poetry.lock') }}
+
+      - name: Install poetry
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install poetry
+
+      - name: Set poetry config
+        run: python -m poetry config virtualenvs.create false
 
       - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
         run: poetry install
 
       - name: Format with black
@@ -30,7 +45,7 @@ jobs:
 
       - name: Lint with flake8
         run: |
-          poetry run flake8 --count --show-source --statistics .
+          poetry run flake8 --show-source --statistics .
 
       - name: Test with pytest
         run: poetry run pytest
