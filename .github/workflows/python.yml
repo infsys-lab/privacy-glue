@@ -31,8 +31,8 @@ jobs:
         uses: actions/cache@v3
         id: cache
         with:
-          path: .venv
-          key: venv-${{ runner.os }}-python-${{ env.pythonLocation }}-${{ hashFiles('poetry.lock') }}
+          path: ${{ env.pythonLocation }}
+          key: ${{ runner.os }}-python-${{ env.pythonLocation }}-${{ hashFiles('poetry.lock') }}
 
       - name: Install poetry
         if: steps.cache.outputs.cache-hit != 'true'
@@ -42,8 +42,7 @@ jobs:
 
       - name: Set poetry config
         run: |
-          poetry config virtualenvs.create true
-          poetry config virtualenvs.in-project true
+          poetry config virtualenvs.create false
 
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
