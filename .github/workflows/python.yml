@@ -57,12 +57,12 @@ jobs:
           poetry run flake8 --show-source --statistics .
 
       - name: Test with pytest
-        run: poetry run pytest --cov-report 'xml:coverage.xml'
+        run: poetry run pytest --cov-report 'xml:coverage.xml' --junitxml 'pytest.xml'
 
       - name: Pytest coverage comment
         if: github.event_name == 'pull_request'
         uses: MishaKav/pytest-coverage-comment@main
         with:
-          github-token: ${{ secrets.SECRET_TOKEN }}
           create-new-comment: true
           pytest-xml-coverage-path: ./coverage.xml
+          junitxml-path: ./pytest.xml
