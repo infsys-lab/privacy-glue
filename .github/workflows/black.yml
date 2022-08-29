@@ -1,0 +1,17 @@
+name: Use black to check code style
+
+on: workflow_call
+
+jobs:
+  black:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup environment with Poetry
+        uses: ./.github/actions/setup-environment
+
+      - name: Format with black
+        run: |
+          poetry run black --diff --check .

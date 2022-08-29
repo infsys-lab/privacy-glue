@@ -1,0 +1,17 @@
+name: Use flake8 to lint code
+
+on: workflow_call
+
+jobs:
+  flake8:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup environment with Poetry
+        uses: ./.github/actions/setup-environment
+
+      - name: Lint with flake8
+        run: |
+          poetry run flake8 --show-source --statistics .
