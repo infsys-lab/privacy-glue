@@ -37,7 +37,8 @@ extend-exclude = """
   runs |
   hooks |
   data |
-  cov_html
+  cov_html |
+  .venv
 )/
 """
 
