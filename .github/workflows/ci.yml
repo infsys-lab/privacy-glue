@@ -10,32 +10,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up Python 3.8.12
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.8.12"
-
-      - name: Cache poetry virtualenv
-        uses: actions/cache@v2
-        id: cache
-        with:
-          path: ${{ env.pythonLocation }}
-          key: ${{ runner.os }}-python-${{ env.pythonLocation }}-${{ hashFiles('poetry.lock') }}
+        uses: actions/checkout@v3
 
       - name: Install poetry
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          python3 -m pip install --upgrade pip
-          python3 -m pip install poetry
+        run: pipx install poetry
 
-      - name: Set poetry config
-        run: python -m poetry config virtualenvs.create false
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.8.12'
+          cache: 'poetry'
 
       - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: python -m poetry install
+        run: poetry install
 
       - name: Format with black
         run: |
