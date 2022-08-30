@@ -34,7 +34,7 @@ jobs:
         id: cache-dev
         with:
           path: .venv
-          key: dev-venv-${{ runner.os }}-python-${{ env.pythonLocation }}-${{ hashFiles('poetry.lock') }}
+          key: dev-${{ runner.os }}-python-${{ env.pythonLocation }}-${{ hashFiles('poetry.lock') }}
 
       - name: Install dependencies
         if: steps.cache-dev.outputs.cache-hit != 'true'
