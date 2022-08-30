@@ -21,10 +21,20 @@ repos:
 
   - repo: local
     hooks:
-      - id: python-deploy
-        name: poetry-export
+      - id: python-deploy-main
+        name: poetry-export-main
         entry: |
           poetry export -f requirements.txt --without-hashes -o requirements.txt
+        language: system
+        files: ^pyproject\.toml$|^poetry\.lock$
+        types: [file]
+        pass_filenames: false
+
+  - repo: local
+    hooks:
+      - id: python-deploy-dev
+        name: poetry-export-dev
+        entry: |
           poetry export -f requirements.txt --without-hashes --dev -o requirements-dev.txt
         language: system
         files: ^pyproject\.toml$|^poetry\.lock$
@@ -35,7 +45,7 @@ repos:
     hooks:
       - id: shell-lint
         name: shellcheck
-        entry: find scripts -type f -print0 | xargs -0 shellcheck
+        entry: bash -c 'find ./scripts -type f -print0 | xargs -0 shellcheck'
         language: system
         files: ^scripts/
         types: [shell]
@@ -45,7 +55,7 @@ repos:
     hooks:
       - id: shell-style
         name: shfmt
-        entry: find scripts -type f -print0 | xargs -0 shfmt -i 2 --diff
+        entry: bash -c 'find ./scripts -type f -print0 | xargs -0 shfmt -i 2 --diff'
         language: system
         files: ^scripts/
         types: [shell]
