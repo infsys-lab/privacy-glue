@@ -30,4 +30,4 @@ jobs:
           SHFMT_OPTS: -i 2
         with:
           sh_checker_exclude: |
-            '^data/ ^hooks/ ^runs/ ^src/ ^submodules/ ^tests/'
+            '^data/ ^runs/ ^src/ ^submodules/ ^tests/'

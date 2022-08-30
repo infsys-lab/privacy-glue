@@ -7,7 +7,6 @@ exclude =
     submodules,
     scripts,
     runs,
-    hooks,
     data,
     cov_html,
     .pytest_cache,
