@@ -31,22 +31,18 @@ jobs:
         with:
           python-version: '3.8.12'
 
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+
       - name: Cache poetry virtualenv
         uses: actions/cache@v3
         id: cache
         with:
-          path: ${{ env.pythonLocation }}
-          key: ${{ runner.os }}-python-${{ env.pythonLocation }}-${{ hashFiles('poetry.lock') }}
-
-      - name: Install poetry
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          python3 -m pip install --upgrade pip
-          python3 -m pip install poetry
-
-      - name: Set poetry config
-        run: |
-          poetry config virtualenvs.create false
+          path: .venv
+          key: venv-${{ runner.os }}-python-${{ env.pythonLocation }}-${{ hashFiles('poetry.lock') }}
 
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
