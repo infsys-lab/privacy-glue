@@ -1,0 +1,52 @@
+repos:
+  - repo: local
+    hooks:
+      - id: python-lint
+        name: flake8
+        entry: poetry run black --diff --check .
+        language: system
+        files: ^src/|^tests/|^pyproject\.toml$|^poetry\.lock$|^\.flake8$
+        types: [python]
+        pass_filenames: false
+
+  - repo: local
+    hooks:
+      - id: python-style
+        name: black
+        entry: poetry run flake8 --show-source --statistics .
+        language: system
+        files: ^src/|^tests/|^pyproject\.toml$|^poetry\.lock$|^\.flake8$
+        types: [python]
+        pass_filenames: false
+
+  - repo: local
+    hooks:
+      - id: python-deploy
+        name: poetry-export
+        entry: |
+          poetry export -f requirements.txt --without-hashes -o requirements.txt
+          poetry export -f requirements.txt --without-hashes --dev -o requirements-dev.txt
+        language: system
+        files: ^pyproject\.toml$|^poetry\.lock$
+        types: [file]
+        pass_filenames: false
+
+  - repo: local
+    hooks:
+      - id: shell-lint
+        name: shellcheck
+        entry: find scripts -type f -print0 | xargs -0 shellcheck
+        language: system
+        files: ^scripts/
+        types: [shell]
+        pass_filenames: false
+
+  - repo: local
+    hooks:
+      - id: shell-style
+        name: shfmt
+        entry: find scripts -type f -print0 | xargs -0 shfmt -i 2 --diff
+        language: system
+        files: ^scripts/
+        types: [shell]
+        pass_filenames: false
