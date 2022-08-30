@@ -2,6 +2,7 @@ name: Shell CI
 
 on:
   pull_request:
+    branches: main
     paths: ['scripts/**']
   push:
     branches: main

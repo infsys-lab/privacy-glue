@@ -5,6 +5,7 @@ name: Python CI
 
 on:
   pull_request:
+    branches: main
     paths: ['src/**', 'tests/**', 'pyproject.toml', 'poetry.lock', '.flake8']
   push:
     branches: main
