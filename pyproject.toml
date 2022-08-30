@@ -35,7 +35,6 @@ extend-exclude = """
   submodules |
   scripts |
   runs |
-  hooks |
   data |
   cov_html |
   .venv
