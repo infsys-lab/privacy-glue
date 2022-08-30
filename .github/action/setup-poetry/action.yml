@@ -5,6 +5,10 @@ inputs:
     description: 'Python version'
     required: false
     default: 3.8.12
+  poetry-version:
+    description: 'Poetry version'
+    required: false
+    default: latest
 
 runs:
   using: 'composite'
@@ -17,5 +21,7 @@ runs:
     - name: Install poetry
       uses: snok/install-poetry@v1
       with:
+        version: ${{ inputs.poetry-version }}
         virtualenvs-create: true
         virtualenvs-in-project: true
+        installer-parallel: true

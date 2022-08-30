@@ -1,7 +1,7 @@
 # Adapted from: https://github.com/zenml-io/zenml
 # Adapted from: https://luminousmen.com/post/making-ci-workflow-faster-with-github-actions
 
-name: Python CI
+name: Python style-check and lint
 
 on:
   pull_request:
@@ -17,10 +17,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    permissions:
-      contents: read
-      pull-requests: write
+  style-lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -28,33 +25,25 @@ jobs:
 
       - name: Setup poetry
         uses: ./.github/actions/setup-poetry
+        with:
+          poetry-version: '1.2.0b3'
 
       - name: Cache poetry virtualenv
         uses: actions/cache@v3
-        id: cache
+        id: cache-dev
         with:
           path: .venv
-          key: venv-${{ runner.os }}-python-${{ env.pythonLocation }}-${{ hashFiles('poetry.lock') }}
+          key: dev-venv-${{ runner.os }}-python-${{ env.pythonLocation }}-${{ hashFiles('poetry.lock') }}
 
       - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: poetry install
+        if: steps.cache-dev.outputs.cache-hit != 'true'
+        run: |
+          poetry install --only dev
 
-      - name: Format with black
+      - name: Style-check with black
         run: |
           poetry run black --diff --check .
 
       - name: Lint with flake8
         run: |
           poetry run flake8 --show-source --statistics .
-
-      - name: Test with pytest
-        run: poetry run pytest --cov-report 'xml:coverage.xml' --junitxml 'pytest.xml'
-
-      - name: Pytest coverage comment
-        if: github.event_name == 'pull_request'
-        uses: MishaKav/pytest-coverage-comment@main
-        with:
-          create-new-comment: true
-          pytest-xml-coverage-path: ./coverage.xml
-          junitxml-path: ./pytest.xml

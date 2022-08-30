@@ -1,0 +1,35 @@
+# Adapted from: https://github.com/zenml-io/zenml
+# Adapted from: https://luminousmen.com/post/making-ci-workflow-faster-with-github-actions
+
+name: Python deploy
+
+on:
+  pull_request:
+    branches: main
+    paths: ['pyproject.toml', 'poetry.lock']
+  push:
+    branches: main
+    paths: ['pyproject.toml', 'poetry.lock']
+
+concurrency:
+  # new commit on branch cancels running workflows of the same branch
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup poetry
+        uses: ./.github/actions/setup-poetry
+
+      - name: Compare requirements for deployment
+        run: |
+          poetry export -f requirements.txt --without-hashes -o requirements-compare.txt
+          poetry export -f requirements.txt --without-hashes --dev -o requirements-dev-compare.txt
+          cmp requirements.txt requirements-compare.txt
+          cmp requirements-dev.txt requirements-dev-compare.txt
+

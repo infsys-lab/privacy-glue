@@ -1,4 +1,7 @@
-name: Shell CI
+# Adapted from: https://github.com/zenml-io/zenml
+# Adapted from: https://luminousmen.com/post/making-ci-workflow-faster-with-github-actions
+
+name: Shell style-check and lint
 
 on:
   pull_request:
