@@ -35,4 +35,3 @@ jobs:
           poetry export -f requirements.txt --without-hashes --dev -o requirements-dev-compare.txt
           cmp requirements.txt requirements-compare.txt
           cmp requirements-dev.txt requirements-dev-compare.txt
-
