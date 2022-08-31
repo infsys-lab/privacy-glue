@@ -24,10 +24,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Run sh-checker
-        uses: luizm/action-sh-checker@master
-        env:
-          SHFMT_OPTS: -i 2
+      - name: Setup poetry
+        uses: ./.github/actions/setup-poetry
+        # NOTE: this is temporary to be able to install dev dependencies only
         with:
-          sh_checker_exclude: |
-            '^data/ ^runs/ ^src/ ^submodules/ ^tests/'
+          poetry-version: '1.2.0b3'
+
+      - name: Cache poetry virtualenv
+        uses: actions/cache@v3
+        id: cache-dev
+        with:
+          path: .venv
+          key: dev-${{ runner.os }}-python-${{ env.pythonLocation }}-${{ hashFiles('poetry.lock') }}
+
+      - name: Install dependencies
+        if: steps.cache-dev.outputs.cache-hit != 'true'
+        run: |
+          poetry install --only dev
+
+      - name: Style-check with shfmt
+        run: |
+          poetry run bash -c 'find ./scripts -type f -print0 | xargs -0 shellcheck'
+
+      - name: Lint with shellcheck
+        run: |
+          poetry run bash -c 'find ./scripts -type f -print0 | xargs -0 shfmt -i 2 --diff'
