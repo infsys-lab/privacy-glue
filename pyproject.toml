@@ -21,6 +21,8 @@ pytest = "^7.1.2"
 pytest-cov = "^3.0.0"
 black = "^22.6.0"
 flake8 = "^5.0.4"
+shellcheck-py = "^0.8.0"
+shfmt-py = "^3.4.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

@@ -17,7 +17,7 @@ dill==0.3.4; python_version >= "2.7" and python_full_version < "3.0.0" or python
 filelock==3.4.0; python_version >= "3.6" and python_full_version >= "3.7.0"
 flake8==5.0.4; python_full_version >= "3.6.1"
 frozenlist==1.2.0; python_version >= "3.6"
-fsspec==2022.7.1; python_version >= "3.7"
+fsspec==2022.8.0; python_version >= "3.7"
 huggingface-hub==0.1.2; python_full_version >= "3.7.0"
 idna==3.3; python_version >= "3.6" and python_full_version >= "3.7.0" and (python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.6.0")
 iniconfig==1.1.1; python_version >= "3.7"
@@ -57,6 +57,8 @@ pyyaml==6.0; python_version >= "3.6" and python_full_version >= "3.7.0"
 regex==2021.11.10; python_full_version >= "3.7.0" and python_version >= "3.7"
 requests==2.26.0; python_version >= "3.7" and python_full_version >= "3.7.0" and (python_version >= "3.7" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.7")
 responses==0.18.0; python_version >= "3.7"
+shellcheck-py==0.8.0.4; python_version >= "3.7"
+shfmt-py==3.4.3.1; python_version >= "3.6"
 six==1.16.0; python_full_version >= "3.7.1"
 tokenizers==0.12.1; python_full_version >= "3.7.0"
 toml==0.10.2; python_version > "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.3.0" and python_version > "3.6"
