@@ -4,10 +4,10 @@ set -e
 # usage function
 usage() {
   cat <<EOF
-usage: prepare_submodules.sh [-h|--help]
+usage: prepare.sh [-h|--help]
 
-This script instantiates necessary submodules and
-extracts relevant data to the necessary locations
+This script clones git submodules, downloads upstream data
+and finally extracts data to the relevant locations
 
 optional arguments:
   -h, --help  show this help message and exit
@@ -22,6 +22,15 @@ parser() {
       exit 0
     fi
   done
+}
+
+policy_detection() {
+  local target="./data/policy_detection"
+  mkdir -p "$target"
+  wget -N -P "$target" \
+    "https://privacypolicies.cs.princeton.edu/data-release/data/classifier_data.tar.gz"
+  tar -zxvf "$target/classifier_data.tar.gz" -C "$target" \
+    --strip-components 1 "dataset/1301_dataset.csv"
 }
 
 privacy_qa() {
@@ -125,6 +134,7 @@ piextract() {
 
 # define main function
 main() {
+  policy_detection
   privacy_qa
   policy_qa
   policy_ie
