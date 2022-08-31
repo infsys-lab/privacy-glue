@@ -45,7 +45,7 @@ repos:
     hooks:
       - id: shell-lint
         name: shellcheck
-        entry: bash -c 'find ./scripts -type f -print0 | xargs -0 shellcheck'
+        entry: poetry run bash -c 'find ./scripts -type f -print0 | xargs -0 shellcheck'
         language: system
         files: ^scripts/
         types: [shell]
@@ -55,7 +55,7 @@ repos:
     hooks:
       - id: shell-style
         name: shfmt
-        entry: bash -c 'find ./scripts -type f -print0 | xargs -0 shfmt -i 2 --diff'
+        entry: poetry run bash -c 'find ./scripts -type f -print0 | xargs -0 shfmt -i 2 --diff'
         language: system
         files: ^scripts/
         types: [shell]
