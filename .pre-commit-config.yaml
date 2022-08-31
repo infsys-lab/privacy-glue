@@ -23,8 +23,7 @@ repos:
     hooks:
       - id: python-deploy-main
         name: poetry-export-main
-        entry: |
-          poetry export -f requirements.txt --without-hashes -o requirements.txt
+        entry: poetry export -f requirements.txt --without-hashes -o requirements.txt
         language: system
         files: ^pyproject\.toml$|^poetry\.lock$
         types: [file]
@@ -34,8 +33,7 @@ repos:
     hooks:
       - id: python-deploy-dev
         name: poetry-export-dev
-        entry: |
-          poetry export -f requirements.txt --without-hashes --dev -o requirements-dev.txt
+        entry: poetry export -f requirements.txt --without-hashes --dev -o requirements-dev.txt
         language: system
         files: ^pyproject\.toml$|^poetry\.lock$
         types: [file]
