@@ -1,16 +1,16 @@
 # Adapted from: https://github.com/zenml-io/zenml
 # Adapted from: https://luminousmen.com/post/making-ci-workflow-faster-with-github-actions
 
-name: Python static analysis
+name: Static analysis
 
 on:
   workflow_dispatch:
   pull_request:
     branches: main
-    paths: ['src/**', 'tests/**', 'pyproject.toml', 'poetry.lock', '.flake8']
+    paths: ['src/**', 'tests/**', 'pyproject.toml', 'poetry.lock', '.flake8', 'scripts/**']
   push:
     branches: main
-    paths: ['src/**', 'tests/**', 'pyproject.toml', 'poetry.lock', '.flake8']
+    paths: ['src/**', 'tests/**', 'pyproject.toml', 'poetry.lock', '.flake8', 'scripts/**']
 
 concurrency:
   # new commit on branch cancels running workflows of the same branch
@@ -18,7 +18,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  python-static:
+  static:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -46,3 +46,11 @@ jobs:
       - name: Lint with flake8
         run: |
           poetry run flake8 --show-source --statistics .
+
+      - name: Style-check with shfmt
+        run: |
+          poetry run bash -c 'find ./scripts -type f -print0 | xargs -0 shfmt -i 2 -d'
+
+      - name: Lint with shellcheck
+        run: |
+          poetry run bash -c 'find ./scripts -type f -print0 | xargs -0 shellcheck'
