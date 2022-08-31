@@ -45,4 +45,4 @@ jobs:
 
       - name: Lint with shellcheck
         run: |
-          poetry run bash -c 'find ./scripts -type f -print0 | xargs -0 shfmt -i 2 --diff'
+          poetry run bash -c 'find ./scripts -type f -print0 | xargs -0 shfmt -i 2 -d'

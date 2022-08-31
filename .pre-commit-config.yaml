@@ -55,7 +55,7 @@ repos:
     hooks:
       - id: shell-style
         name: shfmt
-        entry: poetry run bash -c 'find ./scripts -type f -print0 | xargs -0 shfmt -i 2 --diff'
+        entry: poetry run bash -c 'find ./scripts -type f -print0 | xargs -0 shfmt -i 2 -d'
         language: system
         files: ^scripts/
         types: [shell]
