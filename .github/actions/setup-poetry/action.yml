@@ -18,11 +18,11 @@ runs:
         python-version: ${{ inputs.python-version }}
 
     - name: Load cached .local
-    uses: actions/cache@v3
-    id: cache-dotlocal
-    with:
-      path: ~/.local
-      key: dotlocal-${{ runner.os }}-python-${{ env.pythonLocation }}-${{ inputs.poetry-version }}
+      uses: actions/cache@v3
+      id: cache-dotlocal
+      with:
+        path: ~/.local
+        key: dotlocal-${{ runner.os }}-python-${{ env.pythonLocation }}-${{ inputs.poetry-version }}
 
     - name: Install poetry
       if: steps.cache-dotlocal.outputs.cache-hit != 'true'
