@@ -7,10 +7,12 @@ on:
   workflow_dispatch:
   pull_request:
     branches: main
-    paths: ['src/**', 'tests/**', 'pyproject.toml', 'poetry.lock', '.flake8', 'scripts/**']
+    paths: ['src/**', 'tests/**', 'pyproject.toml', 'poetry.lock', '.flake8', 'scripts/**',
+    '.github/actions/setup-poetry/action.yml', '.github/workflows/static.yml']
   push:
     branches: main
-    paths: ['src/**', 'tests/**', 'pyproject.toml', 'poetry.lock', '.flake8', 'scripts/**']
+    paths: ['src/**', 'tests/**', 'pyproject.toml', 'poetry.lock', '.flake8', 'scripts/**',
+    '.github/actions/setup-poetry/action.yml', '.github/workflows/static.yml']
 
 concurrency:
   # new commit on branch cancels running workflows of the same branch
