@@ -25,12 +25,17 @@ parser() {
 }
 
 policy_detection() {
-  local target="./data/policy_detection"
+  local xz_file target="./data/policy_detection"
   mkdir -p "$target"
-  wget -N -P "$target" \
-    "https://privacypolicies.cs.princeton.edu/data-release/data/classifier_data.tar.gz"
-  tar -zxvf "$target/classifier_data.tar.gz" -C "$target" \
-    --strip-components 1 "dataset/1301_dataset.csv"
+
+  # fetch submodule
+  git submodule update --init --recursive "submodules/policy-detection-data"
+
+  # uncompress compressed tar archive
+  for xz_file in submodules/policy-detection-data/data/*.tar.xz; do
+    printf "%s\n" "Decompressing $xz_file to $target"
+    unxz -ck "$xz_file" | tar x -C "$target"
+  done
 }
 
 privacy_qa() {
