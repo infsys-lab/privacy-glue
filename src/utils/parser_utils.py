@@ -24,7 +24,7 @@ def file_path(path: str) -> str:
         raise argparse.ArgumentTypeError("%s is not a valid file" % path)
 
 
-class Sorting_Help_Formatter(argparse.HelpFormatter):
+class Sorting_Help_Formatter(argparse.HelpFormatter):  # pragma: no cover
     """Formatter for sorting argument options alphabetically"""
 
     # source: https://stackoverflow.com/a/12269143
@@ -151,7 +151,7 @@ class Sorting_Help_Formatter(argparse.HelpFormatter):
         return "%s%s\n\n" % (prefix, usage)
 
 
-class Metavar_Circum_Symbols(argparse.HelpFormatter):
+class Metavar_Circum_Symbols(argparse.HelpFormatter):  # pragma: no cover
     """
     Help message formatter which uses the argument 'type' as the default
     metavar value (instead of the argument 'dest')
@@ -181,7 +181,7 @@ class Metavar_Circum_Symbols(argparse.HelpFormatter):
             return action.metavar
 
 
-class Metavar_Indenter(argparse.HelpFormatter):
+class Metavar_Indenter(argparse.HelpFormatter):  # pragma: no cover
     """
     Formatter for generating usage messages and argument help strings.
 
@@ -268,7 +268,7 @@ class ArgparseFormatter(
     Metavar_Circum_Symbols,
     Metavar_Indenter,
     Sorting_Help_Formatter,
-):
+):  # pragma: no cover
     """
     Class to combine argument parsers in order to display meta-variables
     and defaults for arguments

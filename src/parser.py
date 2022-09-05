@@ -13,7 +13,7 @@ import os
 # 2. NOTE: Enum-type objects will be transformed into choices
 
 
-class Model(Enum):
+class Model(Enum):  # pragma: no cover
     all_mpnet_base_v2: str = "all-mpnet-base-v2"
     bert_base_uncased: str = "bert-base-uncased"
     nlpaueb_legal_bert_base_uncased: str = "nlpaueb/legal-bert-base-uncased"
