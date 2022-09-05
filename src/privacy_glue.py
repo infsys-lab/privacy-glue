@@ -4,7 +4,7 @@
 from transformers import TrainingArguments, set_seed
 from transformers.trainer_utils import get_last_checkpoint
 from utils.logging_utils import (
-    add_stream_handler,
+    init_logger,
     add_file_handler,
     remove_all_file_handlers,
 )
@@ -192,5 +192,5 @@ if __name__ == "__main__":
     parser = get_parser()
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
     LOGGER = logging.getLogger()
-    add_stream_handler(LOGGER, training_args.get_process_log_level())
+    init_logger(LOGGER, training_args.get_process_log_level())
     main(model_args, data_args, training_args)

@@ -9,13 +9,13 @@ FORMATTER = logging.Formatter(
 )
 
 
-def add_stream_handler(logger: logging.Logger, level: str) -> None:
+def init_logger(logger: logging.Logger, level: str) -> None:
     # set logger level
     logger.setLevel(level)
 
     # set output stream to stderr
     stderr_handler = logging.StreamHandler()
-    stderr_handler.setLevel(logging.DEBUG)
+    stderr_handler.setLevel(level)
     stderr_handler.setFormatter(FORMATTER)
 
     # add stream to logger
