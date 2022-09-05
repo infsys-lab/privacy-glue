@@ -4,7 +4,7 @@ This repository documents PrivacyGLUE; a NLP benchmark consisting of legal-priva
 
 ## Dependencies :mag:
 
-1. This repository's code was tested with Python version `3.8.13`. To sync dependencies, we recommend creating a virtual environment and installing the relevant packages with `poetry`:
+1. This repository's code was tested with Python version `3.9.13`. To sync dependencies, we recommend creating a virtual environment and installing the relevant packages with `poetry`:
 
     ```
     $ poetry install
