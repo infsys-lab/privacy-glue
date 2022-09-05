@@ -35,10 +35,10 @@ This repository documents PrivacyGLUE; a NLP benchmark consisting of legal-priva
 
 ## Tasks :runner:
 
-| Name             | Type                                              | Study                                                                                |
+| Task             | Type                                              | Study                                                                                |
 |------------------|---------------------------------------------------|--------------------------------------------------------------------------------------|
 | OPP-115          | Multi-label<sup>\*</sup> sequence classification  | [Wilson et al. (2016)](https://usableprivacy.org/data)                               |
-| PI-Extact        | Multi-label<sup>\*</sup> sequence tagging         | [Duc et al. (2021)](https://github.com/um-rtcl/piextract_dataset)                    |
+| PI-Extract        | Multi-label<sup>\*</sup> sequence tagging         | [Duc et al. (2021)](https://github.com/um-rtcl/piextract_dataset)                    |
 | Policy-Detection | Binary sequence classification                    | [Amos et al. (2021)](https://privacypolicies.cs.princeton.edu/)                      |
 | PolicyIE-A       | Multi-class<sup>\**</sup> sequence classification | [Ahmad et al. (2021)](https://github.com/wasiahmad/PolicyIE)                         |
 | PolicyIE-B       | Multi-label<sup>\*</sup> sequence tagging         | [Ahmad et al. (2021)](https://github.com/wasiahmad/PolicyIE)                         |
