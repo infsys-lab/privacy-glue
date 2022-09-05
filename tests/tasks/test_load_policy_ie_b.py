@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from tasks.piextract import load_piextract
+from tasks.policy_ie_b import load_policy_ie_b
 import os
 
 
-def test_load_piextract():
+def test_load_policy_ie_b():
     # load sample data
-    data = load_piextract(os.path.join(os.path.dirname(__file__), "data", "piextract"))
+    data = load_policy_ie_b(
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "policy_ie_b")
+    )
 
     # check that all three splits are included
-    assert set(data.keys()) == {"train", "test"}
+    assert set(data.keys()) == {"train", "validation", "test"}
 
     # iterate over splits
     for (split, data_split) in data.items():
@@ -42,7 +44,7 @@ def test_load_piextract():
         # check that all NER tags have two elements
         assert all(
             [
-                len(ner_tag) == 4
+                len(ner_tag) == 2
                 and all([isinstance(inner_tag, str) for inner_tag in ner_tag])
                 for ner_tag_sample in data_split["ner_tags"]
                 for ner_tag in ner_tag_sample

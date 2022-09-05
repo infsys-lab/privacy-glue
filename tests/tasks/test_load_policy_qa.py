@@ -7,7 +7,9 @@ import os
 
 def test_load_policy_qa():
     # load sample data
-    data = load_policy_qa(os.path.join(os.path.dirname(__file__), "data", "policy_qa"))
+    data = load_policy_qa(
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "policy_qa")
+    )
 
     # check that all three splits are included
     assert set(data.keys()) == {"train", "test", "validation"}
