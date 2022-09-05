@@ -33,6 +33,23 @@ This repository documents PrivacyGLUE; a NLP benchmark consisting of legal-priva
     $ pre-commit install
     ```
 
+## Tasks :runner:
+
+| Name             | Type                                   | Study                     | Source                                                  |
+|------------------|----------------------------------------|---------------------------|---------------------------------------------------------|
+| OPP-115          | Multi-label\* sequence classification  | Wilson et al. (2016)      | https://usableprivacy.org/data                          |
+| PI-Extact        | Multi-label\* sequence tagging         | Duc et al. (2021)         | https://github.com/um-rtcl/piextract_dataset            |
+| Policy-Detection | Binary sequence classification         | Amos et al. (2021)        | https://privacypolicies.cs.princeton.edu/               |
+| PolicyIE-A       | Multi-class\** sequence classification | Ahmad et al. (2021)       | https://github.com/wasiahmad/PolicyIE                   |
+| PolicyIE-B       | Multi-label\* sequence tagging         | Ahmad et al. (2021)       | https://github.com/wasiahmad/PolicyIE                   |
+| PolicyQA         | Reading comprehension                  | Ahmad et al. (2021)       | https://github.com/wasiahmad/PolicyQA                   |
+| PrivacyQA        | Binary sequence classification         | Ravichander et al. (2019) | https://github.com/AbhilashaRavichander/PrivacyQA_EMNLP |
+
+\*: Multi-label implies that each classification task can have more than one gold standard label
+
+\*\*: Multi-class implies that each classification task can only have one gold standard label out of multiple choices
+
+
 ## Test :microscope:
 
 1. To run unit and integration tests, execute:
