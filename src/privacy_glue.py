@@ -153,11 +153,16 @@ def train(
     raise NotImplementedError
 
 
-def main(
-    model_args: ModelArguments,
-    data_args: DataArguments,
-    training_args: TrainingArguments,
-) -> None:
+def main() -> None:
+    # get parser and parse arguments
+    parser = get_parser()
+    model_args, data_args, training_args = parser.parse_args_into_dataclasses()
+
+    # initialize global logger
+    global LOGGER
+    LOGGER = logging.getLogger()
+    init_logger(LOGGER, training_args.get_process_log_level())
+
     # capture base output directory
     output_dir = training_args.output_dir
     model_dir = os.path.join(
@@ -189,8 +194,4 @@ def main(
 
 
 if __name__ == "__main__":
-    parser = get_parser()
-    model_args, data_args, training_args = parser.parse_args_into_dataclasses()
-    LOGGER = logging.getLogger()
-    init_logger(LOGGER, training_args.get_process_log_level())
-    main(model_args, data_args, training_args)
+    main()
