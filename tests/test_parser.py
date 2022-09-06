@@ -27,7 +27,7 @@ def test_ModelArguments(model_valid, model_invalid):
     "task_valid, task_invalid",
     [("policy_qa", "policy_extract"), ("privacy_qa", "privacy_ie")],
 )
-def test_DataArguments_passing(task_valid, task_invalid):
+def test_DataArguments(task_valid, task_invalid):
     # no error on known task
     try:
         DataArguments(task=task_valid)
