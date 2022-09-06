@@ -67,6 +67,7 @@ pythonpath = ["src"]
 
 [tool.mypy]
 allow_redefinition = true
+show_error_codes = true
 files = "src"
 
 [[tool.mypy.overrides]]
