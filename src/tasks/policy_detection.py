@@ -19,9 +19,6 @@ def load_policy_detection(directory: str) -> datasets.DatasetDict:
     with open(os.path.join(directory, "split_ids.json"), "r") as input_file_stream:
         split_ids = json.load(input_file_stream)
 
-    # assert that all lengths make sense
-    assert sum([len(ids) for ids in split_ids.values()]) == df.shape[0]
-
     # replace labels from boolean to strings for consistency
     df["is_policy"] = df["is_policy"].replace({True: "Policy", False: "Not Policy"})
 

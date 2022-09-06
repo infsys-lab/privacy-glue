@@ -71,9 +71,6 @@ def load_piextract(directory: str) -> datasets.DatasetDict:
             data_split_subset["ner_tags"] for data_split_subset in data_split
         ]
 
-        # ensure that all tokens are exactly the same (assumption for merging)
-        assert all([tokens == all_tokens[0] for tokens in all_tokens])
-
         # merge all NER tags
         merged_ner_tags = merge_ner_tags(all_ner_tags)
 
