@@ -13,7 +13,7 @@ def read_conll_file(file_path: str) -> Dict[str, List[List[str]]]:
         conll_lines = [line.rstrip() for line in input_file_stream]
 
     # create global dictionary for storing data
-    data = {"tokens": [], "ner_tags": []}
+    data: Dict[str, List[List[str]]] = {"tokens": [], "ner_tags": []}
 
     # loop through lines in CONLL file
     for line in conll_lines:
@@ -35,7 +35,7 @@ def read_conll_file(file_path: str) -> Dict[str, List[List[str]]]:
     return data
 
 
-def merge_ner_tags(ner_tags: List[List[str]]) -> List[List[Tuple[str, ...]]]:
+def merge_ner_tags(ner_tags: List[List[List[str]]]) -> List[List[Tuple[str, ...]]]:
     # perform a nested zip operation to combine token-level NER tags
     return [list(zip(*ner_tag)) for ner_tag in list(zip(*ner_tags))]
 
@@ -45,7 +45,7 @@ def load_piextract(directory: str) -> datasets.DatasetDict:
     task_order = ["CollectUse_true", "CollectUse_false", "Share_true", "Share_false"]
 
     # define global data dictionary
-    data = {"train": [], "test": []}
+    data: Dict[str, List[Dict[str, List[List[str]]]]] = {"train": [], "test": []}
 
     # define empty DatasetDict
     combined = datasets.DatasetDict()

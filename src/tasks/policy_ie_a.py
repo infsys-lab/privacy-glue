@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from typing import Dict
+from typing import Dict, cast
 import datasets
 import os
 
@@ -27,6 +27,10 @@ def load_policy_ie_a(directory: str) -> datasets.DatasetDict:
     labels = datasets.load_dataset(
         "text", data_files=file_mapping(directory, "label")
     ).rename_column("text", "label")
+
+    # mypy-related specification to sub-type
+    tokens = cast(datasets.DatasetDict, tokens)
+    labels = cast(datasets.DatasetDict, labels)
 
     # zip together data
     for split in ["train", "validation", "test"]:

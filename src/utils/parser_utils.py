@@ -165,7 +165,7 @@ class Metavar_Circum_Symbols(argparse.HelpFormatter):  # pragma: no cover
         Function to return option metavariable type with circum-symbols
         """
         if action.type is not None:
-            return "<" + action.type.__name__ + ">"  # type: ignore
+            return "<" + action.type.__name__ + ">"  # type: ignore[union-attr]
         else:
             action.metavar = cast(str, action.metavar)
             return action.metavar
@@ -175,7 +175,7 @@ class Metavar_Circum_Symbols(argparse.HelpFormatter):  # pragma: no cover
         Function to return positional metavariable type with circum-symbols
         """
         if action.type is not None:
-            return "<" + action.type.__name__ + ">"  # type: ignore
+            return "<" + action.type.__name__ + ">"  # type: ignore[union-attr]
         else:
             action.metavar = cast(str, action.metavar)
             return action.metavar
@@ -211,8 +211,8 @@ class Metavar_Indenter(argparse.HelpFormatter):  # pragma: no cover
                 "",
                 action_width,
                 action_header,
-            )  # type: ignore
-            action_header = "%*s%-*s  " % tup  # type: ignore
+            )  # type: ignore[assignment]
+            action_header = "%*s%-*s  " % tup  # type: ignore[str-format]
             indent_first = 0
 
         # long action name; start on the next line
@@ -258,7 +258,7 @@ class Metavar_Indenter(argparse.HelpFormatter):  # pragma: no cover
             (metavar,) = self._metavar_formatter(action, default)(1)
             return metavar
         else:
-            parts = []  # type: ignore
+            parts = []  # type: ignore[var-annotated]
             parts.extend(action.option_strings)
             return ", ".join(parts)
 

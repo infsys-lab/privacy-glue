@@ -8,7 +8,7 @@ from utils.logging_utils import (
     add_file_handler,
     remove_all_file_handlers,
 )
-from parser import ModelArguments, DataArguments, Task, get_parser
+from parser import TASKS, ModelArguments, DataArguments, get_parser
 from tasks.opp_115 import load_opp_115
 from tasks.piextract import load_piextract
 from tasks.policy_detection import load_policy_detection
@@ -25,9 +25,6 @@ import re
 
 # define global logger
 LOGGER = logging.getLogger(__name__)
-
-# define all tasks
-TASKS = [task for task in Task._member_names_ if task != "all"]
 
 # define exit code file
 EXIT_CODE_FILE = "exit_code"
@@ -132,23 +129,23 @@ def train(
         checkpoint = None
 
     # define new argument based on task name
-    data_args.task_dir = os.path.join(data_args.data_dir, data_args.task)
+    task_dir = os.path.join(data_args.data_dir, data_args.task)
 
     # load dataset based on task name
     if data_args.task == "opp_115":
-        data = load_opp_115(data_args.task_dir)
+        data = load_opp_115(task_dir)
     elif data_args.task == "piextract":
-        data = load_piextract(data_args.task_dir)
+        data = load_piextract(task_dir)
     elif data_args.task == "policy_detection":
-        data = load_policy_detection(data_args.task_dir)
+        data = load_policy_detection(task_dir)
     elif data_args.task == "policy_ie_a":
-        data = load_policy_ie_a(data_args.task_dir)
+        data = load_policy_ie_a(task_dir)
     elif data_args.task == "policy_ie_b":
-        data = load_policy_ie_b(data_args.task_dir)
+        data = load_policy_ie_b(task_dir)
     elif data_args.task == "policy_qa":
-        data = load_policy_qa(data_args.task_dir)
+        data = load_policy_qa(task_dir)
     elif data_args.task == "privacy_qa":
-        data = load_privacy_qa(data_args.task_dir)
+        data = load_privacy_qa(task_dir)
 
     print(data)
 
@@ -164,7 +161,8 @@ def main(
     # capture base output directory
     output_dir = training_args.output_dir
     model_dir = os.path.join(
-        output_dir, re.sub(r"[/-]", "_", model_args.model_name_or_path)
+        output_dir,
+        re.sub(r"[/-]", "_", model_args.model_name_or_path),
     )
 
     # decide iteration strategy
@@ -179,7 +177,9 @@ def main(
             data_args.task = task
             training_args.seed = seed
             training_args.output_dir = os.path.join(
-                model_dir, re.sub(r"[/-]", "_", data_args.task), "seed_%s" % seed
+                model_dir,
+                re.sub(r"[/-]", "_", data_args.task),
+                "seed_%s" % seed,
             )
             train(model_args, data_args, training_args)
 

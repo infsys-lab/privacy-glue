@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from .policy_ie_a import file_mapping
+from typing import cast
 import datasets
 
 
@@ -27,6 +28,11 @@ def load_policy_ie_b(directory: str) -> datasets.DatasetDict:
         lambda example: {"ner_tags_type_two": example["text"].split()},
         remove_columns=["text"],
     )
+
+    # mypy-related fixes
+    tokens = cast(datasets.DatasetDict, tokens)
+    ner_tags_first = cast(datasets.DatasetDict, ner_tags_first)
+    ner_tags_second = cast(datasets.DatasetDict, ner_tags_second)
 
     # zip together data in splits
     for split in ["train", "validation", "test"]:

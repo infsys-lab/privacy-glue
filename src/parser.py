@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from utils.parser_utils import dir_path
+from transformers.hf_argparser import DataClassType
 from transformers import HfArgumentParser, TrainingArguments
 from dataclasses import dataclass, field
 from typing import Optional
-from enum import Enum
 import os
 
 # 1. NOTE: Fields with no default value set will be transformed
@@ -13,27 +12,29 @@ import os
 # 2. NOTE: Enum-type objects will be transformed into choices
 
 
-class Model(Enum):  # pragma: no cover
-    all_mpnet_base_v2: str = "all-mpnet-base-v2"
-    bert_base_uncased: str = "bert-base-uncased"
-    nlpaueb_legal_bert_base_uncased: str = "nlpaueb/legal-bert-base-uncased"
-    mukund_privbert: str = "mukund/privbert"
+MODELS = [
+    "all-mpnet-base-v2",
+    "bert-base-uncased",
+    "nlpaueb/legal-bert-base-uncased",
+    "mukund/privbert",
+]
 
 
-class Task(Enum):
-    opp_115: str = "opp_115"
-    piextract: str = "piextract"
-    policy_detection: str = "policy_detection"
-    policy_ie_a: str = "policy_ie_a"
-    policy_ie_b: str = "policy_ie_b"
-    policy_qa: str = "policy_qa"
-    privacy_qa: str = "privacy_qa"
-    all: str = "all"
+TASKS = [
+    "opp_115",
+    "piextract",
+    "policy_detection",
+    "policy_ie_a",
+    "policy_ie_b",
+    "policy_qa",
+    "privacy_qa",
+    "all",
+]
 
 
 @dataclass
 class ModelArguments:
-    model_name_or_path: Model = field(
+    model_name_or_path: str = field(
         metadata={
             "help": "Path to pretrained model or model identifier from "
             "huggingface.co/models"
@@ -80,11 +81,19 @@ class ModelArguments:
         default=False, metadata={"help": "Clean all old checkpoints after training"}
     )
 
+    def __post_init__(self):
+        assert (
+            self.model_name_or_path in MODELS
+        ), "Model '%s' is not supported, please select model from %s" % (
+            self.model_name_or_path,
+            MODELS,
+        )
+
 
 @dataclass
 class DataArguments:
-    task: Task = field(metadata={"help": "The name of the task for fine-tuning"})
-    data_dir: dir_path = field(
+    task: str = field(metadata={"help": "The name of the task for fine-tuning"})
+    data_dir: str = field(
         default=os.path.relpath(
             os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
         ),
@@ -118,6 +127,20 @@ class DataArguments:
         },
     )
 
+    def __post_init__(self):
+        assert os.path.isdir(self.data_dir), (
+            "%s is not a valid directory" % self.data_dir
+        )
+        assert (
+            self.task in TASKS
+        ), "Task '%s' is not supported, please select task from %s" % (self.task, TASKS)
+
 
 def get_parser() -> HfArgumentParser:
-    return HfArgumentParser((ModelArguments, DataArguments, TrainingArguments))
+    return HfArgumentParser(
+        (
+            DataClassType(ModelArguments),
+            DataClassType(DataArguments),
+            DataClassType(TrainingArguments),
+        )
+    )
