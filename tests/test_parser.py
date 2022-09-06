@@ -27,24 +27,26 @@ def test_ModelArguments(model_valid, model_invalid):
     "task_valid, task_invalid",
     [("policy_qa", "policy_extract"), ("privacy_qa", "privacy_ie")],
 )
-def test_DataArguments(task_valid, task_invalid):
+def test_DataArguments_task(task_valid, task_invalid):
     # no error on known task
     try:
         DataArguments(task=task_valid)
     except AssertionError:
         pytest.fail("Unexpected assertion encountered")
 
+    # error on unknown task
+    with pytest.raises(Exception) as exception_info:
+        DataArguments(task=task_invalid)
+    assert exception_info.type == AssertionError
+
+
+def test_DataArguments_data_dir():
     # no error on valid directory
     with tempfile.TemporaryDirectory() as tmp_dir:
         try:
             DataArguments(task="all", data_dir=tmp_dir)
         except AssertionError:
             pytest.fail("Unexpected assertion encountered")
-
-    # error on unknown task
-    with pytest.raises(Exception) as exception_info:
-        DataArguments(task=task_invalid)
-    assert exception_info.type == AssertionError
 
     # create and delete a temporary directory
     with tempfile.TemporaryDirectory() as tmp_dir:
