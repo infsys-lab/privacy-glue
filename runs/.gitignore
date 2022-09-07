@@ -7,3 +7,4 @@
 *.bin
 *.md
 exit_code
+.success
