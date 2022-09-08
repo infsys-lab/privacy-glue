@@ -3,25 +3,28 @@ repos:
     hooks:
       - id: python-style
         name: black
-        entry: poetry run black --diff --check .
+        entry: poetry run black
+        args: [--diff, --check]
         language: system
-        files: ^src/|^tests/|^pyproject\.toml$|^poetry\.lock$|^\.flake8$
-        pass_filenames: false
+        files: ^src/|^tests/
+        types: [python]
 
   - repo: local
     hooks:
       - id: python-lint
         name: flake8
-        entry: poetry run flake8 --show-source --statistics .
+        entry: poetry run flake8
+        args: [--show-source, --statistics]
         language: system
-        files: ^src/|^tests/|^pyproject\.toml$|^poetry\.lock$|^\.flake8$
-        pass_filenames: false
+        files: ^src/|^tests/
+        types: [python]
 
   - repo: local
     hooks:
       - id: python-deploy-main
         name: poetry-export-main
-        entry: poetry export -f requirements.txt --without-hashes -o requirements.txt
+        entry: poetry export
+        args: [-f, requirements.txt, --without-hashes, -o, requirements.txt]
         language: system
         files: ^pyproject\.toml$|^poetry\.lock$
         pass_filenames: false
@@ -30,7 +33,8 @@ repos:
     hooks:
       - id: python-deploy-dev
         name: poetry-export-dev
-        entry: poetry export -f requirements.txt --without-hashes --dev -o requirements-dev.txt
+        entry: poetry export
+        args: [-f, requirements.txt, --without-hashes, --dev, -o, requirements-dev.txt]
         language: system
         files: ^pyproject\.toml$|^poetry\.lock$
         pass_filenames: false
@@ -39,16 +43,17 @@ repos:
     hooks:
       - id: shell-lint
         name: shellcheck
-        entry: poetry run bash -c 'find ./scripts -type f -print0 | xargs -0 shellcheck'
+        entry: poetry run shellcheck
         language: system
         files: ^scripts/
-        pass_filenames: false
+        types: [shell]
 
   - repo: local
     hooks:
       - id: shell-style
         name: shfmt
-        entry: poetry run bash -c 'find ./scripts -type f -print0 | xargs -0 shfmt -i 2 -d'
+        entry: poetry run shfmt
+        args: [-i, '2', -d]
         language: system
         files: ^scripts/
-        pass_filenames: false
+        types: [shell]
