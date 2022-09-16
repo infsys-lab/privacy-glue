@@ -163,14 +163,14 @@ class Privacy_GLUE_Pipeline(ABC):
         ) as output_file_stream:
             output_file_stream.write("%s\n" % 0)
 
+    def _clean_logger(self) -> None:
+        self.logger.handlers = []
+
     def _destroy(self) -> None:
         # some variables are not freed automatically by pytorch and can quickly
         # fill up memory.
         self.trainer = None
         del self
-
-    def _clean_logger(self) -> None:
-        self.logger.handlers = []
 
     @abstractmethod
     def _retrieve_data(self) -> None:
