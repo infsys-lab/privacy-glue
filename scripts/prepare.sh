@@ -32,9 +32,9 @@ policy_detection() {
   git submodule update --init --recursive "submodules/policy-detection-data"
 
   # uncompress compressed tar archive
-  for xz_file in submodules/policy-detection-data/data/*.tar.xz; do
+  for xz_file in submodules/policy-detection-data/data/*.xz; do
     printf "%s\n" "Decompressing $xz_file to $target"
-    unxz -ck "$xz_file" | tar x -C "$target"
+    xz -dc "$xz_file" >"$target/$(basename "$xz_file" .xz)"
   done
 }
 
