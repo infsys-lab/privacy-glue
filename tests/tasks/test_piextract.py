@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from tasks.piextract import load_piextract, merge_ner_tags, read_conll_file
 from glob import glob
+from tasks.piextract import load_piextract, merge_ner_tags, read_conll_file
 import pytest
 import os
 
@@ -94,7 +94,7 @@ def test_load_piextract():
     )
 
     # check that all three splits are included
-    assert set(data.keys()) == {"train", "test"}
+    assert set(data.keys()) == {"train", "validation", "test"}
 
     # iterate over splits
     for (split, data_split) in data.items():

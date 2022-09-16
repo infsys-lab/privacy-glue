@@ -12,7 +12,7 @@ def test_load_privacy_qa():
     )
 
     # check that all three splits are included
-    assert set(data.keys()) == {"train", "test"}
+    assert set(data.keys()) == {"train", "validation", "test"}
 
     # iterate over splits
     for (split, data_split) in data.items():
