@@ -21,7 +21,16 @@ def load_privacy_qa(directory: str) -> datasets.DatasetDict:
     )
     test_dataset = datasets.Dataset.from_pandas(test_df, preserve_index=False)
 
+    # make split using HF datasets internal methods
+    train_valid_dataset_dict = train_dataset.train_test_split(test_size=0.15, seed=42)
+
     # concatenate both datasets
-    combined = datasets.DatasetDict({"train": train_dataset, "test": test_dataset})
+    combined = datasets.DatasetDict(
+        {
+            "train": train_valid_dataset_dict["train"],
+            "validation": train_valid_dataset_dict["test"],
+            "test": test_dataset,
+        }
+    )
 
     return combined

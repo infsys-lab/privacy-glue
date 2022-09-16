@@ -82,4 +82,13 @@ def load_piextract(directory: str) -> datasets.DatasetDict:
             {"tokens": all_tokens[0], "ner_tags": merged_ner_tags}
         )
 
+    # make split using HF datasets internal methods
+    train_valid_dataset_dict = combined["train"].train_test_split(
+        test_size=0.15, seed=42
+    )
+
+    # reassign splits to combined
+    combined["train"] = train_valid_dataset_dict["train"]
+    combined["validation"] = train_valid_dataset_dict["test"]
+
     return combined
