@@ -25,7 +25,7 @@ class SuccessFileFoundException(Exception):
     pass
 
 
-class _Privacy_GLUE_Pipeline(ABC):
+class Privacy_GLUE_Pipeline(ABC):
     def __init__(
         self,
         data_args: DataArguments,
@@ -60,11 +60,11 @@ class _Privacy_GLUE_Pipeline(ABC):
 
         return data
 
-    def create_run_dir(self) -> None:
+    def _create_run_dir(self) -> None:
         # create output_dir if it does not exit
         os.makedirs(self.train_args.output_dir, exist_ok=True)
 
-    def init_root_logger(self) -> None:
+    def _init_root_logger(self) -> None:
         # initialize root logger
         self.logger = logging.getLogger()
         init_logger(self.logger, self.train_args.get_process_log_level())
@@ -74,7 +74,7 @@ class _Privacy_GLUE_Pipeline(ABC):
             os.path.join(self.train_args.output_dir, "session.log"),
         )
 
-    def init_third_party_loggers(self) -> None:
+    def _init_third_party_loggers(self) -> None:
         # configure datasets logger
         # NOTE: if working with distributed training, logging/saving would only
         # need to be configured on the main or zero process
@@ -101,7 +101,7 @@ class _Privacy_GLUE_Pipeline(ABC):
             os.path.join(self.train_args.output_dir, "session.log"),
         )
 
-    def check_for_success_file(self) -> None:
+    def _check_for_success_file(self) -> None:
         # check for existing exit code and decide action
         if (
             os.path.exists(os.path.join(self.train_args.output_dir, self.success_file))
@@ -114,14 +114,14 @@ class _Privacy_GLUE_Pipeline(ABC):
             self.logger.info(message)
             raise SuccessFileFoundException(message)
 
-    def dump_misc_args(self) -> None:
+    def _dump_misc_args(self) -> None:
         # dump miscellaneous arguments
         torch.save(
             {"model_args": self.model_args, "data_args": self.data_args},
             os.path.join(self.train_args.output_dir, "misc_args.bin"),
         )
 
-    def log_starting_arguments(self) -> None:
+    def _log_starting_arguments(self) -> None:
         # log on each process the small summary
         self.logger.info(
             (
@@ -137,11 +137,11 @@ class _Privacy_GLUE_Pipeline(ABC):
             )
         )
 
-    def set_global_seeds(self) -> None:
+    def _set_global_seeds(self) -> None:
         # set seed before initializing model
         set_seed(self.train_args.seed)
 
-    def find_existing_checkpoint(self) -> None:
+    def _find_existing_checkpoint(self) -> None:
         # detect last checkpoint if necessary
         if self.train_args.do_train and not self.train_args.overwrite_output_dir:
             # use upstream function for detection
@@ -157,62 +157,64 @@ class _Privacy_GLUE_Pipeline(ABC):
         else:
             self.checkpoint = None
 
-    def save_success_file(self) -> None:
+    def _save_success_file(self) -> None:
         with open(
             os.path.join(self.train_args.output_dir, self.success_file), "w"
         ) as output_file_stream:
             output_file_stream.write("%s\n" % 0)
 
-    def clean_logger(self) -> None:
+    def _destroy(self) -> None:
+        # some variables are not freed automatically by pytorch and can quickly
+        # fill up memory.
+        self.trainer = None
+        del self
+
+    def _clean_logger(self) -> None:
         self.logger.handlers = []
 
     @abstractmethod
-    def retrieve_data(self) -> None:
+    def _retrieve_data(self) -> None:
         pass
 
     @abstractmethod
-    def load_pretrained_model_and_tokenizer(self) -> None:
+    def _load_pretrained_model_and_tokenizer(self) -> None:
         pass
 
     @abstractmethod
-    def apply_preprocessing(self) -> None:
+    def _apply_preprocessing(self) -> None:
         pass
 
     @abstractmethod
-    def set_metrics(self) -> None:
+    def _set_metrics(self) -> None:
         pass
 
     @abstractmethod
-    def run_train_loop(self) -> None:
-        pass
-
-    @abstractmethod
-    def destroy(self) -> None:
+    def _run_train_loop(self) -> None:
         pass
 
     def run_start(self) -> None:
-        self.create_run_dir()
-        self.init_root_logger()
-        self.init_third_party_loggers()
-        self.check_for_success_file()
-        self.dump_misc_args()
-        self.log_starting_arguments()
-        self.set_global_seeds()
-        self.find_existing_checkpoint()
+        self._create_run_dir()
+        self._init_root_logger()
+        self._init_third_party_loggers()
+        self._check_for_success_file()
+        self._dump_misc_args()
+        self._log_starting_arguments()
+        self._set_global_seeds()
+        self._find_existing_checkpoint()
 
     def run_task(self) -> None:
-        self.retrieve_data()
-        self.load_pretrained_model_and_tokenizer()
-        self.apply_preprocessing()
-        self.set_metrics()
-        self.run_train_loop()
-        self.destroy()
+        self._retrieve_data()
+        self._load_pretrained_model_and_tokenizer()
+        self._apply_preprocessing()
+        self._set_metrics()
+        self._run_train_loop()
 
     def run_end(self) -> None:
-        self.save_success_file()
+        self._save_success_file()
 
     def run_finally(self) -> None:
-        self.clean_logger()
+        self._clean_logger()
+        self._destroy()
 
     def run_pipeline(self) -> None:
         try:
