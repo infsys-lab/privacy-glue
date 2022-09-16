@@ -1,6 +1,6 @@
 *.pyc
 *.temp
 *.cache
-.coverage
+.coverage*
 coverage.xml
 pytest.xml
