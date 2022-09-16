@@ -19,8 +19,22 @@ def test_load_opp_115():
         # check that all column names are as expected
         assert data_split.column_names == ["text", "label"]
 
-        # ensure all text is composed of strings and not array-like objects
-        assert all([isinstance(text, str) for text in data_split["text"]])
+        # define what is expected from the load function
+        expected = set(
+            [
+                (
+                    f"{split} check for OPP-115",
+                    frozenset([f"label-{split}-1", f"label-{split}-2"]),
+                ),
+                (
+                    f"another {split} check for OPP-115",
+                    frozenset([f"label-{split}-2"]),
+                ),
+            ]
+        )
 
-        # ensure all labels are composed of strings and not array-like objects
-        assert all([isinstance(label, list) for label in data_split["label"]])
+        # assert that we got what is expected
+        assert (
+            set(zip(data_split["text"], map(frozenset, data_split["label"])))
+            == expected
+        )
