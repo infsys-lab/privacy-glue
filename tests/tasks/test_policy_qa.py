@@ -25,20 +25,44 @@ def test_load_policy_qa():
             "answers",
         ]
 
-        # check that data types are as expected
-        assert all([isinstance(idx, str) for idx in data_split["id"]])
-        assert all([isinstance(title, str) for title in data_split["title"]])
-        assert all([isinstance(context, str) for context in data_split["context"]])
-        assert all(
+        # define what is expected from the load function
+        expected = set(
             [
-                set(answers.keys()) == {"answer_start", "text"}
-                for answers in data_split["answers"]
+                (
+                    "some_id",
+                    f"{split}.com",
+                    f"{split} answer for PolicyQA",
+                    f"{split} question for PolicyQA?",
+                    (0,),
+                    (f"{split} answer for PolicyQA",),
+                ),
+                (
+                    "another_id",
+                    f"{split}.com",
+                    f"another {split} answer for PolicyQA",
+                    f"another {split} question for PolicyQA?",
+                    (0,),
+                    (f"another {split} answer for PolicyQA",),
+                ),
             ]
         )
-        assert all(
-            [
-                isinstance(answers["answer_start"], list)
-                and isinstance(answers["text"], list)
-                for answers in data_split["answers"]
-            ]
+
+        # assert that we got what is expected
+        assert (
+            set(
+                zip(
+                    data_split["id"],
+                    data_split["title"],
+                    data_split["context"],
+                    data_split["question"],
+                    tuple(
+                        [
+                            tuple(answer["answer_start"])
+                            for answer in data_split["answers"]
+                        ]
+                    ),
+                    tuple([tuple(answer["text"]) for answer in data_split["answers"]]),
+                )
+            )
+            == expected
         )
