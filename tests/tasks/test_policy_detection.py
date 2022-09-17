@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from tasks.policy_detection import load_policy_detection
+import datasets
 import os
 
 
@@ -16,13 +17,19 @@ def test_load_policy_detection():
     # check that all three splits are included
     assert set(data.keys()) == {"train", "validation", "test"}
 
-    # iterate over splits
-    for (split, data_split) in data.items():
-        # check that all column names are as expected
-        assert data_split.column_names == ["text", "label"]
+    # merge train and validation to train to compare against files
+    data = datasets.concatenate_datasets(
+        [data["train"], data["validation"], data["test"]]
+    )
 
-        # ensure all text is composed of strings and not array-like objects
-        assert all([isinstance(text, str) for text in data_split["text"]])
+    # define what is expected from the load function
+    expected = set(
+        [
+            ("testing once", "Policy"),
+            ("testing twice", "Not Policy"),
+            ("testing thrice", "Policy"),
+        ]
+    )
 
-        # ensure all labels are composed of strings and not array-like objects
-        assert all([isinstance(label, str) for label in data_split["label"]])
+    # assert that we got what is expected
+    assert set(zip(data["text"], data["label"])) == expected
