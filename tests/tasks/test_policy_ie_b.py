@@ -19,44 +19,41 @@ def test_load_policy_ie_b():
         # check that all column names are as expected
         assert data_split.column_names == ["tokens", "ner_tags"]
 
-        # check that all tokens are present in list objects
-        assert all(
-            [isinstance(tokens_sample, list) for tokens_sample in data_split["tokens"]]
-        )
-
-        # check that all tokens are present as strings
-        assert all(
+        # define what is expected from the load function
+        expected = set(
             [
-                isinstance(token, str)
-                for tokens_sample in data_split["tokens"]
-                for token in tokens_sample
+                (
+                    (f"{split}", "check", "for", "PolicyIE-B"),
+                    (
+                        ("O", "O"),
+                        ("O", "O"),
+                        ("O", "O"),
+                        (f"label-{split}-1", f"label-{split}-3"),
+                    ),
+                ),
+                (
+                    ("another", f"{split}", "check", "for", "PolicyIE-B"),
+                    (
+                        ("O", "O"),
+                        ("O", "O"),
+                        ("O", "O"),
+                        ("O", "O"),
+                        (f"label-{split}-2", f"label-{split}-4"),
+                    ),
+                ),
             ]
         )
 
-        # check that all NER tags are present in list objects
-        assert all(
-            [
-                isinstance(ner_tags_sample, list)
-                for ner_tags_sample in data_split["ner_tags"]
-            ]
-        )
-
-        # check that all NER tags have two elements
-        assert all(
-            [
-                len(ner_tag) == 2
-                and all([isinstance(inner_tag, str) for inner_tag in ner_tag])
-                for ner_tag_sample in data_split["ner_tags"]
-                for ner_tag in ner_tag_sample
-            ]
-        )
-
-        # check that tokens and NER tags have the same length
-        assert all(
-            [
-                len(tokens_sample) == len(ner_tag_sample)
-                for tokens_sample, ner_tag_sample in zip(
-                    data_split["tokens"], data_split["ner_tags"]
+        # assert that we got what is expected
+        assert (
+            set(
+                zip(
+                    map(tuple, data_split["tokens"]),
+                    [
+                        tuple(map(tuple, ner_tags))
+                        for ner_tags in data_split["ner_tags"]
+                    ],
                 )
-            ]
+            )
+            == expected
         )
