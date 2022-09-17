@@ -19,8 +19,19 @@ def test_load_policy_ie_a():
         # check that all column names are as expected
         assert data_split.column_names == ["text", "label"]
 
-        # ensure all text is composed of strings and not array-like objects
-        assert all([isinstance(text, str) for text in data_split["text"]])
+        # define what is expected from the load function
+        expected = set(
+            [
+                (
+                    f"{split} check for PolicyIE-A",
+                    f"label-{split}-1",
+                ),
+                (
+                    f"another {split} check for PolicyIE-A",
+                    f"label-{split}-2",
+                ),
+            ]
+        )
 
-        # ensure all labels are composed of strings and not array-like objects
-        assert all([isinstance(label, str) for label in data_split["label"]])
+        # assert that we got what is expected
+        assert set(zip(data_split["text"], data_split["label"])) == expected
