@@ -15,7 +15,7 @@ def test_load_policy_detection():
     )
 
     # check that all three splits are included
-    assert set(data.keys()) == {"train", "validation", "test"}
+    assert sorted(data.keys()) == sorted(["train", "validation", "test"])
 
     # merge train and validation to train to compare against files
     data = datasets.concatenate_datasets(
@@ -23,7 +23,7 @@ def test_load_policy_detection():
     )
 
     # define what is expected from the load function
-    expected = set(
+    expected = sorted(
         [
             ("testing once", "Policy"),
             ("testing twice", "Not Policy"),
@@ -32,4 +32,4 @@ def test_load_policy_detection():
     )
 
     # assert that we got what is expected
-    assert set(zip(data["text"], data["label"])) == expected
+    assert sorted(zip(data["text"], data["label"])) == expected

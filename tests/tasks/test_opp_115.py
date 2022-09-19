@@ -12,7 +12,7 @@ def test_load_opp_115():
     )
 
     # check that all three splits are included
-    assert set(data.keys()) == {"train", "validation", "test"}
+    assert sorted(data.keys()) == sorted(["train", "validation", "test"])
 
     # iterate over splits
     for (split, data_split) in data.items():
@@ -20,21 +20,21 @@ def test_load_opp_115():
         assert data_split.column_names == ["text", "label"]
 
         # define what is expected from the load function
-        expected = set(
+        expected = sorted(
             [
                 (
                     f"{split} check for OPP-115",
-                    frozenset([f"label-{split}-1", f"label-{split}-2"]),
+                    sorted([f"label-{split}-1", f"label-{split}-2"]),
                 ),
                 (
                     f"another {split} check for OPP-115",
-                    frozenset([f"label-{split}-2"]),
+                    sorted([f"label-{split}-2"]),
                 ),
             ]
         )
 
         # assert that we got what is expected
         assert (
-            set(zip(data_split["text"], map(frozenset, data_split["label"])))
+            sorted(zip(data_split["text"], map(sorted, data_split["label"])))
             == expected
         )

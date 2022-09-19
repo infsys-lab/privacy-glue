@@ -61,7 +61,7 @@ def test_read_conll_file():
     data = read_conll_file(conll_file)
 
     # check their keys make sense
-    assert set(data.keys()) == {"tokens", "ner_tags"}
+    assert sorted(data.keys()) == sorted(["tokens", "ner_tags"])
 
     # assert that we got what is expected
     assert data == mocked_conll_output()
@@ -105,7 +105,7 @@ def test_load_piextract_mocked(mocker):
     )
 
     # check that all three splits are included
-    assert set(data.keys()) == {"train", "validation", "test"}
+    assert sorted(data.keys()) == sorted(["train", "validation", "test"])
 
     # merge validation and train to train to compare against files
     data["train"] = datasets.concatenate_datasets([data["train"], data["validation"]])
@@ -117,12 +117,12 @@ def test_load_piextract_mocked(mocker):
         assert data_split.column_names == ["tokens", "ner_tags"]
 
         # assert that we got what is expected
-        assert set(
+        assert sorted(
             zip(
                 map(tuple, data_split["tokens"]),
                 [tuple(map(tuple, ner_tags)) for ner_tags in data_split["ner_tags"]],
             )
-        ) == set(
+        ) == sorted(
             zip(
                 map(tuple, mocked_conll_output()["tokens"]),
                 [
@@ -141,7 +141,7 @@ def test_load_piextract():
     )
 
     # check that all three splits are included
-    assert set(data.keys()) == {"train", "validation", "test"}
+    assert sorted(data.keys()) == sorted(["train", "validation", "test"])
 
     # merge validation and train to train to compare against files
     data["train"] = datasets.concatenate_datasets([data["train"], data["validation"]])
@@ -153,7 +153,7 @@ def test_load_piextract():
         assert data_split.column_names == ["tokens", "ner_tags"]
 
         # define what is expected from the load function
-        expected = set(
+        expected = sorted(
             [
                 (
                     (f"{split}", "check", "for", "PI-Extract"),
@@ -189,7 +189,7 @@ def test_load_piextract():
 
         # assert that we got what is expected
         assert (
-            set(
+            sorted(
                 zip(
                     map(tuple, data_split["tokens"]),
                     [
