@@ -12,7 +12,7 @@ def test_load_policy_ie_b():
     )
 
     # check that all three splits are included
-    assert set(data.keys()) == {"train", "validation", "test"}
+    assert sorted(data.keys()) == sorted(["train", "validation", "test"])
 
     # iterate over splits
     for (split, data_split) in data.items():
@@ -20,7 +20,7 @@ def test_load_policy_ie_b():
         assert data_split.column_names == ["tokens", "ner_tags"]
 
         # define what is expected from the load function
-        expected = set(
+        expected = sorted(
             [
                 (
                     (f"{split}", "check", "for", "PolicyIE-B"),
@@ -46,7 +46,7 @@ def test_load_policy_ie_b():
 
         # assert that we got what is expected
         assert (
-            set(
+            sorted(
                 zip(
                     map(tuple, data_split["tokens"]),
                     [

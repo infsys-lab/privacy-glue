@@ -12,7 +12,7 @@ def test_load_policy_qa():
     )
 
     # check that all three splits are included
-    assert set(data.keys()) == {"train", "test", "validation"}
+    assert sorted(data.keys()) == sorted(["train", "test", "validation"])
 
     # iterate over splits
     for (split, data_split) in data.items():
@@ -26,7 +26,7 @@ def test_load_policy_qa():
         ]
 
         # define what is expected from the load function
-        expected = set(
+        expected = sorted(
             [
                 (
                     "some_id",
@@ -49,7 +49,7 @@ def test_load_policy_qa():
 
         # assert that we got what is expected
         assert (
-            set(
+            sorted(
                 zip(
                     data_split["id"],
                     data_split["title"],

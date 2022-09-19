@@ -13,7 +13,7 @@ def test_load_privacy_qa():
     )
 
     # check that all three splits are included
-    assert set(data.keys()) == {"train", "validation", "test"}
+    assert sorted(data.keys()) == sorted(["train", "validation", "test"])
 
     # merge train and validation to train to compare against files
     data["train"] = datasets.concatenate_datasets([data["train"], data["validation"]])
@@ -25,7 +25,7 @@ def test_load_privacy_qa():
         assert data_split.column_names == ["question", "text", "label"]
 
         # define what is expected from the load function
-        expected = set(
+        expected = sorted(
             [
                 (
                     f"{split} question for PrivacyQA?",
@@ -42,6 +42,6 @@ def test_load_privacy_qa():
 
         # assert that we got what is expected
         assert (
-            set(zip(data_split["question"], data_split["text"], data_split["label"]))
+            sorted(zip(data_split["question"], data_split["text"], data_split["label"]))
             == expected
         )

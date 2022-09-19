@@ -60,7 +60,7 @@ def test_datasets_random_split(seed, expected):
     combined["test"] = train_test_dataset_dict["test"]
 
     # assert what is expected
-    assert set(range(25)) == set(
+    assert sorted(range(25)) == sorted(
         [index for _, data_split in combined.items() for index in data_split["text"]]
     )
     assert combined["train"]["text"] == expected["train"]
