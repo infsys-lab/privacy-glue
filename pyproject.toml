@@ -3,7 +3,7 @@ name = "privacy-glue"
 version = "0.1.0"
 description = ""
 authors = ["Atreya Shankar <35427332+atreyasha@users.noreply.github.com>"]
-license = "MIT"
+license = "GPL-3.0"
 
 [tool.poetry.dependencies]
 python = "~3.8"
