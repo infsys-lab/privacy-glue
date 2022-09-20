@@ -15,7 +15,7 @@ This repository documents PrivacyGLUE; a NLP benchmark consisting of legal-priva
     $ pip install -r requirements-dev.txt
     ```
 
-    **Note:** Our `torch==1.10.0` dependency works out-of-the-box with CUDA version `10.2`. If you have a different version of CUDA, refer to the official [PyTorch](https://pytorch.org/get-started/locally/) webpage for alternative pip installation commands which will provide torch optimized for your CUDA version.
+    **Note:** Our `torch==1.12.1` dependency works out-of-the-box with CUDA version `11.3`. If you have a different version of CUDA, refer to the official [PyTorch](https://pytorch.org/get-started/locally/) webpage for alternative pip installation commands which will provide torch optimized for your CUDA version.
 
 2.  This repository requires a working installation of Git [`LFS`](https://git-lfs.github.com/) to access upstream task data. We utilized version `3.2.0` in our implementation.
 
