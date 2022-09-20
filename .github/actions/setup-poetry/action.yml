@@ -32,5 +32,6 @@ runs:
         installer-parallel: true
 
     - name: Configure poetry
+      shell: bash
       run: >
         poetry config virtualenvs.in-project true
