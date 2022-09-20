@@ -6,7 +6,7 @@ authors = ["Atreya Shankar <35427332+atreyasha@users.noreply.github.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "~3.8"
 transformers = "^4.18.0"
 tqdm = "^4.62.3"
 numpy = "^1.21.4"
