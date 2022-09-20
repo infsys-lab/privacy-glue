@@ -29,5 +29,8 @@ runs:
       uses: snok/install-poetry@v1
       with:
         version: ${{ inputs.poetry-version }}
-        virtualenvs-in-project: true
         installer-parallel: true
+
+    - name: Configure poetry
+      run: >
+        poetry config virtualenvs.in-project true
