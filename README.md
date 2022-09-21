@@ -4,7 +4,7 @@ This repository documents PrivacyGLUE; a NLP benchmark consisting of legal-priva
 
 ## Dependencies :mag:
 
-1. This repository's code was tested with Python version `3.8.13`. To sync dependencies, we recommend creating a virtual environment and installing the relevant packages with `poetry`:
+1. This repository's code was tested with Python version `3.8.13`. To sync dependencies, we recommend creating a virtual environment with the same python version and installing the relevant packages with `poetry`:
 
     ```
     $ poetry install
@@ -12,7 +12,7 @@ This repository documents PrivacyGLUE; a NLP benchmark consisting of legal-priva
 
     Alternatively, install dependencies in the virtual environment using `pip`:
     ```
-    $ pip install -r requirements-dev.txt
+    $ pip install -r requirements.txt
     ```
 
 2.  This repository requires a working installation of Git [`LFS`](https://git-lfs.github.com/) to access upstream task data. We utilized version `3.2.0` in our implementation.
