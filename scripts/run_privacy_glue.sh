@@ -80,9 +80,9 @@ main() {
     --task "$TASK" \
     --model_name_or_path "$MODEL_NAME_OR_PATH" \
     --output_dir "$OUTPUT_DIR" \
+    --data_dir "tests/data" \
+    --log_level "critical" \
     --do_train \
-    --do_eval \
-    --do_pred \
     --do_clean \
     --do_summarize \
     --metric_for_best_model "macro-f1" \
@@ -109,7 +109,7 @@ OUTPUT_DIR="runs"
 CUDA_VISIBLE_DEVICES=0
 GLOBAL_BATCH_SIZE=8
 ACCUMULATION_STEPS=1
-MODEL_NAME_OR_PATH="bert-base-uncased"
+MODEL_NAME_OR_PATH="all"
 
 # overall workflow
 parser "$@"
