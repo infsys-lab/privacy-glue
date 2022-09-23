@@ -13,7 +13,7 @@ import os
 
 
 MODELS = [
-    "all-mpnet-base-v2",
+    "sentence-transformers/all-mpnet-base-v2",
     "bert-base-uncased",
     "nlpaueb/legal-bert-base-uncased",
     "mukund/privbert",
