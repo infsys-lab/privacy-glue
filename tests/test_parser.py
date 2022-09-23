@@ -8,7 +8,10 @@ import pytest
 
 @pytest.mark.parametrize(
     "model_valid, model_invalid",
-    [("bert-base-uncased", "bert"), ("all-mpnet-base-v2", "all-mpnet")],
+    [
+        ("bert-base-uncased", "bert"),
+        ("sentence-transformers/all-mpnet-base-v2", "all-mpnet"),
+    ],
 )
 def test_ModelArguments(model_valid, model_invalid):
     # no error on known models
