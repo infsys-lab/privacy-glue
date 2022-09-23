@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 
 from parser import TASKS, get_parser
-import importlib
 import os
 import re
 
 
 def summarize(model_dir: str) -> None:
     raise NotImplementedError
+
 
 def main() -> None:
     # get parser and parse arguments
@@ -19,6 +19,7 @@ def main() -> None:
     use_wandb = False
     if train_args.report_to == "wandb":
         import wandb
+
         use_wandb = True
     # capture base output directory
     output_dir = train_args.output_dir
@@ -35,7 +36,8 @@ def main() -> None:
 
     # loop over tasks and seeds
     for task in tasks:
-        os.environ["WANDB_RUN_GROUP"] = f'experiment_{wandb.util.generate_id()}'
+        if use_wandb:
+            os.environ["WANDB_RUN_GROUP"] = f"experiment_{wandb.util.generate_id()}"
         for seed in range(model_args.random_seed_iterations):
             data_args.task = task
             train_args.seed = seed
