@@ -93,6 +93,7 @@ main() {
     --save_total_limit 5 \
     --num_train_epochs 20 \
     --learning_rate 3e-5 \
+    --report_to "none" \
     --per_device_train_batch_size "$((GLOBAL_BATCH_SIZE / ACCUMULATION_STEPS))" \
     --per_device_eval_batch_size "$((GLOBAL_BATCH_SIZE / ACCUMULATION_STEPS))" \
     --gradient_accumulation_steps "$ACCUMULATION_STEPS" \
