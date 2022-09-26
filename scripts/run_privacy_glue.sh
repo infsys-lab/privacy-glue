@@ -28,6 +28,9 @@ optional arguments:
   --overwrite             overwrite cached data and saved checkpoint(s)
                           (default: False)
 
+  --wandb                 log metrics and result to wandb
+                          (default: False)
+
   --task                  <str>
                           task to be worked on. The following values are
                           accepted: "opp_115", "piextract",
@@ -47,6 +50,9 @@ parser() {
       ;;
     --overwrite)
       OVERWRITE=("--overwrite_cache" "--overwrite_output_dir")
+      ;;
+    --wandb)
+      WANDB="wandb"
       ;;
     --model_name_or_path)
       shift
@@ -93,7 +99,7 @@ main() {
     --save_total_limit 5 \
     --num_train_epochs 20 \
     --learning_rate 3e-5 \
-    --report_to "none" \
+    --report_to "$WANDB" \
     --per_device_train_batch_size "$((GLOBAL_BATCH_SIZE / ACCUMULATION_STEPS))" \
     --per_device_eval_batch_size "$((GLOBAL_BATCH_SIZE / ACCUMULATION_STEPS))" \
     --gradient_accumulation_steps "$ACCUMULATION_STEPS" \
@@ -107,6 +113,7 @@ FP_16=()
 OVERWRITE=()
 TASK="all"
 OUTPUT_DIR="runs"
+WANDB="none"
 CUDA_VISIBLE_DEVICES=0
 GLOBAL_BATCH_SIZE=8
 ACCUMULATION_STEPS=1
