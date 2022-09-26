@@ -75,29 +75,18 @@ class Privacy_GLUE_Pipeline(ABC):
         )
 
     def _init_third_party_loggers(self) -> None:
-        # configure datasets logger
-        # NOTE: if working with distributed training, logging/saving would only
-        # need to be configured on the main or zero process
+        # set logger verbosity
         datasets.utils.logging.set_verbosity(self.train_args.get_process_log_level())
-        add_file_handler(
-            datasets.utils.logging.get_logger(),
-            self.train_args.get_process_log_level(),
-            os.path.join(self.train_args.output_dir, "session.log"),
-        )
-
-        # configure transformers logger
-        # NOTE: if working with distributed training, logging/saving would only
-        # need to be configured on the main or zero process
         transformers.utils.logging.set_verbosity(
             self.train_args.get_process_log_level()
         )
-        transformers.utils.logging.enable_default_handler()
-        transformers.utils.logging.enable_explicit_format()
-        add_file_handler(
-            transformers.utils.logging.get_logger(),
-            self.train_args.get_process_log_level(),
-            os.path.join(self.train_args.output_dir, "session.log"),
-        )
+
+        # disable any default handlers since we take the root logger's
+        transformers.utils.logging.disable_default_handler()
+
+        # allow for propagation to the root logger to prevent double configurations
+        datasets.utils.logging.enable_propagation()
+        transformers.utils.logging.enable_propagation()
 
     def _check_for_success_file(self) -> None:
         # check for existing exit code and decide action
