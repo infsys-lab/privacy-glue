@@ -13,7 +13,7 @@ from tasks.policy_ie_a import load_policy_ie_a
 from tasks.policy_ie_b import load_policy_ie_b
 from tasks.policy_qa import load_policy_qa
 from tasks.privacy_qa import load_privacy_qa
-from utils.logging_utils import init_logger, add_file_handler, remove_all_file_handlers
+from utils.logging_utils import init_logger, add_file_handler
 import transformers
 import datasets
 import logging
@@ -79,7 +79,6 @@ class Privacy_GLUE_Pipeline(ABC):
         # NOTE: if working with distributed training, logging/saving would only
         # need to be configured on the main or zero process
         datasets.utils.logging.set_verbosity(self.train_args.get_process_log_level())
-        remove_all_file_handlers(datasets.utils.logging.get_logger())
         add_file_handler(
             datasets.utils.logging.get_logger(),
             self.train_args.get_process_log_level(),
@@ -94,7 +93,6 @@ class Privacy_GLUE_Pipeline(ABC):
         )
         transformers.utils.logging.enable_default_handler()
         transformers.utils.logging.enable_explicit_format()
-        remove_all_file_handlers(transformers.utils.logging.get_logger())
         add_file_handler(
             transformers.utils.logging.get_logger(),
             self.train_args.get_process_log_level(),
@@ -163,8 +161,11 @@ class Privacy_GLUE_Pipeline(ABC):
         ) as output_file_stream:
             output_file_stream.write("%s\n" % 0)
 
-    def _clean_logger(self) -> None:
-        self.logger.handlers = []
+    def _clean_loggers(self) -> None:
+        datasets.utils.logging.get_logger().handlers = []
+        transformers.utils.logging.get_logger().handlers = []
+        if hasattr(self, "logger"):
+            self.logger.handlers = []
 
     def _destroy(self) -> None:
         # some variables are not freed automatically by pytorch and can quickly
@@ -213,7 +214,7 @@ class Privacy_GLUE_Pipeline(ABC):
         self._save_success_file()
 
     def run_finally(self) -> None:
-        self._clean_logger()
+        self._clean_loggers()
         self._destroy()
 
     def run_pipeline(self) -> None:
