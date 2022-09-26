@@ -144,6 +144,21 @@ class Privacy_GLUE_Pipeline(ABC):
         else:
             self.checkpoint = None
 
+    def _init_wandb_run(self) -> None:
+        if self.train_args.report_to == "wandb":
+            import wandb
+
+            self.wandb_run = wandb.init(
+                name=(
+                    f"{self.model_args.wandb_group_id[11:]}"
+                    f"_seed_{str(self.train_args.seed)}"
+                ),
+                group=self.model_args.wandb_group_id,
+                project=f"privacyGLUE-{self.data_args.task}",
+                reinit=True,
+                resume=True if self.checkpoint else None,
+            )
+
     def _save_success_file(self) -> None:
         with open(
             os.path.join(self.train_args.output_dir, self.success_file), "w"
@@ -155,6 +170,10 @@ class Privacy_GLUE_Pipeline(ABC):
         transformers.utils.logging.get_logger().handlers = []
         if hasattr(self, "logger"):
             self.logger.handlers = []
+
+    def _close_wandb(self) -> None:
+        if self.train_args.report_to == "wandb" and hasattr(self, "wandb_run"):
+            self.wandb_run.finish()
 
     def _destroy(self) -> None:
         # some variables are not freed automatically by pytorch and can quickly
@@ -191,6 +210,7 @@ class Privacy_GLUE_Pipeline(ABC):
         self._log_starting_arguments()
         self._set_global_seeds()
         self._find_existing_checkpoint()
+        self._init_wandb_run()
 
     def run_task(self) -> None:
         self._retrieve_data()
@@ -204,6 +224,7 @@ class Privacy_GLUE_Pipeline(ABC):
 
     def run_finally(self) -> None:
         self._clean_loggers()
+        self._close_wandb()
         self._destroy()
 
     def run_pipeline(self) -> None:

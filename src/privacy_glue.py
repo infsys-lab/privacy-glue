@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from wandb.util import generate_id
 from parser import TASKS, get_parser
 import os
 import re
@@ -15,12 +16,6 @@ def main() -> None:
     parser = get_parser()
     model_args, data_args, train_args = parser.parse_args_into_dataclasses()
 
-    # configure results reporting
-    use_wandb = False
-    if train_args.report_to == "wandb":
-        import wandb
-
-        use_wandb = True
     # capture base output directory
     output_dir = train_args.output_dir
     model_dir = os.path.join(
@@ -36,23 +31,17 @@ def main() -> None:
 
     # loop over tasks and seeds
     for task in tasks:
-        if use_wandb:
-            os.environ["WANDB_RUN_GROUP"] = f"experiment_{wandb.util.generate_id()}"
+        data_args.task = task
+        model_args.wandb_group_id = (
+            f"experiment_{generate_id()}" if train_args.report_to == "wandb" else None
+        )
         for seed in range(model_args.random_seed_iterations):
-            data_args.task = task
             train_args.seed = seed
             train_args.output_dir = os.path.join(
                 model_dir,
                 re.sub(r"[/-]", "_", data_args.task),
                 "seed_%s" % seed,
             )
-            if use_wandb:
-                wandb_run = wandb.init(
-                    name=f'{os.environ["WANDB_RUN_GROUP"][11:]}\
-                        _seed_{str(seed)}',
-                    project="privacyGLUE-" + task,
-                    reinit=True,
-                )
             # branch into separate workflows depending on task type
             if data_args.task in [
                 "opp_115",
@@ -65,8 +54,6 @@ def main() -> None:
                 raise NotImplementedError
             elif data_args.task == "policy_qa":
                 raise NotImplementedError
-            if use_wandb:
-                wandb_run.finish()
 
     # summarize PrivacyGLUE benchmark
     if model_args.do_summarize:
