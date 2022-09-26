@@ -4,3 +4,4 @@
 .coverage*
 coverage.xml
 pytest.xml
+wandb/
