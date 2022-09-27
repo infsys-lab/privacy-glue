@@ -28,15 +28,15 @@ optional arguments:
   --overwrite             overwrite cached data and saved checkpoint(s)
                           (default: False)
 
-  --wandb                 log metrics and result to wandb
-                          (default: False)
-
   --task                  <str>
                           task to be worked on. The following values are
                           accepted: "opp_115", "piextract",
                           "policy_detection", "policy_ie_a", "policy_ie_b",
                           "policy_qa", "privacy_qa", "all"
                           (default: all)
+
+  --wandb                 log metrics and result to wandb
+                          (default: False)
 
   -h, --help              show this help message and exit
 EOF
