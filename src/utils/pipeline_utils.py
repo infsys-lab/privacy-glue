@@ -148,7 +148,8 @@ class Privacy_GLUE_Pipeline(ABC):
         if "wandb" in self.train_args.report_to:
             import wandb
 
-            self.wandb_run = wandb.init(
+            global wandb_run
+            wandb_run = wandb.init(
                 name=(
                     f"{self.model_args.wandb_group_id[11:]}"
                     f"_seed_{str(self.train_args.seed)}"
@@ -172,8 +173,9 @@ class Privacy_GLUE_Pipeline(ABC):
             self.logger.handlers = []
 
     def _close_wandb(self) -> None:
+        global wandb_run
         if "wandb" in self.train_args.report_to and hasattr(self, "wandb_run"):
-            self.wandb_run.finish()
+            wandb_run.finish()
 
     def _destroy(self) -> None:
         # some variables are not freed automatically by pytorch and can quickly
