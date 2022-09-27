@@ -91,8 +91,6 @@ main() {
     --do_pred \
     --do_clean \
     --do_summarize \
-    --metric_for_best_model "macro-f1" \
-    --greater_is_better "True" \
     --load_best_model_at_end \
     --evaluation_strategy "steps" \
     --save_strategy "steps" \
