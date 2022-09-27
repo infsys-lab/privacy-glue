@@ -33,7 +33,7 @@ def main() -> None:
     for task in tasks:
         data_args.task = task
         model_args.wandb_group_id = (
-            f"experiment_{generate_id()}" if train_args.report_to == "wandb" else None
+            f"experiment_{generate_id()}" if "wandb" in train_args.report_to else None
         )
         for seed in range(model_args.random_seed_iterations):
             train_args.seed = seed
