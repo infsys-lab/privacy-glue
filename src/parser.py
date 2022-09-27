@@ -112,6 +112,10 @@ class DataArguments:
             "help": "Overwrite the cached training, evaluation and prediction sets"
         },
     )
+    preprocessing_num_workers: Optional[int] = field(
+        default=None,
+        metadata={"help": "The number of processes to use for the preprocessing."},
+    )
     max_train_samples: Optional[int] = field(
         default=None,
         metadata={
