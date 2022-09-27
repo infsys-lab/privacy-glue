@@ -145,7 +145,7 @@ class Privacy_GLUE_Pipeline(ABC):
             self.checkpoint = None
 
     def _init_wandb_run(self) -> None:
-        if self.train_args.report_to == "wandb":
+        if "wandb" in self.train_args.report_to:
             import wandb
 
             self.wandb_run = wandb.init(
@@ -172,7 +172,7 @@ class Privacy_GLUE_Pipeline(ABC):
             self.logger.handlers = []
 
     def _close_wandb(self) -> None:
-        if self.train_args.report_to == "wandb" and hasattr(self, "wandb_run"):
+        if "wandb" in self.train_args.report_to and hasattr(self, "wandb_run"):
             self.wandb_run.finish()
 
     def _destroy(self) -> None:
