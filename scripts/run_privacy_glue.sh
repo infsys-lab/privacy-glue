@@ -25,6 +25,10 @@ optional arguments:
                           "mukund/privbert"
                           (default: bert-base-uncased)
 
+  --num_workers           <int>
+                          number of workers to be used for preprocessing
+                          (default: 1)
+
   --overwrite             overwrite cached data and saved checkpoint(s)
                           (default: False)
 
@@ -58,6 +62,10 @@ parser() {
       shift
       MODEL_NAME_OR_PATH="$1"
       ;;
+    --num_workers)
+      shift
+      NUM_WORKERS="$1"
+      ;;
     --task)
       shift
       TASK="$1"
@@ -85,6 +93,7 @@ main() {
   CUDA_VISIBLE_DEVICES="$CUDA_VISIBLE_DEVICES" python3 src/privacy_glue.py \
     --task "$TASK" \
     --model_name_or_path "$MODEL_NAME_OR_PATH" \
+    --preprocessing_num_workers "$NUM_WORKERS" \
     --output_dir "$OUTPUT_DIR" \
     --do_train \
     --do_eval \
@@ -115,6 +124,7 @@ WANDB="none"
 CUDA_VISIBLE_DEVICES=0
 GLOBAL_BATCH_SIZE=16
 ACCUMULATION_STEPS=1
+NUM_WORKERS=1
 MODEL_NAME_OR_PATH="bert-base-uncased"
 
 # overall workflow
