@@ -17,6 +17,7 @@ from utils.logging_utils import init_logger, add_file_handler
 import transformers
 import datasets
 import logging
+import wandb
 import torch
 import os
 
@@ -146,9 +147,7 @@ class Privacy_GLUE_Pipeline(ABC):
 
     def _init_wandb_run(self) -> None:
         if "wandb" in self.train_args.report_to:
-            import wandb
-
-            self.wandb_run = wandb.init(
+            wandb.init(
                 name=(
                     f"{self.model_args.wandb_group_id[11:]}"
                     f"_seed_{str(self.train_args.seed)}"
@@ -172,8 +171,8 @@ class Privacy_GLUE_Pipeline(ABC):
             self.logger.handlers = []
 
     def _close_wandb(self) -> None:
-        if "wandb" in self.train_args.report_to and hasattr(self, "wandb_run"):
-            self.wandb_run.finish()
+        if "wandb" in self.train_args.report_to and wandb.run is not None:
+            wandb.run.finish()
 
     def _destroy(self) -> None:
         # some variables are not freed automatically by pytorch and can quickly
