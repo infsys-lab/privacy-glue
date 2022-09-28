@@ -101,9 +101,9 @@ main() {
     --do_clean \
     --do_summarize \
     --load_best_model_at_end \
-    --evaluation_strategy "steps" \
-    --save_strategy "steps" \
-    --save_total_limit 5 \
+    --evaluation_strategy "epoch" \
+    --save_strategy "epoch" \
+    --save_total_limit 2 \
     --num_train_epochs 20 \
     --learning_rate 3e-5 \
     --report_to "$WANDB" \
