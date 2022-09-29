@@ -6,6 +6,8 @@ from parser import TASKS, get_parser
 import os
 import re
 
+from sequence_tagging import Sequence_Tagging_Pipeline
+
 
 def summarize(model_dir: str) -> None:
     raise NotImplementedError
@@ -51,7 +53,8 @@ def main() -> None:
             ]:
                 raise NotImplementedError
             elif data_args.task in ["piextract", "policy_ie_b"]:
-                raise NotImplementedError
+                pl = Sequence_Tagging_Pipeline(data_args, model_args, train_args)
+                pl.run_pipeline()
             elif data_args.task == "policy_qa":
                 raise NotImplementedError
 
