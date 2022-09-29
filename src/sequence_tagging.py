@@ -60,7 +60,6 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
 
         if self.train_args.do_predict:
             self.predict_dataset = data["test"]
-        breakpoint()
 
     def _load_pretrained_model_and_tokenizer(self) -> None:
         # Distributed training:
@@ -126,18 +125,19 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
             labels = []
             for i, multilabel in enumerate(examples["ner_tags"]):
                 word_ids = tokenized_inputs.word_ids(batch_index=i)
-                label_ids = [0 for _ in self.label_names]
-                assert len(label_ids) == 9
-                for label in multilabel:
-                    for word_idx in word_ids:
-                        # Special tokens have a word id that is None.
-                        # We set the label to -100 so they are automatically
-                        # ignored in the loss function.
-                        if word_idx is None:
-                            label_ids.append([-100 for _ in range(8)])
-                        else:
-                            label_ids[self.config.label2id[multilabel[word_idx]]] = 1
-                breakpoint()
+                label_ids = []
+                transformed_label = [-1.0 for _ in self.label_names]
+                assert len(transformed_label) == 9
+                for word_idx in word_ids:
+                    # Special tokens have a word id that is None.
+                    # We set the label to -100 so they are automatically
+                    # ignored in the loss function.
+                    if word_idx is None:
+                        label_ids.append([-100 for _ in range(6)])
+                    else:
+                        for label in multilabel[word_idx]:
+                            transformed_label[self.config.label2id[label]] = 1.0
+                    label_ids.append(transformed_label)
                 labels.append(label_ids)
             tokenized_inputs["labels"] = labels
             return tokenized_inputs
