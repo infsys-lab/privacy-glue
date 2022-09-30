@@ -29,14 +29,20 @@ def load_policy_ie_a(directory: str) -> datasets.DatasetDict:
         "text", data_files=file_mapping(directory, "label")
     ).rename_column("text", "label")
 
+    # retrieve unique labels and add them to datastructure
+    unique_labels = list(set(labels["train"]["label"]))
+    label_info = datasets.ClassLabel(
+        num_classes=len(unique_labels), names=unique_labels
+    )
+
     # mypy-related specification to sub-type
     tokens = cast(datasets.DatasetDict, tokens)
     labels = cast(datasets.DatasetDict, labels)
 
     # zip together data
     for split in ["train", "validation", "test"]:
-        combined[split] = datasets.concatenate_datasets(
-            [tokens[split], labels[split]], axis=1
-        )
+        ds = datasets.concatenate_datasets([tokens[split], labels[split]], axis=1)
+        ds.features["label"] = label_info
+        combined[split] = ds
 
     return combined

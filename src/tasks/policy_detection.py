@@ -35,4 +35,9 @@ def load_policy_detection(directory: str) -> datasets.DatasetDict:
     combined["validation"] = train_valid_dataset_dict["test"]
     combined["test"] = train_test_dataset_dict["test"]
 
+    # collect and distribute information about label
+    label_info = datasets.ClassLabel(num_classes=2, names=["Policy", "Not Policy"])
+    for split in ["train", "validation", "test"]:
+        combined[split].features["label"] = label_info
+
     return combined
