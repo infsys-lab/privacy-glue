@@ -3,8 +3,6 @@
 
 import os
 
-import datasets
-
 from tasks.policy_detection import load_policy_detection
 
 
@@ -19,19 +17,8 @@ def test_load_policy_detection():
     # check that all three splits are included
     assert sorted(data.keys()) == sorted(["train", "validation", "test"])
 
-    # merge train and validation to train to compare against files
-    data = datasets.concatenate_datasets(
-        [data["train"], data["validation"], data["test"]]
-    )
-
-    # define what is expected from the load function
-    expected = sorted(
-        [
-            ("testing once", "Policy"),
-            ("testing twice", "Not Policy"),
-            ("testing thrice", "Policy"),
-        ]
-    )
-
     # assert that we got what is expected
-    assert sorted(zip(data["text"], data["label"])) == expected
+
+    assert data["train"][0] == {"text": "testing twice", "label": "Not Policy"}
+    assert data["validation"][0] == {"text": "testing once", "label": "Policy"}
+    assert data["test"][0] == {"text": "testing thrice", "label": "Policy"}
