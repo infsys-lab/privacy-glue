@@ -27,6 +27,7 @@ MOCK_DATA = {
     },
     "single_label": {
         "text": ["hello world in {}", "hello universe in {}"],
+        "question": ["What's the answer to life", "the universe and everything?"],
         "label": ["1", "2"],
     },
 }

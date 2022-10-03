@@ -25,11 +25,11 @@ def test_load_opp_115():
             [
                 (
                     f"{split} check for OPP-115",
-                    sorted([f"label-{split}-1", f"label-{split}-2"]),
+                    [1.0, 1.0],
                 ),
                 (
                     f"another {split} check for OPP-115",
-                    sorted([f"label-{split}-2"]),
+                    [0.0, 1.0],
                 ),
             ]
         )
