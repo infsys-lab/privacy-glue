@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from wandb.util import generate_id
+from reading_comprehension import Reading_Comprehension_Pipeline
 from parser import TASKS, get_parser
 import os
 import re
@@ -53,7 +54,9 @@ def main() -> None:
             elif data_args.task in ["piextract", "policy_ie_b"]:
                 raise NotImplementedError
             elif data_args.task == "policy_qa":
-                raise NotImplementedError
+                Reading_Comprehension_Pipeline(
+                    data_args, model_args, train_args
+                ).run_pipeline()
 
     # summarize PrivacyGLUE benchmark
     if model_args.do_summarize:
