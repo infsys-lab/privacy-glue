@@ -79,7 +79,7 @@ class ModelArguments:
         default=5, metadata={"help": "Number of random seed iterations to run"}
     )
     early_stopping_patience: int = field(
-        default=3, metadata={"help": "Early stopping patience value"}
+        default=5, metadata={"help": "Early stopping patience value"}
     )
     do_summarize: bool = field(
         default=False, metadata={"help": "Summarize over all random seeds"}
