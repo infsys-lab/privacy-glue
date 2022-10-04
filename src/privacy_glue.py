@@ -11,7 +11,7 @@ import re
 
 
 def summarize(model_dir: str) -> None:
-    raise NotImplementedError
+    pass
 
 
 def main() -> None:
