@@ -105,7 +105,7 @@ class Privacy_GLUE_Pipeline(ABC):
     def _dump_misc_args(self) -> None:
         # dump miscellaneous arguments
         torch.save(
-            {"model_args": self.model_args, "data_args": self.data_args},
+            {"data_args": self.data_args, "model_args": self.model_args},
             os.path.join(self.train_args.output_dir, "misc_args.bin"),
         )
 

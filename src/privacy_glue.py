@@ -17,7 +17,7 @@ def summarize(model_dir: str) -> None:
 def main() -> None:
     # get parser and parse arguments
     parser = get_parser()
-    model_args, data_args, train_args = parser.parse_args_into_dataclasses()
+    data_args, model_args, train_args = parser.parse_args_into_dataclasses()
 
     # capture base output directory
     output_dir = train_args.output_dir

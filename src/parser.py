@@ -150,8 +150,8 @@ class DataArguments:
 def get_parser() -> HfArgumentParser:
     return HfArgumentParser(
         (
-            DataClassType(ModelArguments),
             DataClassType(DataArguments),
+            DataClassType(ModelArguments),
             DataClassType(TrainingArguments),
         )
     )

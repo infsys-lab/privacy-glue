@@ -64,8 +64,8 @@ def test_DataArguments_data_dir():
 def test_get_parser():
     # get parser and check contents
     parser = get_parser()
-    assert set(parser.dataclass_types) == {
-        ModelArguments,
+    assert parser.dataclass_types == [
         DataArguments,
+        ModelArguments,
         TrainingArguments,
-    }
+    ]
