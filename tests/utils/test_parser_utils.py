@@ -13,9 +13,8 @@ def test_dir_path():
         assert dir_path(tmp_dir) == tmp_dir
 
     # check when directory does not exist
-    with pytest.raises(Exception) as exception_info:
+    with pytest.raises(argparse.ArgumentTypeError):
         dir_path(tmp_dir)
-    assert exception_info.type == argparse.ArgumentTypeError
 
 
 def test_file_path():
@@ -24,6 +23,5 @@ def test_file_path():
         assert file_path(tmp_file.name) == tmp_file.name
 
     # check when file does not exist
-    with pytest.raises(Exception) as exception_info:
+    with pytest.raises(argparse.ArgumentTypeError):
         file_path(tmp_file.name)
-    assert exception_info.type == argparse.ArgumentTypeError
