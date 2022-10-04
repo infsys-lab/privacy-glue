@@ -18,6 +18,7 @@ import transformers
 import datasets
 import logging
 import wandb
+import shutil
 import torch
 import os
 
@@ -61,7 +62,14 @@ class Privacy_GLUE_Pipeline(ABC):
 
         return data
 
-    def _create_run_dir(self) -> None:
+    def _init_run_dir(self) -> None:
+        if (
+            os.path.exists(self.train_args.output_dir)
+            and self.train_args.overwrite_output_dir
+        ):
+            # delete run directory if it exists
+            shutil.rmtree(self.train_args.output_dir)
+
         # create output_dir if it does not exit
         os.makedirs(self.train_args.output_dir, exist_ok=True)
 
@@ -201,7 +209,7 @@ class Privacy_GLUE_Pipeline(ABC):
         pass
 
     def run_start(self) -> None:
-        self._create_run_dir()
+        self._init_run_dir()
         self._init_root_logger()
         self._init_third_party_loggers()
         self._check_for_success_file()
