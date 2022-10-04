@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from transformers import PreTrainedTokenizer, PreTrainedTokenizerFast
 from reading_comprehension import Reading_Comprehension_Pipeline
 import pytest
 
@@ -23,7 +24,11 @@ def test__retrieve_data(mocked_arguments, mocker):
     assert mocked_pipeline.raw_datasets == "mocked_dictionary"
 
 
-def test__load_pretrained_model_and_tokenizer(mocked_arguments, mocker):
+@pytest.mark.parametrize(
+    "use_fast",
+    [True, False],
+)
+def test__load_pretrained_model_and_tokenizer(use_fast, mocked_arguments, mocker):
     # create mocked pipeline object
     mocked_pipeline = Reading_Comprehension_Pipeline(*mocked_arguments())
 
@@ -34,7 +39,10 @@ def test__load_pretrained_model_and_tokenizer(mocked_arguments, mocker):
     )
     auto_tokenizer = mocker.patch(
         "reading_comprehension.AutoTokenizer.from_pretrained",
-        return_value="mocked_tokenizer",
+        return_value=mocker.MagicMock(
+            spec=PreTrainedTokenizerFast if use_fast else PreTrainedTokenizer,
+            return_value="mocked_tokenizer",
+        ),
     )
     auto_model = mocker.patch(
         "reading_comprehension.AutoModelForQuestionAnswering.from_pretrained",
@@ -42,8 +50,11 @@ def test__load_pretrained_model_and_tokenizer(mocked_arguments, mocker):
     )
 
     # execute relevant pipeline method
-    with pytest.raises(ValueError):
+    if use_fast:
         mocked_pipeline._load_pretrained_model_and_tokenizer()
+    else:
+        with pytest.raises(ValueError):
+            mocked_pipeline._load_pretrained_model_and_tokenizer()
 
     # make assertions
     auto_config.assert_called_once()
@@ -55,6 +66,7 @@ def test__load_pretrained_model_and_tokenizer(mocked_arguments, mocker):
         == auto_model.call_args.args[0]
         == mocked_arguments()[1].model_name_or_path
     )
-    mocked_pipeline.config == "mocked_config"
-    mocked_pipeline.tokenizer == "mocked_tokenizer"
-    mocked_pipeline.model == "mocked_model"
+
+    assert mocked_pipeline.config == "mocked_config"
+    assert mocked_pipeline.tokenizer.return_value == "mocked_tokenizer"
+    assert mocked_pipeline.model == "mocked_model"
