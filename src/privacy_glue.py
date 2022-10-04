@@ -59,7 +59,7 @@ def main() -> None:
                 Sequence_Tagging_Pipeline(
                     data_args, model_args, train_args
                 ).run_pipeline()
-            elif data_args.task == "policy_qa":
+            elif data_args.task == "policy_qa":  # pragma: no branch
                 Reading_Comprehension_Pipeline(
                     data_args, model_args, train_args
                 ).run_pipeline()

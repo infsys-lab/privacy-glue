@@ -56,7 +56,7 @@ class Privacy_GLUE_Pipeline(ABC):
             data = load_policy_ie_b(task_dir)
         elif self.data_args.task == "policy_qa":
             data = load_policy_qa(task_dir)
-        elif self.data_args.task == "privacy_qa":
+        elif self.data_args.task == "privacy_qa":  # pragma: no branch
             data = load_privacy_qa(task_dir)
 
         return data
