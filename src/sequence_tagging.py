@@ -323,22 +323,10 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
             self.trainer.log_metrics("predict", self.predict_metrics)
             self.trainer.log(self.predict_metrics)
             self.trainer.save_metrics("predict", self.predict_metrics)
-            if self.problem_type == "multi_label":
-                predictions = np.round(torch.special.expit(torch.Tensor(predictions)))
-                predictions = [
-                    ",".join(
-                        [
-                            self.label_names[idx]
-                            for idx, item in enumerate(labels)
-                            if int(item) == 1
-                        ]
-                    )
-                    for labels in predictions
-                ]
-            else:
-                predictions = [
-                    self.label_names[item] for item in np.argmax(predictions, axis=1)
-                ]
+           
+            predictions = [
+                self.label_names[item] for item in np.argmax(predictions, axis=1)
+            ]
 
             output_predict_file = os.path.join(
                 self.train_args.output_dir, "predictions.txt"
