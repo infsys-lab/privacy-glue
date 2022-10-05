@@ -12,7 +12,6 @@ import numpy as np
 import evaluate
 import datasets
 from transformers import (
-    AutoConfig,
     AutoModel,
     AutoTokenizer,
     Trainer,
@@ -35,7 +34,7 @@ TASK2SUBTASKS = {
             ["COLLECT"],
             ["NOT_COLLECT"],
             ["NOT_SHARE"],
-        ]
+        ],
     },
     "policy_ie_b": [],
 }
@@ -59,8 +58,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
         self.subtasks = TASK2SUBTASKS[data_args.task]["tasks"]
         self.general_labels = TASK2SUBTASKS[data_args.task]["labels"]
         self.label_names = {
-            task: ["O"] + 
-            [f"{pre}-{label}" for pre in ["B", "I"] for label in labels] 
+            task: ["O"] + [f"{pre}-{label}" for pre in ["B", "I"] for label in labels]
             for task, labels in zip(self.subtasks, self.general_labels)
         }
 
@@ -86,15 +84,19 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
             revision=self.model_args.model_revision,
         )
 
-        self.model = MultiTaskModel(self.model_args.model_name_or_path, self.subtasks, self.label_names)
+        self.model = MultiTaskModel(
+            self.model_args.model_name_or_path, self.subtasks, self.label_names
+        )
 
     def _form_multitask_dataset(self, ds):
         # only one label per example, split the data into multiple tasks
-        multi_trainset = {"tokens":[], "ner_tags":[], "subtask":[]}
+        multi_trainset = {"tokens": [], "ner_tags": [], "subtask": []}
         for i, st in enumerate(self.subtasks):
             for example in ds:
                 multi_trainset["tokens"].append(example["tokens"])
-                multi_trainset["ner_tags"].append([tag[i] for tag in example["ner_tags"]])
+                multi_trainset["ner_tags"].append(
+                    [tag[i] for tag in example["ner_tags"]]
+                )
                 multi_trainset["subtask"].append(st)
 
         multi_trainset = datasets.Dataset.from_dict(multi_trainset)
@@ -102,9 +104,9 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
         return multi_trainset
 
     def _apply_preprocessing(self) -> None:
-        self.data_args.label_all_tokens=True
+        self.data_args.label_all_tokens = True
         # Padding strategy
-        padding = 'max_length'
+        padding = "max_length"
         # Map that sends B-Xxx label to its I-Xxx counterpart
         b_to_i_label = {}
         for st in self.subtasks:
@@ -116,9 +118,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
                 else:
                     b_to_i_label[st].append(idx)
         label_to_ids = {
-            l: i
-            for st in self.subtasks
-            for i, l in enumerate(self.label_names[st])
+            l: i for st in self.subtasks for i, l in enumerate(self.label_names[st])
         }
 
         def preprocess_function(examples):
@@ -131,7 +131,9 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
             )
             labels = []
             task_ids = []
-            for i, (st, label) in enumerate(zip(examples["subtask"], examples["ner_tags"])):
+            for i, (st, label) in enumerate(
+                zip(examples["subtask"], examples["ner_tags"])
+            ):
                 task_id = self.subtasks.index(st)
                 word_ids = tokenized_inputs.word_ids(batch_index=i)
                 previous_word_idx = None
@@ -145,11 +147,13 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
                     # We set the label for the first token of each word.
                     elif word_idx != previous_word_idx:
                         label_ids.append(label_to_ids[label[word_idx]])
-                    # For the other tokens in a word, we set the label to either the current label or -100, depending on
-                    # the label_all_tokens flag.
+                    # For the other tokens in a word, we set the label to either the current
+                    # label or -100, depending on the label_all_tokens flag.
                     else:
                         if self.data_args.label_all_tokens:
-                            label_ids.append(b_to_i_label[st][label_to_ids[label[word_idx]]])
+                            label_ids.append(
+                                b_to_i_label[st][label_to_ids[label[word_idx]]]
+                            )
                         else:
                             label_ids.append(-100)
                     previous_word_idx = word_idx
@@ -177,7 +181,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
                     load_from_cache_file=not self.data_args.overwrite_cache,
                     num_proc=self.data_args.preprocessing_num_workers,
                     desc="Running tokenizer on train dataset",
-                    remove_columns=["tokens","ner_tags", "subtask"],
+                    remove_columns=["tokens", "ner_tags", "subtask"],
                 )
 
         if self.train_args.do_eval:
@@ -195,7 +199,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
                     load_from_cache_file=not self.data_args.overwrite_cache,
                     num_proc=self.data_args.preprocessing_num_workers,
                     desc="Running tokenizer on validation dataset",
-                    remove_columns=["tokens","ner_tags", "subtask"],
+                    remove_columns=["tokens", "ner_tags", "subtask"],
                 )
 
         if self.train_args.do_predict:
@@ -215,7 +219,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
                     load_from_cache_file=not self.data_args.overwrite_cache,
                     num_proc=self.data_args.preprocessing_num_workers,
                     desc="Running tokenizer on prediction dataset",
-                    remove_columns=["tokens","ner_tags", "subtask"],
+                    remove_columns=["tokens", "ner_tags", "subtask"],
                 )
         # Data collator will default to DataCollatorWithPadding, so we change it if we
         # already did the padding.
@@ -238,7 +242,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
             )
             m = metric.compute(
                 predictions=np.argmax(preds, axis=1),
-                references=p.label_ids.astype("int32")
+                references=p.label_ids.astype("int32"),
             )
             return m
 
@@ -345,7 +349,10 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
                     for index, (item, true_l) in enumerate(zip(predictions, labels)):
                         writer.write(f"{index}\t{item}\t{true_l}\n")
 
-# adapted from https://towardsdatascience.com/how-to-create-and-train-a-multi-task-transformer-model-18c54a146240
+
+# adapted from 
+# https://towardsdatascience.com/
+# how-to-create-and-train-a-multi-task-transformer-model-18c54a146240
 class MultiTaskModel(nn.Module):
     def __init__(self, encoder_name_or_path, tasks: List, label_names: Dict):
         super().__init__()
@@ -355,10 +362,12 @@ class MultiTaskModel(nn.Module):
         self.output_heads = nn.ModuleDict()
         # one model several heads
         for task_id, task in enumerate(tasks):
-            decoder = TokenClassificationHead(self.encoder.config.hidden_size, len(label_names[task]))
+            decoder = TokenClassificationHead(
+                self.encoder.config.hidden_size, len(label_names[task])
+            )
             # ModuleDict requires keys to be strings
             self.output_heads[str(task_id)] = decoder
-    
+
     def forward(
         self,
         input_ids=None,
@@ -408,6 +417,7 @@ class MultiTaskModel(nn.Module):
 
         return outputs
 
+
 class TokenClassificationHead(nn.Module):
     def __init__(self, hidden_size, num_labels, dropout_p=0.1):
         super().__init__()
@@ -448,4 +458,3 @@ class TokenClassificationHead(nn.Module):
                 loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
 
         return logits, loss
-    
