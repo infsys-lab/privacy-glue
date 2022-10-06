@@ -25,6 +25,8 @@ optional arguments:
                           "mukund/privbert"
                           (default: bert-base-uncased)
 
+  --no_cuda               disable CUDA even when available (default: False)
+
   --num_workers           <int>
                           number of workers to be used for preprocessing
                           (default: 1)
@@ -54,6 +56,9 @@ parser() {
       ;;
     --overwrite)
       OVERWRITE=("--overwrite_cache" "--overwrite_output_dir")
+      ;;
+    --no_cuda)
+      NO_CUDA=("--no_cuda")
       ;;
     --wandb)
       WANDB="wandb"
@@ -86,6 +91,11 @@ parser() {
     esac
     shift
   done
+
+  # add post-parsing sanity checks
+  if [ -n "${NO_CUDA[*]}" ] && [ -n "$CUDA_VISIBLE_DEVICES" ]; then
+    CUDA_VISIBLE_DEVICES=""
+  fi
 }
 
 main() {
@@ -113,12 +123,14 @@ main() {
     --gradient_accumulation_steps "$ACCUMULATION_STEPS" \
     --eval_accumulation_steps "$ACCUMULATION_STEPS" \
     "${FP_16[@]}" \
-    "${OVERWRITE[@]}"
+    "${OVERWRITE[@]}" \
+    "${NO_CUDA[@]}"
 }
 
 # declare global variable defaults
 FP_16=()
 OVERWRITE=()
+NO_CUDA=()
 TASK="all"
 OUTPUT_DIR="runs"
 WANDB="none"
