@@ -147,6 +147,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
         }
 
         def preprocess_function(examples):
+            # padding = self.model.encoder.config.max_length
             # Tokenize the texts
             tokenized_inputs = self.tokenizer(
                 examples["tokens"],
@@ -182,7 +183,6 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
                         else:
                             label_ids.append(-100)
                     previous_word_idx = word_idx
-
                 labels.append(label_ids)
                 task_ids.append(task_id)
 
@@ -259,22 +259,57 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
 
     def _set_metrics(self) -> None:
         # Get the metric function
-        metric = evaluate.load("f1")
+        metric = evaluate.load("seqeval")
 
         def compute_f1(p: EvalPrediction):
-            preds = (
+            labels = p.label_ids
+            predictions = (
                 p.predictions[0] if isinstance(p.predictions, tuple) else p.predictions
             )
-            m = metric.compute(
-                predictions=np.argmax(preds, axis=1),
-                references=p.label_ids.astype("int32"),
-            )
-            return m
+            predictions = np.argmax(predictions, axis=2)
+            # Remove ignored index (special tokens)
+            true_predictions = {st: [] for st in self.subtasks}
+            true_labels = {st: [] for st in self.subtasks}
+            per_tasks_metrics = {}
+            for i, (prediction, label) in enumerate(zip(predictions, labels)):
+                true_label_vec = []
+                true_pred_vec = []
+                task_name = self.subtasks[i % len(self.subtasks)]
+                for (pr, la) in zip(prediction, label):
+                    if la != -100:
+                        true_label = self.label_names[task_name][la]
+                        true_pred = self.label_names[task_name][pr]
+                        true_pred_vec.append(true_pred)
+                        true_label_vec.append(true_label)
+                true_predictions[task_name].append(true_pred_vec)
+                true_labels[task_name].append(true_label_vec)
+
+            for st in self.subtasks:
+                m = metric.compute(
+                    predictions=true_predictions[st],
+                    references=true_labels[st],
+                )
+                per_tasks_metrics[st] = m
+            return {
+                "precision": np.mean(
+                    [per_tasks_metrics[st]["overall_precision"] for st in self.subtasks]
+                ),
+                "recall": np.mean(
+                    [per_tasks_metrics[st]["overall_recall"] for st in self.subtasks]
+                ),
+                "f1": np.mean(
+                    [per_tasks_metrics[st]["overall_f1"] for st in self.subtasks]
+                ),
+                "accuracy": np.mean(
+                    [per_tasks_metrics[st]["overall_accuracy"] for st in self.subtasks]
+                ),
+            }
 
         self.compute_metrics = compute_f1
 
     def _run_train_loop(self) -> None:
         # Initialize the Trainer
+        self.train_args.include_inputs_for_metrics = True
         self.trainer = Trainer(
             model=self.model,
             args=self.train_args,
@@ -350,7 +385,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
             self.trainer.save_metrics("predict", self.predict_metrics)
 
             predictions = [
-                self.label_names[item] for item in np.argmax(predictions, axis=1)
+                self.label_names[item] for item in np.argmax(predictions, axis=2)
             ]
 
             output_predict_file = os.path.join(
@@ -407,7 +442,7 @@ class MultiTaskModel(nn.Module):
         unique_task_ids_list = torch.unique(task_ids).tolist()
 
         loss_list = []
-        logits = None
+        logits_list = []
         for unique_task_id in unique_task_ids_list:
             task_id_filter = task_ids == unique_task_id
             logits, task_loss = self.output_heads[str(unique_task_id)].forward(
@@ -420,14 +455,14 @@ class MultiTaskModel(nn.Module):
             if labels is not None:
                 loss_list.append(task_loss)
 
+            logits_list.append(logits[0])
         # logits are only used for eval. and in case of eval the batch is not multi task
         # For training only the loss is used
-        outputs = (logits, outputs[2:])
+        outputs = (torch.stack(logits_list), outputs[2:])
 
-        if loss_list:
+        if len(loss_list) > 0:
             loss = torch.stack(loss_list)
             outputs = (loss.mean(),) + outputs
-
         return outputs
 
 
@@ -469,5 +504,4 @@ class TokenClassificationHead(nn.Module):
                 loss = loss_fct(active_logits, active_labels)
             else:
                 loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
-
         return logits, loss
