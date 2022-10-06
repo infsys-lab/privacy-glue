@@ -5,6 +5,7 @@ import os
 
 import logging
 import torch
+import torch.nn as nn
 import numpy as np
 import evaluate
 from transformers import (
@@ -16,6 +17,8 @@ from transformers import (
     EvalPrediction,
     EarlyStoppingCallback,
     DataCollatorWithPadding,
+    PreTrainedModel,
+    PretrainedConfig,
 )
 
 from parser import DataArguments, ModelArguments
@@ -23,9 +26,27 @@ from utils.pipeline_utils import Privacy_GLUE_Pipeline
 
 logger = logging.getLogger(__name__)
 
-TASK2LABELS = {
-    "piextract": ["SHARE", "COLLECT", "NOT_COLLECT", "NOT_SHARE"],
-    "policy_ie_b": [],
+TASK2SUBTASKS = {
+    "piextract": {st: [st] for st in ["SHARE", "COLLECT", "NOT_COLLECT", "NOT_SHARE"]},
+    "policy_ie_b": {
+        "type-I": [
+            "data-protector",
+            "data-protected",
+            "data-collector",
+            "data-collected",
+            "data-receiver",
+            "data-retained",
+            "data-holder",
+            "data-provider",
+            "data-sharer",
+            "data-shared",
+            "storage-place",
+            "retention-period",
+            "protect-against",
+            "action",
+        ],
+        "type-II": ["purpose-argument", "polarity", "method", "condition-argument"],
+    },
 }
 
 
@@ -44,17 +65,13 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
         super().__init__(data_args, model_args, training_args)
 
         # information about label names
-        self.labels = TASK2LABELS[data_args.task]
+        self.subtasks = TASK2SUBTASKS[data_args.task].keys()
 
     def _retrieve_data(self) -> None:
         data = self._get_data()
-        self.label_names = ["O"] + [
-            f"{pre}-{label}" for pre in ["B", "I"] for label in self.labels
-        ]
 
         if self.train_args.do_train:
             self.train_dataset = data["train"]
-
         if self.train_args.do_eval:
             self.eval_dataset = data["validation"]
 
@@ -65,50 +82,47 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
         # Distributed training:
         # The .from_pretrained methods guarantee that only one local process
         # can concurrently download model & vocab.
-        self.config = AutoConfig.from_pretrained(
-            self.model_args.model_name_or_path,
-            finetuning_task=self.data_args.task,
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            self.model_args.tokenizer_name
+            if self.model_args.tokenizer_name
+            else self.model_args.model_name_or_path,
             cache_dir=self.model_args.cache_dir,
-            revision=self.model_args.model_revision,
-            problem_type="multilabel_classification",
-            num_labels=len(self.label_names),
-            id2label=dict(enumerate(self.label_names)),
-            label2id={l: n for n, l in enumerate(self.label_names)},
-        )
-
-        if self.config.model_type in {"bloom", "gpt2", "roberta"}:
-            self.tokenizer = AutoTokenizer.from_pretrained(
-                self.model_args.tokenizer_name
-                if self.model_args.tokenizer_name
-                else self.model_args.model_name_or_path,
-                cache_dir=self.model_args.cache_dir,
-                use_fast=True,
-                revision=self.model_args.model_revision,
-                add_prefix_space=True,
-            )
-        else:
-            self.tokenizer = AutoTokenizer.from_pretrained(
-                self.model_args.tokenizer_name
-                if self.model_args.tokenizer_name
-                else self.model_args.model_name_or_path,
-                cache_dir=self.model_args.cache_dir,
-                use_fast=True,
-                revision=self.model_args.model_revision,
-            )
-
-        self.model = AutoModelForTokenClassification.from_pretrained(
-            self.model_args.model_name_or_path,
-            from_tf=bool(".ckpt" in self.model_args.model_name_or_path),
-            config=self.config,
-            cache_dir=self.model_args.cache_dir,
+            use_fast=True,
             revision=self.model_args.model_revision,
         )
+        self.subtask_models = {}
+        for subtask in self.subtasks:
+            label_names = ["O"] + [
+                f"{pre}-{label}"
+                for pre in ["B", "I"]
+                for label in TASK2SUBTASKS[self.data_args.task][subtask]
+            ]
+            subtask_config = AutoConfig.from_pretrained(
+                self.model_args.model_name_or_path,
+                finetuning_task=self.data_args.task,
+                cache_dir=self.model_args.cache_dir,
+                revision=self.model_args.model_revision,
+                problem_type="singlelabel_classification",
+                num_labels=len(label_names),
+                id2label=dict(enumerate(label_names)),
+                label2id={l: n for n, l in enumerate(label_names)},
+            )
 
-    def _apply_preprocessing(self) -> None:
+            subtask_model = AutoModelForTokenClassification.from_pretrained(
+                self.model_args.model_name_or_path,
+                from_tf=bool(".ckpt" in self.model_args.model_name_or_path),
+                config=subtask_config,
+                cache_dir=self.model_args.cache_dir,
+                revision=self.model_args.model_revision,
+            )
+            self.subtask_models[subtask] = subtask_model
+        self.model = MultitaskModel("bert", self.subtask_models)
+
+    def _apply_preprocessing(self, subtask) -> None:
         padding = False
         # Map that sends B-Xxx label to its I-Xxx counterpart
         b_to_i_label = []
-        for idx, label in enumerate(self.label_names):
+        for idx, label in enumerate(self.label_names[subtask]):
             if label.startswith("B-") and label.replace("B-", "I-") in self.label_names:
                 b_to_i_label.append(self.label_names.index(label.replace("B-", "I-")))
             else:
@@ -331,3 +345,49 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
                     writer.write("index\tprediction\ttrue_label\n")
                     for index, (item, true_l) in enumerate(zip(predictions, labels)):
                         writer.write(f"{index}\t{item}\t{true_l}\n")
+
+
+class MultitaskModel(PreTrainedModel):
+    def __init__(self, encoder, taskmodels_dict):
+        """
+        Setting MultitaskModel up as a PretrainedModel allows us
+        to take better advantage of Trainer features
+        """
+        super().__init__(PretrainedConfig())
+
+        self.encoder = encoder
+        self.taskmodels_dict = nn.ModuleDict(taskmodels_dict)
+
+    @classmethod
+    def create(cls, model_dict):
+        """
+        This creates a MultitaskModel using the model class and config objects
+        from single-task models.
+
+        We do this by creating each single-task model, and having them share
+        the same encoder transformer.
+        """
+        shared_encoder = None
+        taskmodels_dict = {}
+        for task_name, model in model_dict.items():
+            if shared_encoder is None:
+                shared_encoder = getattr(model, cls.get_encoder_attr_name(model))
+            else:
+                setattr(model, cls.get_encoder_attr_name(model), shared_encoder)
+            taskmodels_dict[task_name] = model
+        return cls(encoder=shared_encoder, taskmodels_dict=taskmodels_dict)
+
+    @classmethod
+    def get_encoder_attr_name(cls, model):
+        """
+        The encoder transformer is named differently in each model "architecture".
+        This method lets us get the name of the encoder attribute
+        """
+        model_class_name = model.__class__.__name__
+        if model_class_name.startswith("Bert"):
+            return "bert"
+        else:
+            raise KeyError(f"Add support for new model {model_class_name}")
+
+    def forward(self, task_name, **kwargs):
+        return self.taskmodels_dict[task_name](**kwargs)
