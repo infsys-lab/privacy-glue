@@ -12,7 +12,7 @@ optional arguments:
                           the "CUDA_VISIBLE_DEVICES" environmental variable
                           (default: 0)
 
-  --fp_16                 enable 16-bit mixed precision computation
+  --fp16_all              enable 16-bit mixed precision computation
                           through NVIDIA Apex for both training and evaluation
                           (default: False)
 
@@ -51,8 +51,8 @@ EOF
 parser() {
   while [[ -n "$1" ]]; do
     case "$1" in
-    --fp_16)
-      FP_16=("--fp16" "--fp16_full_eval")
+    --fp16_all)
+      FP16_ALL=("--fp16" "--fp16_full_eval")
       ;;
     --overwrite)
       OVERWRITE=("--overwrite_cache" "--overwrite_output_dir")
@@ -122,13 +122,13 @@ main() {
     --per_device_eval_batch_size "$((GLOBAL_BATCH_SIZE / ACCUMULATION_STEPS))" \
     --gradient_accumulation_steps "$ACCUMULATION_STEPS" \
     --eval_accumulation_steps "$ACCUMULATION_STEPS" \
-    "${FP_16[@]}" \
+    "${FP16_ALL[@]}" \
     "${OVERWRITE[@]}" \
     "${NO_CUDA[@]}"
 }
 
 # declare global variable defaults
-FP_16=()
+FP16_ALL=()
 OVERWRITE=()
 NO_CUDA=()
 TASK="all"
