@@ -91,13 +91,13 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
     def _retrieve_data(self) -> None:
         data = self._get_data()
         if self.train_args.do_train:
-            self.train_dataset = self._form_multitask_dataset(data["train"])
+            self.train_dataset = data["train"]
 
         if self.train_args.do_eval:
-            self.eval_dataset = self._form_multitask_dataset(data["validation"])
+            self.eval_dataset = data["validation"]
 
         if self.train_args.do_predict:
-            self.predict_dataset = self._form_multitask_dataset(data["test"])
+            self.predict_dataset = data["test"]
 
     def _load_pretrained_model_and_tokenizer(self) -> None:
         self.tokenizer = AutoTokenizer.from_pretrained(
@@ -116,8 +116,8 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
     def _form_multitask_dataset(self, ds):
         # only one label per example, split the data into multiple tasks
         multi_trainset = {"tokens": [], "ner_tags": [], "subtask": []}
-        for i, st in enumerate(self.subtasks):
-            for example in ds:
+        for example in ds:
+            for i, st in enumerate(self.subtasks):
                 multi_trainset["tokens"].append(example["tokens"])
                 multi_trainset["ner_tags"].append(
                     [tag[i] for tag in example["ner_tags"]]
@@ -125,11 +125,19 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
                 multi_trainset["subtask"].append(st)
 
         multi_trainset = datasets.Dataset.from_dict(multi_trainset)
-        multi_trainset.shuffle(42)
         return multi_trainset
 
     def _apply_preprocessing(self) -> None:
-        self.data_args.label_all_tokens = True
+        # expand the compressed labels
+        if self.train_args.do_train:
+            self.train_dataset = self._form_multitask_dataset(self.train_dataset)
+            self.train_dataset.shuffle(42)
+        if self.train_args.do_eval:
+            self.eval_dataset = self._form_multitask_dataset(self.eval_dataset)
+        if self.train_args.do_predict:
+            self.predict_dataset = self._form_multitask_dataset(self.predict_dataset)
+
+        self.data_args.label_all_tokens = False
         # Padding strategy
         padding = "max_length"
         # Map that sends B-Xxx label to its I-Xxx counterpart
@@ -172,14 +180,24 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
                         label_ids.append(-100)
                     # We set the label for the first token of each word.
                     elif word_idx != previous_word_idx:
-                        label_ids.append(label_to_ids[label[word_idx]])
+                        find_dot = label[word_idx].find(".")
+                        if find_dot > 0:
+                            w_label = label[word_idx][:find_dot]
+                        else:
+                            w_label = label[word_idx]
+
+                        label_ids.append(label_to_ids[w_label])
+
                     # For the other tokens in a word, we set the label to either the
                     # current label or -100, depending on the label_all_tokens flag.
                     else:
                         if self.data_args.label_all_tokens:
-                            label_ids.append(
-                                b_to_i_label[st][label_to_ids[label[word_idx]]]
-                            )
+                            find_dot = label[word_idx].find(".")
+                            if find_dot > 0:
+                                w_label = label[word_idx][:find_dot]
+                            else:
+                                w_label = label[word_idx]
+                            label_ids.append(b_to_i_label[st][label_to_ids[w_label]])
                         else:
                             label_ids.append(-100)
                     previous_word_idx = word_idx
