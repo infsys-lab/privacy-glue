@@ -43,7 +43,7 @@ def main() -> None:
             train_args.output_dir = os.path.join(
                 model_dir,
                 re.sub(r"[/-]", "_", data_args.task),
-                "seed_%s" % seed,
+                f"seed_{seed}",
             )
             # branch into separate workflows depending on task type
             if data_args.task in [
