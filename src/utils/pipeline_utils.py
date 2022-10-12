@@ -3,6 +3,7 @@
 
 from abc import ABC, abstractmethod
 from datasets import DatasetDict
+from glob import glob
 from transformers import TrainingArguments, set_seed
 from transformers.trainer_utils import get_last_checkpoint
 from parser import DataArguments, ModelArguments
@@ -165,6 +166,13 @@ class Privacy_GLUE_Pipeline(ABC):
                 resume=True if self.last_checkpoint else None,
             )
 
+    def _clean_checkpoint_dirs(self) -> None:
+        if self.model_args.do_clean and self.train_args.do_train:
+            for checkpoint in glob(
+                os.path.join(self.train_args.output_dir, "checkpoint*")
+            ):
+                shutil.rmtree(checkpoint)
+
     def _save_success_file(self) -> None:
         if self.train_args.do_train:
             with open(
@@ -227,6 +235,7 @@ class Privacy_GLUE_Pipeline(ABC):
         self._run_train_loop()
 
     def run_end(self) -> None:
+        self._clean_checkpoint_dirs()
         self._save_success_file()
 
     def run_finally(self) -> None:

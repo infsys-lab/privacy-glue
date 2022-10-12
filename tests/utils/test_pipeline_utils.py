@@ -396,6 +396,58 @@ def test__init_wandb_run(report_to, mocked_arguments, mocker):
 
 
 @pytest.mark.parametrize(
+    "do_clean",
+    [True, False],
+)
+@pytest.mark.parametrize(
+    "do_train",
+    [True, False],
+)
+def test__clean_checkpoint_dirs(
+    do_clean, do_train, mocked_arguments_with_tmp_path, mocker
+):
+    # create mocked pipeline class
+    mocked_pipeline_with_tmp_path = Mocked_Pipeline(
+        *mocked_arguments_with_tmp_path(do_clean=do_clean, do_train=do_train)
+    )
+
+    # create dummy checkpoints
+    for checkpoint in ["checkpoint-100", "checkpoint-200"]:
+        os.makedirs(
+            os.path.join(
+                mocked_pipeline_with_tmp_path.train_args.output_dir, checkpoint
+            )
+        )
+
+    # create mocked object
+    shutil_rmtree = mocker.patch("utils.pipeline_utils.shutil.rmtree")
+
+    # execute relevant pipeline method
+    mocked_pipeline_with_tmp_path._clean_checkpoint_dirs()
+
+    # make assertion
+    if do_clean and do_train:
+        assert sorted(shutil_rmtree.mock_calls) == sorted(
+            [
+                mocker.call(
+                    os.path.join(
+                        mocked_pipeline_with_tmp_path.train_args.output_dir,
+                        "checkpoint-100",
+                    )
+                ),
+                mocker.call(
+                    os.path.join(
+                        mocked_pipeline_with_tmp_path.train_args.output_dir,
+                        "checkpoint-200",
+                    )
+                ),
+            ]
+        )
+    else:
+        shutil_rmtree.assert_not_called()
+
+
+@pytest.mark.parametrize(
     "do_train",
     [True, False],
 )
@@ -603,6 +655,9 @@ def test_run_end(mocked_arguments, mocker):
     mocked_pipeline = Mocked_Pipeline(*mocked_arguments())
 
     # mock function
+    clean_checkpoint_dirs = mocker.patch(
+        "utils.pipeline_utils.Privacy_GLUE_Pipeline._clean_checkpoint_dirs"
+    )
     save_success_file = mocker.patch(
         "utils.pipeline_utils.Privacy_GLUE_Pipeline._save_success_file"
     )
@@ -611,6 +666,7 @@ def test_run_end(mocked_arguments, mocker):
     mocked_pipeline.run_end()
 
     # make assertions
+    clean_checkpoint_dirs.assert_called_once()
     save_success_file.assert_called_once()
 
 

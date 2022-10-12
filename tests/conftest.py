@@ -22,6 +22,7 @@ def get_mocked_arguments(
     model_name_or_path="bert-base-uncased",
     do_train=True,
     do_summarize=True,
+    do_clean=True,
     random_seed_iterations=5,
     wandb_group_id="test",
     output_dir="/tmp/runs",
@@ -39,6 +40,7 @@ def get_mocked_arguments(
         SimpleNamespace(
             model_name_or_path=model_name_or_path,
             do_summarize=do_summarize,
+            do_clean=do_clean,
             random_seed_iterations=random_seed_iterations,
             wandb_group_id=wandb_group_id,
         ),
