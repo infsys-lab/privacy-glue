@@ -103,6 +103,10 @@ parser() {
       if [[ -n "$2" ]]; then
         shift
         CUDA_VISIBLE_DEVICES="$1"
+        N_GPU=$(($(printf "%s" "$CUDA_VISIBLE_DEVICES" |
+          sed 's/^,\+//g; s/,\+$//g; s/,\+ */,/g' |
+          tr -cd , |
+          wc -c) + 1))
       else
         {
           printf "%s\n\n" "Missing --cuda_visible_devices argument"
@@ -127,14 +131,19 @@ parser() {
   done
 
   # add post-parsing sanity checks
-  if [ -n "${NO_CUDA[*]}" ] && [ -n "$CUDA_VISIBLE_DEVICES" ]; then
+  if [ -n "${NO_CUDA[*]}" ]; then
     CUDA_VISIBLE_DEVICES=""
+    N_GPU=0
+  elif [ "$N_GPU" -gt "1" ]; then
+    PROGRAM_RUNTIME=("torchrun" "--nproc_per_node" "$N_GPU")
   fi
 }
 
 main() {
   # execute fine-tuning
-  CUDA_VISIBLE_DEVICES="$CUDA_VISIBLE_DEVICES" python3 src/privacy_glue.py \
+  CUDA_VISIBLE_DEVICES="$CUDA_VISIBLE_DEVICES" \
+    "${PROGRAM_RUNTIME[@]}" \
+    src/privacy_glue.py \
     --task "$TASK" \
     --model_name_or_path "$MODEL_NAME_OR_PATH" \
     --preprocessing_num_workers "$NUM_WORKERS" \
@@ -169,10 +178,12 @@ TASK="all"
 OUTPUT_DIR="runs"
 WANDB="none"
 CUDA_VISIBLE_DEVICES=0
+N_GPU=1
 GLOBAL_BATCH_SIZE=16
 ACCUMULATION_STEPS=1
 NUM_WORKERS=1
 MODEL_NAME_OR_PATH="bert-base-uncased"
+PROGRAM_RUNTIME=("python3")
 
 # overall workflow
 parser "$@"
