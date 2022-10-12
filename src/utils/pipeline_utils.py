@@ -3,6 +3,7 @@
 
 from abc import ABC, abstractmethod
 from datasets import DatasetDict
+from glob import glob
 from transformers import TrainingArguments, set_seed
 from transformers.trainer_utils import get_last_checkpoint
 from parser import DataArguments, ModelArguments
@@ -18,6 +19,7 @@ import transformers
 import datasets
 import logging
 import wandb
+import shutil
 import torch
 import os
 
@@ -56,12 +58,19 @@ class Privacy_GLUE_Pipeline(ABC):
             data = load_policy_ie_b(task_dir)
         elif self.data_args.task == "policy_qa":
             data = load_policy_qa(task_dir)
-        elif self.data_args.task == "privacy_qa":
+        elif self.data_args.task == "privacy_qa":  # pragma: no branch
             data = load_privacy_qa(task_dir)
 
         return data
 
-    def _create_run_dir(self) -> None:
+    def _init_run_dir(self) -> None:
+        if (
+            os.path.exists(self.train_args.output_dir)
+            and self.train_args.overwrite_output_dir
+        ):
+            # delete run directory if it exists
+            shutil.rmtree(self.train_args.output_dir)
+
         # create output_dir if it does not exit
         os.makedirs(self.train_args.output_dir, exist_ok=True)
 
@@ -105,7 +114,7 @@ class Privacy_GLUE_Pipeline(ABC):
     def _dump_misc_args(self) -> None:
         # dump miscellaneous arguments
         torch.save(
-            {"model_args": self.model_args, "data_args": self.data_args},
+            {"data_args": self.data_args, "model_args": self.model_args},
             os.path.join(self.train_args.output_dir, "misc_args.bin"),
         )
 
@@ -133,17 +142,17 @@ class Privacy_GLUE_Pipeline(ABC):
         # detect last checkpoint if necessary
         if self.train_args.do_train and not self.train_args.overwrite_output_dir:
             # use upstream function for detection
-            self.checkpoint = get_last_checkpoint(self.train_args.output_dir)
+            self.last_checkpoint = get_last_checkpoint(self.train_args.output_dir)
 
             # check if checkpoint exists
-            if self.checkpoint is not None:
+            if self.last_checkpoint is not None:
                 self.logger.warning(
-                    "Checkpoint detected, resuming training from %s. "
-                    "To avoid this behavior, change --output_dir or "
-                    "add --overwrite_output_dir to train from scratch" % self.checkpoint
+                    "Checkpoint detected, resuming training from "
+                    f"{self.last_checkpoint}. To avoid this behavior, change "
+                    "--output_dir or add --overwrite_output_dir to train from scratch"
                 )
         else:
-            self.checkpoint = None
+            self.last_checkpoint = None
 
     def _init_wandb_run(self) -> None:
         if "wandb" in self.train_args.report_to:
@@ -155,14 +164,22 @@ class Privacy_GLUE_Pipeline(ABC):
                 group=self.model_args.wandb_group_id,
                 project=f"privacyGLUE-{self.data_args.task}",
                 reinit=True,
-                resume=True if self.checkpoint else None,
+                resume=True if self.last_checkpoint else None,
             )
 
+    def _clean_checkpoint_dirs(self) -> None:
+        if self.model_args.do_clean and self.train_args.do_train:
+            for checkpoint in glob(
+                os.path.join(self.train_args.output_dir, "checkpoint*")
+            ):
+                shutil.rmtree(checkpoint)
+
     def _save_success_file(self) -> None:
-        with open(
-            os.path.join(self.train_args.output_dir, self.success_file), "w"
-        ) as output_file_stream:
-            output_file_stream.write("%s\n" % 0)
+        if self.train_args.do_train:
+            with open(
+                os.path.join(self.train_args.output_dir, self.success_file), "w"
+            ) as output_file_stream:
+                output_file_stream.write("0\n")
 
     def _clean_loggers(self) -> None:
         datasets.utils.logging.get_logger().handlers = []
@@ -201,7 +218,7 @@ class Privacy_GLUE_Pipeline(ABC):
         pass
 
     def run_start(self) -> None:
-        self._create_run_dir()
+        self._init_run_dir()
         self._init_root_logger()
         self._init_third_party_loggers()
         self._check_for_success_file()
@@ -219,6 +236,7 @@ class Privacy_GLUE_Pipeline(ABC):
         self._run_train_loop()
 
     def run_end(self) -> None:
+        self._clean_checkpoint_dirs()
         self._save_success_file()
 
     def run_finally(self) -> None:
