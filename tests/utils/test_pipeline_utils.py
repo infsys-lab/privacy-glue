@@ -395,17 +395,32 @@ def test__init_wandb_run(report_to, mocked_arguments, mocker):
         wandb_init.assert_not_called()
 
 
-def test__save_success_file(mocked_arguments_with_tmp_path, mocker):
+@pytest.mark.parametrize(
+    "do_train",
+    [True, False],
+)
+def test__save_success_file(do_train, mocked_arguments_with_tmp_path, mocker):
     # create mocked pipeline class
-    mocked_pipeline_with_tmp_path = Mocked_Pipeline(*mocked_arguments_with_tmp_path())
+    mocked_pipeline_with_tmp_path = Mocked_Pipeline(
+        *mocked_arguments_with_tmp_path(do_train=do_train)
+    )
 
     # execute relevant pipeline method
     mocked_pipeline_with_tmp_path._save_success_file()
 
     # make assertion
-    assert os.path.exists(
-        os.path.join(mocked_pipeline_with_tmp_path.train_args.output_dir, ".success")
-    )
+    if do_train:
+        assert os.path.exists(
+            os.path.join(
+                mocked_pipeline_with_tmp_path.train_args.output_dir, ".success"
+            )
+        )
+    else:
+        assert not os.path.exists(
+            os.path.join(
+                mocked_pipeline_with_tmp_path.train_args.output_dir, ".success"
+            )
+        )
 
 
 @pytest.mark.parametrize(

@@ -166,10 +166,11 @@ class Privacy_GLUE_Pipeline(ABC):
             )
 
     def _save_success_file(self) -> None:
-        with open(
-            os.path.join(self.train_args.output_dir, self.success_file), "w"
-        ) as output_file_stream:
-            output_file_stream.write("0\n")
+        if self.train_args.do_train:
+            with open(
+                os.path.join(self.train_args.output_dir, self.success_file), "w"
+            ) as output_file_stream:
+                output_file_stream.write("0\n")
 
     def _clean_loggers(self) -> None:
         datasets.utils.logging.get_logger().handlers = []
