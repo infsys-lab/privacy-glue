@@ -30,20 +30,28 @@ def test_load_policy_qa():
         expected = sorted(
             [
                 (
-                    "some_id",
+                    f"{split}_id_1",
                     f"{split}.com",
                     f"{split} answer for PolicyQA",
-                    f"{split} question for PolicyQA?",
-                    (0,),
-                    (f"{split} answer for PolicyQA",),
+                    f"{split} question for PolicyQA 1?",
+                    (0, len(split) + 1),
+                    (f"{split} answer", "answer for PolicyQA"),
                 ),
                 (
-                    "another_id",
+                    f"{split}_id_2",
+                    f"{split}.com",
+                    f"{split} answer for PolicyQA",
+                    f"{split} question for PolicyQA 2?",
+                    (0, len(split) + 1),
+                    (f"{split}", "answer"),
+                ),
+                (
+                    f"{split}_id_3",
                     f"{split}.com",
                     f"another {split} answer for PolicyQA",
-                    f"another {split} question for PolicyQA?",
-                    (0,),
-                    (f"another {split} answer for PolicyQA",),
+                    f"another {split} question for PolicyQA 3?",
+                    (8,),
+                    (f"{split} answer",),
                 ),
             ]
         )
