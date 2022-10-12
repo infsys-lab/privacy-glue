@@ -7,13 +7,32 @@
         {
           "qas": [
             {
-              "question": "train question for PolicyQA?",
+              "question": "train question for PolicyQA 1?",
               "type": "Type-1|||Type-2",
-              "id": "some_id",
+              "id": "train_id_1",
               "answers": [
                 {
-                  "text": "train answer for PolicyQA",
+                  "text": "train answer",
                   "answer_start": 0
+                },
+                {
+                  "text": "answer for PolicyQA",
+                  "answer_start": 6
+                }
+              ]
+            },
+            {
+              "question": "train question for PolicyQA 2?",
+              "type": "Type-1|||Type-2",
+              "id": "train_id_2",
+              "answers": [
+                {
+                  "text": "train",
+                  "answer_start": 0
+                },
+                {
+                  "text": "answer",
+                  "answer_start": 6
                 }
               ]
             }
@@ -27,13 +46,13 @@
         {
           "qas": [
             {
-              "question": "another train question for PolicyQA?",
+              "question": "another train question for PolicyQA 3?",
               "type": "Type-1|||Type-2",
-              "id": "another_id",
+              "id": "train_id_3",
               "answers": [
                 {
-                  "text": "another train answer for PolicyQA",
-                  "answer_start": 0
+                  "text": "train answer",
+                  "answer_start": 8
                 }
               ]
             }
@@ -43,7 +62,7 @@
           "summary": [
             "another summary"
           ]
-        } 
+        }
       ]
     }
   ]
