@@ -119,6 +119,34 @@ class DataArguments:
         default=None,
         metadata={"help": "The number of processes to use for the preprocessing."},
     )
+    max_seq_length: int = field(
+        default=512,
+        metadata={
+            "help": (
+                "The maximum total input sequence length after tokenization. "
+                "Sequences longer than this will be truncated, sequences "
+                "shorter will be padded."
+            )
+        },
+    )
+    pad_to_max_length: bool = field(
+        default=True,
+        metadata={
+            "help": (
+                "Whether to pad all samples to `max_seq_length`. "
+                "If False, will pad the samples dynamically when "
+                "batching to the maximum length in the batch "
+                "(which can be faster on GPU but will be slower on TPU)."
+            )
+        },
+    )
+    doc_stride: int = field(
+        default=128,
+        metadata={
+            "help": "When splitting up a long document into chunks, "
+            "how much stride to take between chunks."
+        },
+    )
     max_train_samples: Optional[int] = field(
         default=None,
         metadata={
@@ -138,6 +166,23 @@ class DataArguments:
         metadata={
             "help": "For debugging purposes or quicker training, truncate the "
             "number of prediction examples to this value if set"
+        },
+    )
+    n_best_size: int = field(
+        default=20,
+        metadata={
+            "help": "PolicyQA: The total number of n-best predictions to generate when "
+            "looking for an answer."
+        },
+    )
+    max_answer_length: int = field(
+        default=30,
+        metadata={
+            "help": (
+                "PolicyQA: The maximum length of an answer that can be generated. "
+                "This is needed because the start and end predictions "
+                "are not conditioned on one another."
+            )
         },
     )
 
