@@ -105,7 +105,7 @@ class Privacy_GLUE_Pipeline(ABC):
             and self.train_args.do_train
         ):
             message = (
-                "%s file found; therefore training already complete" % self.success_file
+                f"{self.success_file} file found; therefore training already complete"
             )
             self.logger.info(message)
             raise SuccessFileFoundException(message)
@@ -170,7 +170,7 @@ class Privacy_GLUE_Pipeline(ABC):
         with open(
             os.path.join(self.train_args.output_dir, self.success_file), "w"
         ) as output_file_stream:
-            output_file_stream.write("%s\n" % 0)
+            output_file_stream.write("0\n")
 
     def _clean_loggers(self) -> None:
         datasets.utils.logging.get_logger().handlers = []

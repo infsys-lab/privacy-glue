@@ -17,7 +17,7 @@ def load_opp_115(directory: str) -> datasets.DatasetDict:
     for split in splits:
         # read CSV file corresponding to split
         temp_df = pd.read_csv(
-            os.path.join(directory, "%s_dataset.csv" % split),
+            os.path.join(directory, f"{split}_dataset.csv"),
             header=None,
             names=["text", "label"],
         )
