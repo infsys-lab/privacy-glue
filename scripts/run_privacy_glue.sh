@@ -64,28 +64,62 @@ parser() {
       WANDB="wandb"
       ;;
     --model_name_or_path)
-      shift
-      MODEL_NAME_OR_PATH="$1"
+      if [[ -n "$2" ]]; then
+        shift
+        MODEL_NAME_OR_PATH="$1"
+      else
+        {
+          printf "%s\n\n" "Missing --model_name_or_path argument"
+          usage
+        } >&2
+        exit 1
+      fi
       ;;
     --num_workers)
-      shift
-      NUM_WORKERS="$1"
+      if [[ -n "$2" ]]; then
+        shift
+        NUM_WORKERS="$1"
+      else
+        {
+          printf "%s\n\n" "Missing --num_workers argument"
+          usage
+        } >&2
+        exit 1
+      fi
       ;;
     --task)
-      shift
-      TASK="$1"
+      if [[ -n "$2" ]]; then
+        shift
+        TASK="$1"
+      else
+        {
+          printf "%s\n\n" "Missing --task argument"
+          usage
+        } >&2
+        exit 1
+      fi
       ;;
     --cuda_visible_devices)
-      shift
-      CUDA_VISIBLE_DEVICES="$1"
+      if [[ -n "$2" ]]; then
+        shift
+        CUDA_VISIBLE_DEVICES="$1"
+      else
+        {
+          printf "%s\n\n" "Missing --cuda_visible_devices argument"
+          usage
+        } >&2
+        exit 1
+      fi
       ;;
     -h | --help)
       usage
       exit 0
       ;;
     *)
-      printf "%s\n" "Unknown option $1"
-      usage
+      {
+        printf "%s\n\n" "Unknown option $1"
+        usage
+      } >&2
       exit 1
       ;;
     esac
