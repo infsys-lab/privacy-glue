@@ -295,7 +295,7 @@ def test__log_starting_arguments(mocked_arguments, mocker):
     mocked_pipeline._log_starting_arguments()
 
     # make assertion
-    logger.info.assert_called_once()
+    logger.info.assert_called()
 
 
 @pytest.mark.parametrize(

@@ -118,20 +118,19 @@ class Privacy_GLUE_Pipeline(ABC):
         )
 
     def _log_starting_arguments(self) -> None:
-        # log on each process the small summary
+        # log summary and arguments in each process
         self.logger.info(
             (
-                "Process rank: %s, device: %s, n_gpu: %s, distributed training: %s, "
-                "16-bits training: %s"
-            )
-            % (
-                self.train_args.local_rank,
-                self.train_args.device,
-                self.train_args.n_gpu,
-                bool(self.train_args.local_rank != -1),
-                self.train_args.fp16,
+                f"Process rank: {self.train_args.local_rank}, "
+                f"device: {self.train_args.device}, "
+                f"n_gpu: {self.train_args.n_gpu}, "
+                f"distributed training: {bool(self.train_args.local_rank != -1)}, "
+                f"16-bits training: {self.train_args.fp16}"
             )
         )
+        self.logger.info(f"Data arguments: {self.data_args}")
+        self.logger.info(f"Model arguments: {self.model_args}")
+        self.logger.info(f"Training arguments: {self.train_args}")
 
     def _set_global_seeds(self) -> None:
         # set seed before initializing model
