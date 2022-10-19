@@ -79,7 +79,7 @@ class ModelArguments:
         default=5, metadata={"help": "Number of random seed iterations to run"}
     )
     early_stopping_patience: int = field(
-        default=3, metadata={"help": "Early stopping patience value"}
+        default=5, metadata={"help": "Early stopping patience value"}
     )
     do_summarize: bool = field(
         default=False, metadata={"help": "Summarize over all random seeds"}
@@ -135,6 +135,27 @@ class DataArguments:
         metadata={
             "help": "For debugging purposes or quicker training, truncate the "
             "number of prediction examples to this value if set"
+        },
+    )
+    max_seq_length: int = field(
+        default=512,
+        metadata={
+            "help": (
+                "The maximum total input sequence length after tokenization. "
+                "Sequences longer than this will be truncated, sequences "
+                "shorter will be padded."
+            )
+        },
+    )
+    pad_to_max_length: bool = field(
+        default=True,
+        metadata={
+            "help": (
+                "Whether to pad all samples to `max_seq_length`. "
+                "If False, will pad the samples dynamically when "
+                "batching to the maximum length in the batch "
+                "(which can be faster on GPU but will be slower on TPU)."
+            )
         },
     )
 
