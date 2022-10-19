@@ -21,10 +21,10 @@ def get_mocked_arguments(
     data_dir="/tmp/data",
     model_name_or_path="bert-base-uncased",
     do_train=True,
-    do_summarize=True,
     do_clean=True,
+    do_summarize=True,
     random_seed_iterations=5,
-    wandb_group_id="test",
+    wandb_group_id="experiment_test",
     output_dir="/tmp/runs",
     overwrite_output_dir=False,
     log_level="info",
@@ -34,30 +34,36 @@ def get_mocked_arguments(
     n_gpu=0,
     fp16=False,
     seed=0,
+    with_experiment_args=False,
 ):
-    return (
-        SimpleNamespace(task=task, data_dir=data_dir),
-        SimpleNamespace(
-            model_name_or_path=model_name_or_path,
-            do_summarize=do_summarize,
-            do_clean=do_clean,
-            random_seed_iterations=random_seed_iterations,
-            wandb_group_id=wandb_group_id,
-        ),
-        SimpleNamespace(
-            do_train=do_train,
-            output_dir=output_dir,
-            overwrite_output_dir=overwrite_output_dir,
-            log_level=logging.getLevelName(log_level.upper()),
-            get_process_log_level=lambda: logging.getLevelName(log_level.upper()),
-            report_to=report_to,
-            local_rank=local_rank,
-            device=device,
-            n_gpu=n_gpu,
-            fp16=fp16,
-            seed=seed,
-        ),
+    data_args = SimpleNamespace(task=task, data_dir=data_dir)
+    model_args = SimpleNamespace(
+        model_name_or_path=model_name_or_path,
+        do_clean=do_clean,
+        wandb_group_id=wandb_group_id,
     )
+    train_args = SimpleNamespace(
+        do_train=do_train,
+        output_dir=output_dir,
+        overwrite_output_dir=overwrite_output_dir,
+        log_level=logging.getLevelName(log_level.upper()),
+        get_process_log_level=lambda: logging.getLevelName(log_level.upper()),
+        report_to=report_to,
+        local_rank=local_rank,
+        device=device,
+        n_gpu=n_gpu,
+        fp16=fp16,
+        seed=seed,
+    )
+    experiment_args = SimpleNamespace(
+        random_seed_iterations=random_seed_iterations, do_summarize=do_summarize
+    )
+    all_args = (
+        (data_args, model_args, train_args)
+        if not with_experiment_args
+        else (data_args, model_args, train_args, experiment_args)
+    )
+    return all_args
 
 
 @pytest.fixture

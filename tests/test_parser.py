@@ -1,7 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from parser import ModelArguments, DataArguments, TrainingArguments, get_parser
+from parser import (
+    ModelArguments,
+    DataArguments,
+    TrainingArguments,
+    ExperimentArguments,
+    get_parser,
+)
 import tempfile
 import pytest
 
@@ -65,4 +71,5 @@ def test_get_parser():
         DataArguments,
         ModelArguments,
         TrainingArguments,
+        ExperimentArguments,
     ]
