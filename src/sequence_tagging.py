@@ -3,67 +3,24 @@
 
 import os
 
-from typing import List, Dict
-
 import logging
-import torch
-import torch.nn as nn
 import numpy as np
 import evaluate
-import datasets
 from transformers import (
-    AutoModel,
     AutoTokenizer,
     Trainer,
     TrainingArguments,
     EvalPrediction,
     EarlyStoppingCallback,
     DataCollatorWithPadding,
+    default_data_collator,
 )
 
 from parser import DataArguments, ModelArguments
 from utils.pipeline_utils import Privacy_GLUE_Pipeline
+from utils.model_utils import MultiTaskModel
 
 logger = logging.getLogger(__name__)
-
-TASK2SUBTASKS = {
-    "piextract": {
-        "tasks": ["COLLECT", "NOT_COLLECT", "SHARE", "NOT_SHARE"],
-        "labels": [
-            ["SHARE"],
-            ["COLLECT"],
-            ["NOT_COLLECT"],
-            ["NOT_SHARE"],
-        ],
-    },
-    "policy_ie_b": {
-        "tasks": ["type-I", "type-II"],
-        "labels": [
-            [
-                "data-protector",
-                "data-protected",
-                "data-collector",
-                "data-collected",
-                "data-receiver",
-                "data-retained",
-                "data-holder",
-                "data-provider",
-                "data-sharer",
-                "data-shared",
-                "storage-place",
-                "retention-period",
-                "protect-against",
-                "action",
-            ],
-            [
-                "purpose-argument",
-                "polarity",
-                "method",
-                "condition-argument",
-            ],
-        ],
-    },
-}
 
 
 class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
@@ -79,27 +36,34 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
         training_args: TrainingArguments,
     ) -> None:
         super().__init__(data_args, model_args, training_args)
+        if self.data_args.task == "piextract":
+            from tasks.piextract import SUBTASKS as subtasks
+        elif self.data_args.task == "policy_ie_b":
+            from tasks.policy_ie_b import SUBTASKS as subtasks
+        else:
+            logger.warn(
+                f"Task: {self.data_args.task} is not an instance of \
+                multitask learning problem!"
+            )
+            subtasks = [self.data_args.task]
 
-        # information about label names
-        self.subtasks = TASK2SUBTASKS[data_args.task]["tasks"]
-        self.general_labels = TASK2SUBTASKS[data_args.task]["labels"]
-        self.label_names = {
-            task: ["O"] + [f"{pre}-{label}" for pre in ["B", "I"] for label in labels]
-            for task, labels in zip(self.subtasks, self.general_labels)
-        }
+        self.subtasks = subtasks
 
     def _retrieve_data(self) -> None:
-        data = self._get_data()
+        self.raw_datasets = self._get_data()
         if self.train_args.do_train:
-            self.train_dataset = data["train"]
+            self.train_dataset = self.raw_datasets["train"]
 
         if self.train_args.do_eval:
-            self.eval_dataset = data["validation"]
+            self.eval_dataset = self.raw_datasets["validation"]
 
         if self.train_args.do_predict:
-            self.predict_dataset = data["test"]
+            self.predict_dataset = self.raw_datasets["test"]
 
     def _load_pretrained_model_and_tokenizer(self) -> None:
+        if self.train_args.do_train:
+            self.label_names = self.train_dataset.features["tags"].feature.names
+
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.model_args.tokenizer_name
             if self.model_args.tokenizer_name
@@ -113,33 +77,8 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
             self.model_args.model_name_or_path, self.subtasks, self.label_names
         )
 
-    def _form_multitask_dataset(self, ds):
-        # only one label per example, split the data into multiple tasks
-        multi_trainset = {"tokens": [], "ner_tags": [], "subtask": []}
-        for example in ds:
-            for i, st in enumerate(self.subtasks):
-                multi_trainset["tokens"].append(example["tokens"])
-                multi_trainset["ner_tags"].append(
-                    [tag[i] for tag in example["ner_tags"]]
-                )
-                multi_trainset["subtask"].append(st)
-
-        multi_trainset = datasets.Dataset.from_dict(multi_trainset)
-        return multi_trainset
-
     def _apply_preprocessing(self) -> None:
-        # expand the compressed labels
-        if self.train_args.do_train:
-            self.train_dataset = self._form_multitask_dataset(self.train_dataset)
-            self.train_dataset.shuffle(42)
-        if self.train_args.do_eval:
-            self.eval_dataset = self._form_multitask_dataset(self.eval_dataset)
-        if self.train_args.do_predict:
-            self.predict_dataset = self._form_multitask_dataset(self.predict_dataset)
-
         self.data_args.label_all_tokens = False
-        # Padding strategy
-        padding = "max_length"
         # Map that sends B-Xxx label to its I-Xxx counterpart
         b_to_i_label = {}
         for st in self.subtasks:
@@ -159,15 +98,26 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
             # Tokenize the texts
             tokenized_inputs = self.tokenizer(
                 examples["tokens"],
-                padding=padding,
+                padding="max_length" if self.data_args.pad_to_max_length else False,
+                max_length=self.data_args.max_seq_length,
                 truncation=True,
                 is_split_into_words=True,
             )
+            # Warn if seqeuence length choice is not logical
+            if self.data_args.max_seq_length > self.tokenizer.model_max_length:
+                self.logger.warning(
+                    f"The max_seq_length passed ({self.data_args.max_seq_length}) "
+                    "is larger than the maximum length for the "
+                    f"model ({self.tokenizer.model_max_length}). "
+                    f"Using max_seq_length={self.tokenizer.model_max_length}"
+                )
+            self.max_seq_length = min(
+                self.data_args.max_seq_length, self.tokenizer.model_max_length
+            )
+            # transform labels to label_ids
             labels = []
             task_ids = []
-            for i, (st, label) in enumerate(
-                zip(examples["subtask"], examples["ner_tags"])
-            ):
+            for i, (st, label) in enumerate(zip(examples["subtask"], examples["tags"])):
                 task_id = self.subtasks.index(st)
                 word_ids = tokenized_inputs.word_ids(batch_index=i)
                 previous_word_idx = None
@@ -224,7 +174,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
                     load_from_cache_file=not self.data_args.overwrite_cache,
                     num_proc=self.data_args.preprocessing_num_workers,
                     desc="Running tokenizer on train dataset",
-                    remove_columns=["tokens", "ner_tags", "subtask"],
+                    remove_columns=["tokens", "tags", "subtask"],
                 )
 
         if self.train_args.do_eval:
@@ -242,7 +192,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
                     load_from_cache_file=not self.data_args.overwrite_cache,
                     num_proc=self.data_args.preprocessing_num_workers,
                     desc="Running tokenizer on validation dataset",
-                    remove_columns=["tokens", "ner_tags", "subtask"],
+                    remove_columns=["tokens", "tags", "subtask"],
                 )
 
         if self.train_args.do_predict:
@@ -262,18 +212,18 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
                     load_from_cache_file=not self.data_args.overwrite_cache,
                     num_proc=self.data_args.preprocessing_num_workers,
                     desc="Running tokenizer on prediction dataset",
-                    remove_columns=["tokens", "ner_tags", "subtask"],
+                    remove_columns=["tokens", "tags", "subtask"],
                 )
-        # Data collator will default to DataCollatorWithPadding, so we change it if we
-        # already did the padding.
-        # if self.data_args.pad_to_max_length:
-        #    data_collator = default_data_collator
-        if self.train_args.fp16:
-            self.data_collator = DataCollatorWithPadding(
-                self.tokenizer, pad_to_multiple_of=8
+
+        # datacollator
+        self.data_collator = (
+            default_data_collator
+            if self.data_args.pad_to_max_length
+            else DataCollatorWithPadding(
+                self.tokenizer,
+                pad_to_multiple_of=8 if self.train_args.fp16 else None,
             )
-        else:
-            self.data_collator = None
+        )
 
     def _set_metrics(self) -> None:
         # Get the metric function
@@ -292,6 +242,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
             for i, (prediction, label) in enumerate(zip(predictions, labels)):
                 true_label_vec = []
                 true_pred_vec = []
+                # get the subtasks according to mod of index
                 task_name = self.subtasks[i % len(self.subtasks)]
                 for (pr, la) in zip(prediction, label):
                     if la != -100:
@@ -345,19 +296,11 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
 
         # Training
         if self.train_args.do_train:
-            checkpoint = None
-            if self.train_args.resume_from_checkpoint is not None:
-                checkpoint = self.train_args.resume_from_checkpoint
-            # elif last_checkpoint is not None:
-            #    checkpoint = last_checkpoint
-            train_result = self.trainer.train(resume_from_checkpoint=checkpoint)
-            metrics = train_result.metrics
-            max_train_samples = (
-                self.data_args.max_train_samples
-                if self.data_args.max_train_samples is not None
-                else len(self.train_dataset)
+            train_result = self.trainer.train(
+                resume_from_checkpoint=self.last_checkpoint
             )
-            metrics["train_samples"] = min(max_train_samples, len(self.train_dataset))
+            metrics = train_result.metrics
+            metrics["train_samples"] = len(self.train_dataset)
 
             self.trainer.save_model()  # Saves the tokenizer too for easy upload
 
@@ -369,15 +312,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
         if self.train_args.do_eval:
             logger.info("*** Evaluate ***")
             self.eval_metrics = self.trainer.evaluate(eval_dataset=self.eval_dataset)
-
-            max_eval_samples = (
-                self.data_args.max_eval_samples
-                if self.data_args.max_eval_samples is not None
-                else len(self.eval_dataset)
-            )
-            self.eval_metrics["eval_samples"] = min(
-                max_eval_samples, len(self.eval_dataset)
-            )
+            self.eval_metrics["eval_samples"] = len(self.eval_dataset)
 
             self.trainer.log_metrics("eval", self.eval_metrics)
             self.trainer.save_metrics("eval", self.eval_metrics)
@@ -388,15 +323,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
             predictions, labels, self.predict_metrics = self.trainer.predict(
                 self.predict_dataset, metric_key_prefix="predict"
             )
-
-            max_predict_samples = (
-                self.data_args.max_predict_samples
-                if self.data_args.max_predict_samples is not None
-                else len(self.predict_dataset)
-            )
-            self.predict_metrics["predict_samples"] = min(
-                max_predict_samples, len(self.predict_dataset)
-            )
+            self.predict_metrics["predict_samples"] = len(self.predict_dataset)
 
             self.trainer.log_metrics("predict", self.predict_metrics)
             self.trainer.log(self.predict_metrics)
@@ -414,112 +341,3 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
                     writer.write("index\tprediction\ttrue_label\n")
                     for index, (item, true_l) in enumerate(zip(predictions, labels)):
                         writer.write(f"{index}\t{item}\t{true_l}\n")
-
-
-# adapted from
-# https://towardsdatascience.com/
-# how-to-create-and-train-a-multi-task-transformer-model-18c54a146240
-class MultiTaskModel(nn.Module):
-    def __init__(self, encoder_name_or_path, tasks: List, label_names: Dict):
-        super().__init__()
-
-        self.encoder = AutoModel.from_pretrained(encoder_name_or_path)
-
-        self.output_heads = nn.ModuleDict()
-        # one model several heads
-        for task_id, task in enumerate(tasks):
-            decoder = TokenClassificationHead(
-                self.encoder.config.hidden_size, len(label_names[task])
-            )
-            # ModuleDict requires keys to be strings
-            self.output_heads[str(task_id)] = decoder
-
-    def forward(
-        self,
-        input_ids=None,
-        attention_mask=None,
-        token_type_ids=None,
-        position_ids=None,
-        head_mask=None,
-        inputs_embeds=None,
-        labels=None,
-        task_ids=None,
-        **kwargs,
-    ):
-        outputs = self.encoder(
-            input_ids=input_ids,
-            attention_mask=attention_mask,
-            token_type_ids=token_type_ids,
-            position_ids=position_ids,
-            head_mask=head_mask,
-            inputs_embeds=inputs_embeds,
-        )
-
-        sequence_output, pooled_output = outputs[:2]
-
-        unique_task_ids_list = torch.unique(task_ids).tolist()
-
-        loss_list = []
-        logits_list = []
-        for unique_task_id in unique_task_ids_list:
-            task_id_filter = task_ids == unique_task_id
-            logits, task_loss = self.output_heads[str(unique_task_id)].forward(
-                sequence_output[task_id_filter],
-                pooled_output[task_id_filter],
-                labels=None if labels is None else labels[task_id_filter],
-                attention_mask=attention_mask[task_id_filter],
-            )
-
-            if labels is not None:
-                loss_list.append(task_loss)
-
-            logits_list.append(logits[0])
-        # logits are only used for eval. and in case of eval the batch is not multi task
-        # For training only the loss is used
-        outputs = (torch.stack(logits_list), outputs[2:])
-
-        if len(loss_list) > 0:
-            loss = torch.stack(loss_list)
-            outputs = (loss.mean(),) + outputs
-        return outputs
-
-
-class TokenClassificationHead(nn.Module):
-    def __init__(self, hidden_size, num_labels, dropout_p=0.1):
-        super().__init__()
-        self.dropout = nn.Dropout(dropout_p)
-        self.classifier = nn.Linear(hidden_size, num_labels)
-        self.num_labels = num_labels
-
-        self._init_weights()
-
-    def _init_weights(self):
-        self.classifier.weight.data.normal_(mean=0.0, std=0.02)
-        if self.classifier.bias is not None:
-            self.classifier.bias.data.zero_()
-
-    def forward(
-        self, sequence_output, pooled_output, labels=None, attention_mask=None, **kwargs
-    ):
-        sequence_output_dropout = self.dropout(sequence_output)
-        logits = self.classifier(sequence_output_dropout)
-
-        loss = None
-        if labels is not None:
-            loss_fct = torch.nn.CrossEntropyLoss()
-
-            labels = labels.long()
-
-            # Only keep active parts of the loss
-            if attention_mask is not None:
-                active_loss = attention_mask.view(-1) == 1
-                active_logits = logits.view(-1, self.num_labels)
-                active_labels = torch.where(
-                    active_loss,
-                    labels.view(-1),
-                    torch.tensor(loss_fct.ignore_index).type_as(labels),
-                )
-                loss = loss_fct(active_logits, active_labels)
-            else:
-                loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
-        return logits, loss
