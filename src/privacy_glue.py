@@ -53,8 +53,9 @@ def main() -> None:
             ]:
                 raise NotImplementedError
             elif data_args.task in ["piextract", "policy_ie_b"]:
-                pl = Sequence_Tagging_Pipeline(data_args, model_args, train_args)
-                pl.run_pipeline()
+                Sequence_Tagging_Pipeline(
+                    data_args, model_args, train_args
+                ).run_pipeline()
             elif data_args.task == "policy_qa":
                 raise NotImplementedError
 
