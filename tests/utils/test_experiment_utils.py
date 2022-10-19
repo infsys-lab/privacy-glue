@@ -1,14 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from itertools import chain, repeat
 from utils.experiment_utils import Privacy_GLUE_Experiment_Manager
 import pytest
 import os
-
-
-def repeat_elements_n_times(input_list, n):
-    return list(chain.from_iterable(repeat(element, n) for element in input_list))
 
 
 def test__init__():
