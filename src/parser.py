@@ -33,6 +33,16 @@ TASKS = [
 
 
 @dataclass
+class ExperimentArguments:
+    random_seed_iterations: int = field(
+        default=5, metadata={"help": "Number of random seed iterations to run"}
+    )
+    do_summarize: bool = field(
+        default=False, metadata={"help": "Summarize over all random seeds"}
+    )
+
+
+@dataclass
 class ModelArguments:
     model_name_or_path: str = field(
         metadata={
@@ -75,14 +85,8 @@ class ModelArguments:
             "tokenizers library) or not"
         },
     )
-    random_seed_iterations: int = field(
-        default=5, metadata={"help": "Number of random seed iterations to run"}
-    )
     early_stopping_patience: int = field(
         default=3, metadata={"help": "Early stopping patience value"}
-    )
-    do_summarize: bool = field(
-        default=False, metadata={"help": "Summarize over all random seeds"}
     )
     do_clean: bool = field(
         default=False, metadata={"help": "Clean all old checkpoints after training"}
@@ -149,5 +153,6 @@ def get_parser() -> HfArgumentParser:
             DataClassType(DataArguments),
             DataClassType(ModelArguments),
             DataClassType(TrainingArguments),
+            DataClassType(ExperimentArguments),
         )
     )
