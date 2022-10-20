@@ -86,7 +86,7 @@ class ModelArguments:
         },
     )
     early_stopping_patience: int = field(
-        default=3, metadata={"help": "Early stopping patience value"}
+        default=5, metadata={"help": "Early stopping patience value"}
     )
     do_clean: bool = field(
         default=False, metadata={"help": "Clean all old checkpoints after training"}
