@@ -13,11 +13,9 @@ def load_privacy_qa(directory: str) -> datasets.DatasetDict:
     train_df = train_df[["Query", "Segment", "Label"]].rename(
         columns={"Query": "question", "Segment": "text", "Label": "label"}
     )
+
     # collect information about label
-    unique_labels = list(set(train_df["label"]))
-    label_info = datasets.ClassLabel(
-        num_classes=len(unique_labels), names=unique_labels
-    )
+    label_info = datasets.ClassLabel(names=["Irrelevant", "Relevant"])
     train_dataset = datasets.Dataset.from_pandas(train_df, preserve_index=False)
 
     # work on the test dataset
@@ -39,8 +37,14 @@ def load_privacy_qa(directory: str) -> datasets.DatasetDict:
         }
     )
 
-    # distribute info about labels
+    # map labels to integers and add feature information
     for split in ["train", "validation", "test"]:
+        combined[split] = combined[split].map(
+            lambda examples: {
+                "label": [label_info.str2int(label) for label in examples["label"]]
+            },
+            batched=True,
+        )
         combined[split].features["label"] = label_info
 
     return combined
