@@ -55,7 +55,11 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
 
     def _retrieve_data(self) -> None:
         data = self._get_data()
-        self.label_names = data["train"].features["label"].names
+        self.label_names = (
+            data["train"].features["label"].names
+            if self.problem_type == "single_label"
+            else data["train"].features["label"].feature.names
+        )
 
         if self.train_args.do_train:
             self.train_dataset = data["train"]
