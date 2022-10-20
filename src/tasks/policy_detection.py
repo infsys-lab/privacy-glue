@@ -23,6 +23,7 @@ def load_policy_detection(directory: str) -> datasets.DatasetDict:
 
     # convert into HF datasets
     dataset = datasets.Dataset.from_pandas(df, preserve_index=False)
+    label_info = datasets.ClassLabel(names=["Not Policy", "Policy"])
 
     # make split using HF datasets internal methods
     train_test_dataset_dict = dataset.train_test_split(test_size=0.3, seed=42)
@@ -36,8 +37,13 @@ def load_policy_detection(directory: str) -> datasets.DatasetDict:
     combined["test"] = train_test_dataset_dict["test"]
 
     # collect and distribute information about label
-    label_info = datasets.ClassLabel(num_classes=2, names=["Policy", "Not Policy"])
     for split in ["train", "validation", "test"]:
+        combined[split] = combined[split].map(
+            lambda examples: {
+                "label": [label_info.str2int(label) for label in examples["label"]]
+            },
+            batched=True,
+        )
         combined[split].features["label"] = label_info
 
     return combined
