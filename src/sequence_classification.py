@@ -84,7 +84,6 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
             cache_dir=self.model_args.cache_dir,
             use_fast=self.model_args.use_fast_tokenizer,
             revision=self.model_args.model_revision,
-            config=self.config,
         )
 
         self.model = AutoModelForSequenceClassification.from_pretrained(
