@@ -229,12 +229,7 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
                 resume_from_checkpoint=self.last_checkpoint
             )
             metrics = train_result.metrics
-            max_train_samples = (
-                self.data_args.max_train_samples
-                if self.data_args.max_train_samples is not None
-                else len(self.train_dataset)
-            )
-            metrics["train_samples"] = min(max_train_samples, len(self.train_dataset))
+            metrics["train_samples"] = len(self.train_dataset)
 
             self.trainer.save_model()  # Saves the tokenizer too for easy upload
 
@@ -247,14 +242,7 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
             logger.info("*** Evaluate ***")
             self.eval_metrics = self.trainer.evaluate(eval_dataset=self.eval_dataset)
 
-            max_eval_samples = (
-                self.data_args.max_eval_samples
-                if self.data_args.max_eval_samples is not None
-                else len(self.eval_dataset)
-            )
-            self.eval_metrics["eval_samples"] = min(
-                max_eval_samples, len(self.eval_dataset)
-            )
+            self.eval_metrics["eval_samples"] = len(self.eval_dataset)
 
             self.trainer.log_metrics("eval", self.eval_metrics)
             self.trainer.save_metrics("eval", self.eval_metrics)
@@ -266,14 +254,7 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
                 self.predict_dataset, metric_key_prefix="predict"
             )
 
-            max_predict_samples = (
-                self.data_args.max_predict_samples
-                if self.data_args.max_predict_samples is not None
-                else len(self.predict_dataset)
-            )
-            self.predict_metrics["predict_samples"] = min(
-                max_predict_samples, len(self.predict_dataset)
-            )
+            self.predict_metrics["predict_samples"] = len(self.predict_dataset)
 
             self.trainer.log_metrics("predict", self.predict_metrics)
             self.trainer.log(self.predict_metrics)
