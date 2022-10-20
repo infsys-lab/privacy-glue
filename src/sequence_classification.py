@@ -125,7 +125,6 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
                     desc="Running tokenizer on train dataset",
                     remove_columns=self.input_keys,
                 )
-                self.train_dataset.set_format("torch")
 
         if self.train_args.do_eval:
             if self.data_args.max_eval_samples is not None:
@@ -143,7 +142,6 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
                     desc="Running tokenizer on validation dataset",
                     remove_columns=self.input_keys,
                 )
-                self.eval_dataset.set_format("torch")
 
         if self.train_args.do_predict:
             if self.data_args.max_predict_samples is not None:
@@ -163,7 +161,6 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
                     desc="Running tokenizer on prediction dataset",
                     remove_columns=self.input_keys,
                 )
-                self.predict_dataset.set_format("torch")
 
     def _set_metrics(self) -> None:
         # Get the metric function
