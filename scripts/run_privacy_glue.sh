@@ -41,7 +41,7 @@ optional arguments:
                           "policy_qa", "privacy_qa", "all"
                           (default: all)
 
-  --wandb                 log metrics and result to wandb
+  --wandb                 log metrics and results to wandb
                           (default: False)
 
   -h, --help              show this help message and exit
