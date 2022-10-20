@@ -22,8 +22,6 @@ import torch
 import os
 
 logger = logging.getLogger(__name__)
-TASK2PROBLEM_TYPE = {"opp_115": "multi_label"}
-TASK2INPUT_KEYS = {"privacy_qa": ["question", "text"]}
 
 
 class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
@@ -32,6 +30,19 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
     of task specific pipeline functions.
     """
 
+    task2problem = {
+        "opp_115": "multi_label",
+        "policy_detection": "single_label",
+        "policy_ie_a": "single_label",
+        "privacy_qa": "single_label",
+    }
+    task2input = {
+        "opp_115": ["text"],
+        "policy_detection": ["text"],
+        "policy_ie_a": ["text"],
+        "privacy_qa": ["question", "text"],
+    }
+
     def __init__(
         self,
         data_args: DataArguments,
@@ -39,8 +50,8 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
         training_args: TrainingArguments,
     ) -> None:
         super().__init__(data_args, model_args, training_args)
-        self.problem_type = TASK2PROBLEM_TYPE.get(self.data_args.task, "single_label")
-        self.input_keys = TASK2INPUT_KEYS.get(self.data_args.task, ["text"])
+        self.problem_type = self.task2problem[self.data_args.task]
+        self.input_keys = self.task2input[self.data_args.task]
 
     def _retrieve_data(self) -> None:
         data = self._get_data()
