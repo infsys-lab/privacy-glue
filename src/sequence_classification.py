@@ -17,6 +17,7 @@ from transformers import (
     Trainer,
     TrainingArguments,
     EarlyStoppingCallback,
+    default_data_collator,
 )
 
 
@@ -160,6 +161,15 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
                     remove_columns=self.input_keys,
                 )
 
+        self.data_collator = (
+            default_data_collator
+            if self.data_args.pad_to_max_length
+            else DataCollatorWithPadding(
+                self.tokenizer,
+                pad_to_multiple_of=8 if self.train_args.fp16 else None,
+            )
+        )
+
     def _set_metrics(self) -> None:
         # Get the metric function
         if self.problem_type == "multi_label":
@@ -189,16 +199,6 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
             return m
 
         self.compute_metrics = compute_f1
-        # Data collator will default to DataCollatorWithPadding, so we change it if we
-        # already did the padding.
-        # if self.data_args.pad_to_max_length:
-        #    data_collator = default_data_collator
-        if self.train_args.fp16:
-            self.data_collator = DataCollatorWithPadding(
-                self.tokenizer, pad_to_multiple_of=8
-            )
-        else:
-            self.data_collator = None
 
     def _run_train_loop(self) -> None:
         # Initialize the Trainer
