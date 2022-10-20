@@ -80,7 +80,7 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
             else self.model_args.model_name_or_path,
             cache_dir=self.model_args.cache_dir,
             revision=self.model_args.model_revision,
-            problem_type=self.problem_type + "_classification",
+            problem_type=f"{self.problem_type}_classification",
             num_labels=len(self.label_names),
             id2label=dict(enumerate(self.label_names)),
             label2id={l: n for n, l in enumerate(self.label_names)},
@@ -90,7 +90,6 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
             self.model_args.tokenizer_name
             if self.model_args.tokenizer_name
             else self.model_args.model_name_or_path,
-            # do_lower_case=self.model_args.do_lower_case,
             cache_dir=self.model_args.cache_dir,
             use_fast=self.model_args.use_fast_tokenizer,
             revision=self.model_args.model_revision,
@@ -102,7 +101,6 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
             config=self.config,
             cache_dir=self.model_args.cache_dir,
             revision=self.model_args.model_revision,
-            # ignore_mismatched_sizes=self.model_args.ignore_mismatched_sizes,
         )
 
     def _apply_preprocessing(self) -> None:
