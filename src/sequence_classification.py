@@ -315,7 +315,6 @@ class Privacy_Qa_Trainer(Trainer):
             raise ValueError("Trainer: training requires a train_dataset.")
 
         data_collator = self.data_collator
-        train_dataset = self.train_dataset.rename_column("label", "labels")
 
         samples_weight = self._get_sample_weights()
         train_sampler = WeightedRandomSampler(
