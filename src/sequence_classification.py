@@ -91,16 +91,27 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
         )
 
     def _apply_preprocessing(self) -> None:
-        padding = False
-
         def preprocess_function(examples):
             args = tuple([examples[key] for key in self.input_keys])
             # Tokenize the texts
             return self.tokenizer(
                 *args,
-                padding=padding,
+                padding="max_length" if self.data_args.pad_to_max_length else False,
+                max_length=self.max_seq_length,
                 truncation=True,
             )
+
+        # Warn if seqeuence length choice is not logical
+        if self.data_args.max_seq_length > self.tokenizer.model_max_length:
+            self.logger.warning(
+                f"The max_seq_length passed ({self.data_args.max_seq_length}) "
+                "is larger than the maximum length for the "
+                f"model ({self.tokenizer.model_max_length}). "
+                f"Using max_seq_length={self.tokenizer.model_max_length}"
+            )
+        self.max_seq_length = min(
+            self.data_args.max_seq_length, self.tokenizer.model_max_length
+        )
 
         if self.train_args.do_train:
             if self.data_args.max_train_samples is not None:
