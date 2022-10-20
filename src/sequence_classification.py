@@ -1,13 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import os
-
-import numpy as np
-import evaluate
-import torch
-import logging
-
 from transformers import (
     AutoConfig,
     AutoModelForSequenceClassification,
@@ -19,14 +12,16 @@ from transformers import (
     EarlyStoppingCallback,
     default_data_collator,
 )
-
-
 from parser import DataArguments, ModelArguments
 from utils.trainer_utils import Weighted_Random_Sampler_Trainer
 from utils.pipeline_utils import Privacy_GLUE_Pipeline
+import numpy as np
+import evaluate
+import logging
+import torch
+import os
 
 logger = logging.getLogger(__name__)
-
 TASK2PROBLEM_TYPE = {"opp_115": "multi_label"}
 TASK2INPUT_KEYS = {"privacy_qa": ["question", "text"]}
 
