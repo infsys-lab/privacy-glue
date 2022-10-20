@@ -18,11 +18,10 @@ from transformers import (
     TrainingArguments,
     EarlyStoppingCallback,
 )
-from torch.utils.data import DataLoader
-from torch.utils.data.sampler import WeightedRandomSampler
 
 
 from parser import DataArguments, ModelArguments
+from utils.trainer_utils import Weighted_Random_Sampler_Trainer
 from utils.pipeline_utils import Privacy_GLUE_Pipeline
 
 logger = logging.getLogger(__name__)
@@ -204,7 +203,7 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
     def _run_train_loop(self) -> None:
         # Initialize the Trainer
         if self.data_args.task == "privacy_qa":
-            this_task_trainer = Privacy_Qa_Trainer
+            this_task_trainer = Weighted_Random_Sampler_Trainer
         else:
             this_task_trainer = Trainer
 
@@ -283,46 +282,3 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
                     writer.write("index\tprediction\ttrue_label\n")
                     for index, (item, true_l) in enumerate(zip(predictions, labels)):
                         writer.write(f"{index}\t{item}\t{true_l}\n")
-
-
-class Privacy_Qa_Trainer(Trainer):
-    """
-    Subclass of Trainer which overrides the get_train_loader function to
-    provide a data loader which samples from the data with a weighted sampler
-    to counteract the very unbalanced dataset of privacy_qa.
-    """
-
-    def _get_sample_weights(self):
-        train_dataset_labels = self.train_dataset.to_pandas().label
-        unique_lables = train_dataset_labels.unique().tolist()
-        samples_count = np.array(
-            [
-                len(train_dataset_labels[train_dataset_labels == label])
-                for label in unique_lables
-            ]
-        )
-        samples_weight = 1 / torch.Tensor(samples_count)
-        samples_weight = torch.Tensor(
-            [
-                samples_weight[unique_lables.index(label)]
-                for label in train_dataset_labels
-            ]
-        )
-        return samples_weight
-
-    def get_train_dataloader(self) -> DataLoader:
-        if self.train_dataset is None:
-            raise ValueError("Trainer: training requires a train_dataset.")
-
-        data_collator = self.data_collator
-
-        samples_weight = self._get_sample_weights()
-        train_sampler = WeightedRandomSampler(
-            samples_weight, len(samples_weight)  # type: ignore
-        )
-        return DataLoader(
-            train_dataset,
-            batch_size=self.args.per_device_train_batch_size,
-            sampler=train_sampler,
-            collate_fn=data_collator,
-        )

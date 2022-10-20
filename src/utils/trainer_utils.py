@@ -14,16 +14,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Subclass of `Trainer` specific to Question-Answering tasks
-Post-processing utilities for question answering.
-"""
 
+import torch
+from torch.utils.data import DataLoader
+from torch.utils.data.sampler import WeightedRandomSampler
 from transformers import Trainer
 from transformers.trainer_utils import PredictionOutput
 
 
 class QuestionAnsweringTrainer(Trainer):
+    """
+    Subclass of `Trainer` specific to Question-Answering tasks
+    Post-processing utilities for question answering.
+    """
+
     def __init__(self, *args, eval_examples=None, post_process_function=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.eval_examples = eval_examples
@@ -128,4 +132,40 @@ class QuestionAnsweringTrainer(Trainer):
             predictions=predictions.predictions,
             label_ids=predictions.label_ids,
             metrics=metrics,
+        )
+
+
+class Weighted_Random_Sampler_Trainer(Trainer):
+    """
+    Subclass of Trainer which overrides the get_train_loader function to
+    provide a data loader which samples from the data with a weighted sampler
+    to counteract the very unbalanced datasets
+    """
+
+    def _get_sample_weights(self):
+        train_dataset_labels = self.train_dataset["label"]
+        unique_labels = sorted(set(train_dataset_labels))
+        samples_count = [train_dataset_labels.count(label) for label in unique_labels]
+        samples_weight = 1 / torch.Tensor(samples_count)
+        samples_weight = torch.Tensor(
+            [
+                samples_weight[unique_labels.index(label)]
+                for label in train_dataset_labels
+            ]
+        )
+        return samples_weight
+
+    def get_train_dataloader(self) -> DataLoader:
+        if self.train_dataset is None:
+            raise ValueError("Trainer: training requires a train_dataset.")
+        data_collator = self.data_collator
+        samples_weight = self._get_sample_weights()
+        train_sampler = WeightedRandomSampler(
+            samples_weight, len(samples_weight)  # type: ignore
+        )
+        return DataLoader(
+            self.train_dataset,
+            batch_size=self.args.per_device_train_batch_size,
+            sampler=train_sampler,
+            collate_fn=data_collator,
         )
