@@ -228,12 +228,9 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
         )
         # Training
         if self.train_args.do_train:
-            checkpoint = None
-            if self.train_args.resume_from_checkpoint is not None:
-                checkpoint = self.train_args.resume_from_checkpoint
-            # elif last_checkpoint is not None:
-            #    checkpoint = last_checkpoint
-            train_result = self.trainer.train(resume_from_checkpoint=checkpoint)
+            train_result = self.trainer.train(
+                resume_from_checkpoint=self.last_checkpoint
+            )
             metrics = train_result.metrics
             max_train_samples = (
                 self.data_args.max_train_samples
