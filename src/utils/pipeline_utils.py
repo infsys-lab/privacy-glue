@@ -133,17 +133,18 @@ class Privacy_GLUE_Pipeline(ABC):
         # detect last checkpoint if necessary
         if self.train_args.do_train and not self.train_args.overwrite_output_dir:
             # use upstream function for detection
-            self.checkpoint = get_last_checkpoint(self.train_args.output_dir)
+            self.last_checkpoint = get_last_checkpoint(self.train_args.output_dir)
 
             # check if checkpoint exists
-            if self.checkpoint is not None:
+            if self.last_checkpoint is not None:
                 self.logger.warning(
                     "Checkpoint detected, resuming training from %s. "
                     "To avoid this behavior, change --output_dir or "
-                    "add --overwrite_output_dir to train from scratch" % self.checkpoint
+                    "add --overwrite_output_dir to train from scratch"
+                    % self.last_checkpoint
                 )
         else:
-            self.checkpoint = None
+            self.last_checkpoint = None
 
     def _init_wandb_run(self) -> None:
         if "wandb" in self.train_args.report_to:
