@@ -102,14 +102,26 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
 
     def _apply_preprocessing(self) -> None:
         def preprocess_function(examples):
-            args = tuple([examples[key] for key in self.input_keys])
+            input_text = tuple([examples[key] for key in self.input_keys])
+
             # Tokenize the texts
-            return self.tokenizer(
-                *args,
+            tokenized_examples = self.tokenizer(
+                *input_text,
                 padding="max_length" if self.data_args.pad_to_max_length else False,
                 max_length=self.max_seq_length,
                 truncation=True,
             )
+
+            if self.problem_type == "multi_label":
+                tokenized_examples["labels"] = [
+                    [
+                        1.0 if index in example else 0.0
+                        for index, _ in enumerate(self.label_names)
+                    ]
+                    for example in examples["label"]
+                ]
+
+            return tokenized_examples
 
         # Warn if seqeuence length choice is not logical
         if self.data_args.max_seq_length > self.tokenizer.model_max_length:
@@ -138,7 +150,9 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
                     batched=True,
                     load_from_cache_file=not self.data_args.overwrite_cache,
                     desc="Running tokenizer on train dataset",
-                    remove_columns=self.input_keys,
+                    remove_columns=self.input_keys
+                    if self.problem_type == "single_label"
+                    else self.input_keys + ["label"],
                 )
 
         if self.train_args.do_eval:
@@ -155,7 +169,9 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
                     batched=True,
                     load_from_cache_file=not self.data_args.overwrite_cache,
                     desc="Running tokenizer on validation dataset",
-                    remove_columns=self.input_keys,
+                    remove_columns=self.input_keys
+                    if self.problem_type == "single_label"
+                    else self.input_keys + ["label"],
                 )
 
         if self.train_args.do_predict:
@@ -174,7 +190,9 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
                     batched=True,
                     load_from_cache_file=not self.data_args.overwrite_cache,
                     desc="Running tokenizer on prediction dataset",
-                    remove_columns=self.input_keys,
+                    remove_columns=self.input_keys
+                    if self.problem_type == "single_label"
+                    else self.input_keys + ["label"],
                 )
 
         self.data_collator = (
