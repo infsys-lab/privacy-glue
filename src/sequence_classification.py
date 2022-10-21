@@ -223,42 +223,52 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
             )
         )
 
+    def _compute_metrics(self, p: EvalPrediction):
+        # extract predictions
+        preds = p.predictions[0] if isinstance(p.predictions, tuple) else p.predictions
+
+        # convert model scores to labels
+        preds = (
+            np.argmax(preds, axis=1)
+            if self.problem_type == "single_label"
+            else np.round(torch.special.expit(torch.Tensor(preds)).numpy()).astype(
+                "int32"
+            )
+        )
+
+        # compute combinable metrics
+        metric_dict = {}
+        for metric in ["f1", "precision", "recall"]:
+            for average in ["macro", "micro"]:
+                # compute and save metrics
+                metric_dict[f"{average}_{metric}"] = getattr(
+                    self, f"{metric}_metric"
+                ).compute(
+                    predictions=preds,
+                    references=p.label_ids.astype("int32"),
+                    average=average,
+                )[
+                    metric
+                ]
+
+        # compute and append accuracy
+        metric_dict["accuracy"] = self.accuracy_metric.compute(
+            predictions=preds, references=p.label_ids.astype("int32")
+        )["accuracy"]
+
+        return metric_dict
+
     def _set_metrics(self) -> None:
         # set training arguments for metrics
         self.train_args.metric_for_best_model = "f1"
         self.train_args.greater_is_better = True
-
-        # get the metric function
-        if self.problem_type == "multi_label":
-            metric = evaluate.load("f1", "multilabel")
-            averaging = "samples"
-
-            # define inner function
-            def transform_to_binary(pred):
-                return np.round(torch.special.expit(torch.Tensor(pred)))
-
-        else:
-            metric = evaluate.load("f1", "multiclass")
-            averaging = "macro"
-
-            # define inner function
-            def transform_to_binary(pred):
-                return np.argmax(pred, axis=1)
-
-        # define outer function to use
-        def compute_f1(p: EvalPrediction):
-            preds = (
-                p.predictions[0] if isinstance(p.predictions, tuple) else p.predictions
-            )
-            m = metric.compute(
-                predictions=transform_to_binary(preds),
-                references=p.label_ids.astype("int32"),
-                average=averaging,
-            )
-            return m
-
-        # assign this function as an attribute
-        self.compute_metrics = compute_f1
+        metric_config = (
+            "multiclass" if self.problem_type == "single_label" else "multilabel"
+        )
+        self.accuracy_metric = evaluate.load("accuracy", metric_config)
+        self.f1_metric = evaluate.load("f1", metric_config)
+        self.precision_metric = evaluate.load("precision", metric_config)
+        self.recall_metric = evaluate.load("recall", metric_config)
 
     def _run_train_loop(self) -> None:
         # conditionally choose the trainer class
@@ -273,7 +283,7 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
             args=self.train_args,
             train_dataset=self.train_dataset if self.train_args.do_train else None,
             eval_dataset=self.eval_dataset if self.train_args.do_eval else None,
-            compute_metrics=self.compute_metrics,
+            compute_metrics=self._compute_metrics,
             tokenizer=self.tokenizer,
             data_collator=self.data_collator,
             callbacks=[
@@ -323,7 +333,7 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
                         if int(item) == 1
                     ]
                     for multi_hot_label in np.round(
-                        torch.special.expit(torch.Tensor(predictions))
+                        torch.special.expit(torch.Tensor(predictions)).numpy()
                     ).tolist()
                 ]
                 gold_labels = [
