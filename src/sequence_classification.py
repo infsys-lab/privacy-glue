@@ -276,25 +276,25 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
         # Evaluation
         if self.train_args.do_eval:
             self.logger.info("*** Evaluate ***")
-            self.eval_metrics = self.trainer.evaluate(eval_dataset=self.eval_dataset)
+            metrics = self.trainer.evaluate(eval_dataset=self.eval_dataset)
 
-            self.eval_metrics["eval_samples"] = len(self.eval_dataset)
+            metrics["eval_samples"] = len(self.eval_dataset)
 
-            self.trainer.log_metrics("eval", self.eval_metrics)
-            self.trainer.save_metrics("eval", self.eval_metrics)
+            self.trainer.log_metrics("eval", metrics)
+            self.trainer.save_metrics("eval", metrics)
 
         # Prediction
         if self.train_args.do_predict:
             self.logger.info("*** Predict ***")
-            predictions, labels, self.predict_metrics = self.trainer.predict(
+            predictions, labels, metrics = self.trainer.predict(
                 self.predict_dataset, metric_key_prefix="predict"
             )
 
-            self.predict_metrics["predict_samples"] = len(self.predict_dataset)
+            metrics["predict_samples"] = len(self.predict_dataset)
 
-            self.trainer.log_metrics("predict", self.predict_metrics)
-            self.trainer.log(self.predict_metrics)
-            self.trainer.save_metrics("predict", self.predict_metrics)
+            self.trainer.log_metrics("predict", metrics)
+            self.trainer.log(metrics)
+            self.trainer.save_metrics("predict", metrics)
             if self.problem_type == "multi_label":
                 predictions = np.round(torch.special.expit(torch.Tensor(predictions)))
                 predictions = [
