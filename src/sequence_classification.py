@@ -17,11 +17,8 @@ from utils.trainer_utils import Weighted_Random_Sampler_Trainer
 from utils.pipeline_utils import Privacy_GLUE_Pipeline
 import numpy as np
 import evaluate
-import logging
 import torch
 import os
-
-logger = logging.getLogger(__name__)
 
 
 class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
@@ -260,7 +257,7 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
 
         # Evaluation
         if self.train_args.do_eval:
-            logger.info("*** Evaluate ***")
+            self.logger.info("*** Evaluate ***")
             self.eval_metrics = self.trainer.evaluate(eval_dataset=self.eval_dataset)
 
             self.eval_metrics["eval_samples"] = len(self.eval_dataset)
@@ -270,7 +267,7 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
 
         # Prediction
         if self.train_args.do_predict:
-            logger.info("*** Predict ***")
+            self.logger.info("*** Predict ***")
             predictions, labels, self.predict_metrics = self.trainer.predict(
                 self.predict_dataset, metric_key_prefix="predict"
             )
