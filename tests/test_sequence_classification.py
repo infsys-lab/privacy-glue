@@ -140,7 +140,7 @@ class DummyModel(PreTrainedModel):
     scope="module",
     params=["opp_115", "privacy_qa"],
 )
-def setup_classifier(request):
+def _setup_classifier(request):
     wandb.init(mode="disabled")
 
     pipeline = Sequence_Classification_Pipeline(
@@ -159,7 +159,7 @@ def setup_classifier(request):
     pipeline._destroy()
 
 
-def test_data_collection(setup_classifier, mocker):
+def _test_data_collection(setup_classifier, mocker):
     # mocker.patch(
     #     "self._get_data",
     #     return_value=mock_dataset(setup_classifier.problem_type),
@@ -200,7 +200,7 @@ def test_data_collection(setup_classifier, mocker):
 #     assert setup_classifier.model!=None
 
 
-def test_preprocessing(setup_classifier, mocker):
+def _test_preprocessing(setup_classifier, mocker):
     # mocker.patch(
     #     "_get_data",
     #     return_value=mock_dataset(setup_classifier.problem_type),
@@ -212,7 +212,7 @@ def test_preprocessing(setup_classifier, mocker):
     assert True
 
 
-def test_set_metrics(setup_classifier):
+def _test_set_metrics(setup_classifier):
     setup_classifier._set_metrics()
 
     mock_results = MOCK_RESULTS[setup_classifier.problem_type]
