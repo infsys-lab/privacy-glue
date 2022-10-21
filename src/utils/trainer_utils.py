@@ -160,9 +160,7 @@ class Weighted_Random_Sampler_Trainer(Trainer):
             raise ValueError("Trainer: training requires a train_dataset.")
         data_collator = self.data_collator
         samples_weight = self._get_sample_weights()
-        train_sampler = WeightedRandomSampler(
-            samples_weight, len(samples_weight)  # type: ignore
-        )
+        train_sampler = WeightedRandomSampler(samples_weight, len(samples_weight))
         return DataLoader(
             self.train_dataset,
             batch_size=self.args.per_device_train_batch_size,
