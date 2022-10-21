@@ -71,9 +71,7 @@ def load_policy_ie_b(directory: str) -> datasets.DatasetDict:
 
     # merge NER tags and drop old ones
     combined = combined.map(
-        lambda x: {
-            "ner_tags": list(zip(x["ner_tags_type_one"], x["ner_tags_type_two"]))
-        },
+        lambda x: {"tags": list(zip(x["ner_tags_type_one"], x["ner_tags_type_two"]))},
         remove_columns=["ner_tags_type_one", "ner_tags_type_two"],
     )
 

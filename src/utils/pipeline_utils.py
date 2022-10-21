@@ -156,7 +156,7 @@ class Privacy_GLUE_Pipeline(ABC):
                 group=self.model_args.wandb_group_id,
                 project=f"privacyGLUE-{self.data_args.task}",
                 reinit=True,
-                resume=True if self.checkpoint else None,
+                resume=True if self.last_checkpoint else None,
             )
 
     def _save_success_file(self) -> None:
