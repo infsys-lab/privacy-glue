@@ -18,6 +18,7 @@ from utils.pipeline_utils import Privacy_GLUE_Pipeline
 import numpy as np
 import evaluate
 import torch
+import json
 import os
 
 
@@ -315,28 +316,49 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
 
             # convert integer/float labels to more readable format
             if self.problem_type == "multi_label":
-                predictions = np.round(torch.special.expit(torch.Tensor(predictions)))
-                predictions = [
-                    ",".join(
-                        [
-                            self.label_names[idx]
-                            for idx, item in enumerate(labels)
-                            if int(item) == 1
-                        ]
-                    )
-                    for labels in predictions
+                predicted_labels = [
+                    [
+                        self.label_names[idx]
+                        for idx, item in enumerate(multi_hot_label)
+                        if int(item) == 1
+                    ]
+                    for multi_hot_label in np.round(
+                        torch.special.expit(torch.Tensor(predictions))
+                    ).tolist()
+                ]
+                gold_labels = [
+                    [
+                        self.label_names[idx]
+                        for idx, item in enumerate(multi_hot_label)
+                        if int(item) == 1
+                    ]
+                    for multi_hot_label in labels.tolist()
                 ]
             else:
-                predictions = [
-                    self.label_names[item] for item in np.argmax(predictions, axis=1)
+                predicted_labels = [
+                    self.label_names[item]
+                    for item in np.argmax(predictions, axis=1).tolist()
                 ]
+                gold_labels = [self.label_names[item] for item in labels.tolist()]
+
+            # assemble predictions into dictionary for dumping
+            prediction_dump = [
+                {
+                    "id": index,
+                    "text": input_text,
+                    "gold_label": gold_label,
+                    "predicted_label": predicted_label,
+                }
+                for index, (input_text, gold_label, predicted_label) in enumerate(
+                    zip(
+                        self.raw_datasets["test"]["text"], gold_labels, predicted_labels
+                    )
+                )
+            ]
 
             # dump prediction outputs
-            output_predict_file = os.path.join(
-                self.train_args.output_dir, "predictions.txt"
-            )
             if self.trainer.is_world_process_zero():
-                with open(output_predict_file, "w") as writer:
-                    writer.write("index\tprediction\ttrue_label\n")
-                    for index, (item, true_l) in enumerate(zip(predictions, labels)):
-                        writer.write(f"{index}\t{item}\t{true_l}\n")
+                with open(
+                    os.path.join(self.train_args.output_dir, "predictions.json"), "w"
+                ) as output_file_stream:
+                    json.dump(prediction_dump, output_file_stream)
