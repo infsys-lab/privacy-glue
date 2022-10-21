@@ -4,17 +4,19 @@ from typing import List, Dict
 
 import torch
 import torch.nn as nn
-from transformers import AutoModel
+from transformers import AutoModel, AutoConfig
 
 
 # adapted from
 # https://towardsdatascience.com/
 # how-to-create-and-train-a-multi-task-transformer-model-18c54a146240
 class MultiTaskModel(nn.Module):
-    def __init__(self, encoder_name_or_path, tasks: List, label_names: Dict):
+    def __init__(
+        self, encoder_name_or_path, tasks: List, label_names: Dict, config: AutoConfig
+    ):
         super().__init__()
 
-        self.encoder = AutoModel.from_pretrained(encoder_name_or_path)
+        self.encoder = AutoModel.from_pretrained(encoder_name_or_path, config=config)
 
         self.output_heads = nn.ModuleDict()
         # one model several heads
@@ -66,12 +68,12 @@ class MultiTaskModel(nn.Module):
             logits_list.append(logits[0])
         # logits are only used for eval. and in case of eval the batch is not multi task
         # For training only the loss is used
-        outputs = (torch.stack(logits_list), outputs[2:])
+        outputs = (logits_list, outputs[2:])
 
         if len(loss_list) > 0:
             loss = torch.stack(loss_list)
             outputs = (loss.mean(),) + outputs
-
+        # breakpoint()
         return outputs
 
 
@@ -100,7 +102,6 @@ class TokenClassificationHead(nn.Module):
             loss_fct = torch.nn.CrossEntropyLoss()
 
             labels = labels.long()
-
             # Only keep active parts of the loss
             if attention_mask is not None:
                 active_loss = attention_mask.view(-1) == 1

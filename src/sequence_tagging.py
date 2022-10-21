@@ -3,11 +3,14 @@
 
 import os
 
+from typing import Dict
+
 import logging
 import numpy as np
 import evaluate
 from transformers import (
     AutoTokenizer,
+    AutoConfig,
     Trainer,
     TrainingArguments,
     EvalPrediction,
@@ -64,6 +67,12 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
         if self.train_args.do_train:
             self.label_names = self.train_dataset.features["tags"].feature.names
 
+        self.config = AutoConfig.from_pretrained(
+            self.model_args.model_name_or_path,
+            cache_dir=self.model_args.cache_dir,
+            revision=self.model_args.model_revision,
+        )
+
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.model_args.tokenizer_name
             if self.model_args.tokenizer_name
@@ -74,11 +83,13 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
         )
 
         self.model = MultiTaskModel(
-            self.model_args.model_name_or_path, self.subtasks, self.label_names
+            self.model_args.model_name_or_path,
+            self.subtasks,
+            self.label_names,
+            self.config,
         )
 
-    def _apply_preprocessing(self) -> None:
-        self.data_args.label_all_tokens = False
+    def _create_b_to_i_label_map(self) -> Dict:
         # Map that sends B-Xxx label to its I-Xxx counterpart
         b_to_i_label = {}
         for st in self.subtasks:
@@ -89,6 +100,11 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
                     b_to_i_label[st].append(label_list.index(label.replace("B-", "I-")))
                 else:
                     b_to_i_label[st].append(idx)
+        return b_to_i_label
+
+    def _apply_preprocessing(self) -> None:
+        self.data_args.label_all_tokens = True
+        b_to_i_label = self._create_b_to_i_label_map()
         label_to_ids = {
             l: i for st in self.subtasks for i, l in enumerate(self.label_names[st])
         }
@@ -103,7 +119,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
                 truncation=True,
                 is_split_into_words=True,
             )
-            # Warn if seqeuence length choice is not logical
+            # Warn if sequence length choice is not logical
             if self.data_args.max_seq_length > self.tokenizer.model_max_length:
                 self.logger.warning(
                     f"The max_seq_length passed ({self.data_args.max_seq_length}) "
@@ -225,40 +241,45 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
             )
         )
 
+    def _retransform_labels(self, predictions, labels) -> Dict:
+        predictions = predictions[0] if isinstance(predictions, tuple) else predictions
+        predictions = np.argmax(predictions, axis=2)
+        # Remove ignored index (special tokens)
+        true_predictions = {st: [] for st in self.subtasks}
+        true_labels = {st: [] for st in self.subtasks}
+
+        for i, (prediction, label) in enumerate(zip(predictions, labels)):
+            true_label_vec = []
+            true_pred_vec = []
+            # get the subtasks according to mod of index
+            task_name = self.subtasks[i % len(self.subtasks)]
+            for (pr, la) in zip(prediction, label):
+                if la != -100:
+                    true_label = self.label_names[task_name][la]
+                    true_pred = self.label_names[task_name][pr]
+                    true_pred_vec.append(true_pred)
+                    true_label_vec.append(true_label)
+            true_predictions[task_name].append(true_pred_vec)
+            true_labels[task_name].append(true_label_vec)
+        return true_predictions, true_labels
+
     def _set_metrics(self) -> None:
+        self.train_args.metric_for_best_model = "f1"
+        self.train_args.greater_is_better = True
         # Get the metric function
         metric = evaluate.load("seqeval")
 
         def compute_f1(p: EvalPrediction):
-            labels = p.label_ids
-            predictions = (
-                p.predictions[0] if isinstance(p.predictions, tuple) else p.predictions
-            )
-            predictions = np.argmax(predictions, axis=2)
-            # Remove ignored index (special tokens)
-            true_predictions = {st: [] for st in self.subtasks}
-            true_labels = {st: [] for st in self.subtasks}
+            predictions, labels = self._retransform_labels(p.predictions, p.label_ids)
             per_tasks_metrics = {}
-            for i, (prediction, label) in enumerate(zip(predictions, labels)):
-                true_label_vec = []
-                true_pred_vec = []
-                # get the subtasks according to mod of index
-                task_name = self.subtasks[i % len(self.subtasks)]
-                for (pr, la) in zip(prediction, label):
-                    if la != -100:
-                        true_label = self.label_names[task_name][la]
-                        true_pred = self.label_names[task_name][pr]
-                        true_pred_vec.append(true_pred)
-                        true_label_vec.append(true_label)
-                true_predictions[task_name].append(true_pred_vec)
-                true_labels[task_name].append(true_label_vec)
 
             for st in self.subtasks:
                 m = metric.compute(
-                    predictions=true_predictions[st],
-                    references=true_labels[st],
+                    predictions=predictions[st],
+                    references=labels[st],
                 )
                 per_tasks_metrics[st] = m
+
             return {
                 "precision": np.mean(
                     [per_tasks_metrics[st]["overall_precision"] for st in self.subtasks]
@@ -329,9 +350,9 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
             self.trainer.log(self.predict_metrics)
             self.trainer.save_metrics("predict", self.predict_metrics)
 
-            predictions = [
-                self.label_names[item] for item in np.argmax(predictions, axis=2)
-            ]
+            predictions_per_task, labels_per_task = self._retransform_labels(
+                predictions, labels
+            )
 
             output_predict_file = os.path.join(
                 self.train_args.output_dir, "predictions.txt"
@@ -339,5 +360,10 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
             if self.trainer.is_world_process_zero():
                 with open(output_predict_file, "w") as writer:
                     writer.write("index\tprediction\ttrue_label\n")
-                    for index, (item, true_l) in enumerate(zip(predictions, labels)):
-                        writer.write(f"{index}\t{item}\t{true_l}\n")
+                    for st in self.subtasks:
+                        for index, (seq, true_seq) in enumerate(
+                            zip(predictions_per_task[st], labels_per_task[st])
+                        ):
+                            writer.write(
+                                f"{index}\t{' '.join(seq)}\t{' '.join(true_seq)}\n"
+                            )
