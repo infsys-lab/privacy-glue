@@ -54,21 +54,12 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
 
     def _retrieve_data(self) -> None:
         # load data and label names
-        data = self._get_data()
+        self.raw_datasets = self._get_data()
         self.label_names = (
-            data["train"].features["label"].names
+            self.raw_datasets["train"].features["label"].names
             if self.problem_type == "single_label"
-            else data["train"].features["label"].feature.names
+            else self.raw_datasets["train"].features["label"].feature.names
         )
-
-        if self.train_args.do_train:
-            self.train_dataset = data["train"]
-
-        if self.train_args.do_eval:
-            self.eval_dataset = data["validation"]
-
-        if self.train_args.do_predict:
-            self.predict_dataset = data["test"]
 
     def _load_pretrained_model_and_tokenizer(self) -> None:
         # load model config
@@ -147,15 +138,17 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
             # subsample if necessary
             if self.data_args.max_train_samples is not None:
                 max_train_samples = min(
-                    len(self.train_dataset), self.data_args.max_train_samples
+                    len(self.raw_datasets["train"]), self.data_args.max_train_samples
                 )
-                self.train_dataset = self.train_dataset.select(range(max_train_samples))
+                self.raw_datasets["train"] = self.raw_datasets["train"].select(
+                    range(max_train_samples)
+                )
 
             # batch-apply the preprocessing function
             with self.train_args.main_process_first(
                 desc="train dataset map pre-processing"
             ):
-                self.train_dataset = self.train_dataset.map(
+                self.train_dataset = self.raw_datasets["train"].map(
                     self._preprocess_function,
                     batched=True,
                     num_proc=self.data_args.preprocessing_num_workers,
@@ -171,15 +164,18 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
             # subsample if necessary
             if self.data_args.max_eval_samples is not None:
                 max_eval_samples = min(
-                    len(self.eval_dataset), self.data_args.max_eval_samples
+                    len(self.raw_datasets["validation"]),
+                    self.data_args.max_eval_samples,
                 )
-                self.eval_dataset = self.eval_dataset.select(range(max_eval_samples))
+                self.raw_datasets["validation"] = self.raw_datasets[
+                    "validation"
+                ].select(range(max_eval_samples))
 
             # batch-apply the preprocessing function
             with self.train_args.main_process_first(
                 desc="validation dataset map pre-processing"
             ):
-                self.eval_dataset = self.eval_dataset.map(
+                self.eval_dataset = self.raw_datasets["validation"].map(
                     self._preprocess_function,
                     batched=True,
                     num_proc=self.data_args.preprocessing_num_workers,
@@ -195,9 +191,9 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
             if self.data_args.max_predict_samples is not None:
                 # subsample if necessary
                 max_predict_samples = min(
-                    len(self.predict_dataset), self.data_args.max_predict_samples
+                    len(self.raw_datasets["test"]), self.data_args.max_predict_samples
                 )
-                self.predict_dataset = self.predict_dataset.select(
+                self.raw_datasets["test"] = self.raw_datasets["test"].select(
                     range(max_predict_samples)
                 )
 
@@ -205,7 +201,7 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
             with self.train_args.main_process_first(
                 desc="prediction dataset map pre-processing"
             ):
-                self.predict_dataset = self.predict_dataset.map(
+                self.predict_dataset = self.raw_datasets["test"].map(
                     self._preprocess_function,
                     batched=True,
                     num_proc=self.data_args.preprocessing_num_workers,
