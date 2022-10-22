@@ -2,12 +2,11 @@
 # -*- coding: utf-8 -*-
 
 from types import SimpleNamespace
-from collections import defaultdict
 from functools import partial
 from contextlib import nullcontext
 from unittest.mock import MagicMock
 from copy import deepcopy
-from transformers import PreTrainedModel, PretrainedConfig, PreTrainedTokenizer
+from transformers import PreTrainedModel, PretrainedConfig
 import numpy as np
 import datasets
 import logging
@@ -191,18 +190,6 @@ class MockPreTrainedModel(PreTrainedModel):
         return (loss, y)
 
 
-class MockTokenizer(PreTrainedTokenizer):
-    def __init__(self, model_input_names=["labels", "label_ids"]):
-        super().__init__()
-        self.lookup = defaultdict(int)
-
-    def _tokenize(self, s):
-        return s.split()
-
-    def _convert_token_to_id(self, token):
-        return self.lookup[token]
-
-
 @pytest.fixture
 def mocked_regression_config():
     return MockConfig
@@ -211,8 +198,3 @@ def mocked_regression_config():
 @pytest.fixture
 def mocked_regression_model():
     return MockPreTrainedModel
-
-
-@pytest.fixture
-def mocked_tokenizer():
-    return MockTokenizer
