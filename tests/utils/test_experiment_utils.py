@@ -131,6 +131,8 @@ def test_run_experiments(
                 wandb_group_id="experiment_test" if report_to == ["wandb"] else None,
             )
             train_args.get_process_log_level = mocker.ANY
+            train_args.main_process_first = mocker.ANY
+            train_args.is_world_process_zero = mocker.ANY
             if _task in [
                 "opp_115",
                 "policy_detection",
