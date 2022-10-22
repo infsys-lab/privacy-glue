@@ -6,6 +6,21 @@ import os
 import datasets
 import pandas as pd
 
+LABELS = [
+    "Data Retention",
+    "Data Security",
+    "Do Not Track",
+    "First Party Collection/Use",
+    "International and Specific Audiences",
+    "Introductory/Generic",
+    "Policy Change",
+    "Practice not covered",
+    "Privacy contact information",
+    "Third Party Sharing/Collection",
+    "User Access, Edit and Deletion",
+    "User Choice/Control",
+]
+
 
 def load_opp_115(directory: str) -> datasets.DatasetDict:
     # define an empty DatasetDict
@@ -15,24 +30,7 @@ def load_opp_115(directory: str) -> datasets.DatasetDict:
     splits = ["train", "validation", "test"]
 
     # define label information
-    label_info = datasets.Sequence(
-        datasets.ClassLabel(
-            names=[
-                "Data Retention",
-                "Data Security",
-                "Do Not Track",
-                "First Party Collection/Use",
-                "International and Specific Audiences",
-                "Introductory/Generic",
-                "Policy Change",
-                "Practice not covered",
-                "Privacy contact information",
-                "Third Party Sharing/Collection",
-                "User Access, Edit and Deletion",
-                "User Choice/Control",
-            ]
-        )
-    )
+    label_info = datasets.Sequence(datasets.ClassLabel(names=LABELS))
 
     # loop over all splits
     for split in splits:

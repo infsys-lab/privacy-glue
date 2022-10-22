@@ -6,6 +6,8 @@ import os
 import datasets
 import pandas as pd
 
+LABELS = ["Irrelevant", "Relevant"]
+
 
 def load_privacy_qa(directory: str) -> datasets.DatasetDict:
     # load and process the train dataset
@@ -15,7 +17,7 @@ def load_privacy_qa(directory: str) -> datasets.DatasetDict:
     )
 
     # collect information about label
-    label_info = datasets.ClassLabel(names=["Irrelevant", "Relevant"])
+    label_info = datasets.ClassLabel(names=LABELS)
     train_dataset = datasets.Dataset.from_pandas(train_df, preserve_index=False)
 
     # work on the test dataset
