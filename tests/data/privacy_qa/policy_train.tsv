@@ -1,3 +1,3 @@
 Folder	DocID	QueryID	SentID	Split	Query	Segment	Label
-../../Dataset/Train/com.cake.browser	Cake Web Browser _1	Cake Web Browser _1_0	Cake Web Browser _1_0_0	train	train question for PrivacyQA?	train answer for PrivacyQA	label-train-1
-../../Dataset/Train/com.cake.browser	Cake Web Browser _1	Cake Web Browser _1_0	Cake Web Browser _1_0_1	train	another train question for PrivacyQA?	another train answer for PrivacyQA	label-train-2
+../../Dataset/Train/com.cake.browser	Cake Web Browser _1	Cake Web Browser _1_0	Cake Web Browser _1_0_0	train	train question for PrivacyQA?	train answer for PrivacyQA	Relevant
+../../Dataset/Train/com.cake.browser	Cake Web Browser _1	Cake Web Browser _1_0	Cake Web Browser _1_0_1	train	another train question for PrivacyQA?	another train answer for PrivacyQA	Irrelevant

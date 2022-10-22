@@ -1,3 +1,3 @@
 Folder	DocID	QueryID	SentID	Split	Query	Segment	Any_Relevant	Ann1	Ann2	Ann3	Ann4	Ann5	Ann6
-../../Dataset/Test/com.fiverr.fiverr	Fiverr _1	Fiverr _1_0	Fiverr _1_0_0	test	test question for PrivacyQA?	test answer for PrivacyQA	label-test-1	Irrelevant	None	Irrelevant	Irrelevant	None	None
-../../Dataset/Test/com.fiverr.fiverr	Fiverr _1	Fiverr _1_0	Fiverr _1_0_1	test	another test question for PrivacyQA?	another test answer for PrivacyQA	label-test-2	Irrelevant	None	Irrelevant	Irrelevant	None	None
+../../Dataset/Test/com.fiverr.fiverr	Fiverr _1	Fiverr _1_0	Fiverr _1_0_0	test	test question for PrivacyQA?	test answer for PrivacyQA	Relevant	Irrelevant	None	Irrelevant	Irrelevant	None	None
+../../Dataset/Test/com.fiverr.fiverr	Fiverr _1	Fiverr _1_0	Fiverr _1_0_1	test	another test question for PrivacyQA?	another test answer for PrivacyQA	Irrelevant	Irrelevant	None	Irrelevant	Irrelevant	None	None
