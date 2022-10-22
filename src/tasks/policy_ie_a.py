@@ -5,6 +5,14 @@ from typing import cast
 from utils.task_utils import policy_ie_file_mapping
 import datasets
 
+LABELS = [
+    "Other",
+    "data-collection-usage",
+    "data-security-protection",
+    "data-sharing-disclosure",
+    "data-storage-retention-deletion",
+]
+
 
 def load_policy_ie_a(directory: str) -> datasets.DatasetDict:
     # initialize DatasetDict object
@@ -21,15 +29,7 @@ def load_policy_ie_a(directory: str) -> datasets.DatasetDict:
     ).rename_column("text", "label")
 
     # collect information about label
-    label_info = datasets.ClassLabel(
-        names=[
-            "Other",
-            "data-collection-usage",
-            "data-security-protection",
-            "data-sharing-disclosure",
-            "data-storage-retention-deletion",
-        ]
-    )
+    label_info = datasets.ClassLabel(names=LABELS)
 
     # mypy-related specification to sub-type
     tokens = cast(datasets.DatasetDict, tokens)

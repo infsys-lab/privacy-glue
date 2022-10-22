@@ -6,6 +6,8 @@ import os
 import datasets
 import pandas as pd
 
+LABELS = ["Not Policy", "Policy"]
+
 
 def load_policy_detection(directory: str) -> datasets.DatasetDict:
     # initialize DatasetDict object
@@ -23,7 +25,7 @@ def load_policy_detection(directory: str) -> datasets.DatasetDict:
 
     # convert into HF datasets
     dataset = datasets.Dataset.from_pandas(df, preserve_index=False)
-    label_info = datasets.ClassLabel(names=["Not Policy", "Policy"])
+    label_info = datasets.ClassLabel(names=LABELS)
 
     # make split using HF datasets internal methods
     train_test_dataset_dict = dataset.train_test_split(test_size=0.3, seed=42)
