@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import os
+import json
 
 from typing import Dict
 
-import logging
 import numpy as np
 import evaluate
 from transformers import (
@@ -22,8 +22,6 @@ from transformers import (
 from parser import DataArguments, ModelArguments
 from utils.pipeline_utils import Privacy_GLUE_Pipeline
 from utils.model_utils import MultiTaskModel
-
-logger = logging.getLogger(__name__)
 
 
 class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
@@ -44,7 +42,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
         elif self.data_args.task == "policy_ie_b":
             from tasks.policy_ie_b import SUBTASKS as subtasks
         else:
-            logger.warn(
+            self.logger.warn(
                 f"Task: {self.data_args.task} is not an instance of \
                 multitask learning problem!"
             )
@@ -163,7 +161,14 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
                                 w_label = label[word_idx][:find_dot]
                             else:
                                 w_label = label[word_idx]
-                            label_ids.append(b_to_i_label[st][label_to_ids[w_label]])
+                            try:
+                                label_ids.append(
+                                    b_to_i_label[st][label_to_ids[w_label]]
+                                )
+                            except IndexError:
+                                print(label_ids)
+                                print(w_label)
+                                breakpoint()
                         else:
                             label_ids.append(-100)
                     previous_word_idx = word_idx
@@ -243,16 +248,21 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
 
     def _retransform_labels(self, predictions, labels) -> Dict:
         predictions = predictions[0] if isinstance(predictions, tuple) else predictions
-        predictions = np.argmax(predictions, axis=2)
+        predictions = [np.argmax(p, axis=2) for p in predictions]
+        # interleave predictions
+        predictions = [st for subtasks in zip(*predictions) for st in subtasks]
+
         # Remove ignored index (special tokens)
         true_predictions = {st: [] for st in self.subtasks}
         true_labels = {st: [] for st in self.subtasks}
 
+        assert len(predictions) == len(labels)
         for i, (prediction, label) in enumerate(zip(predictions, labels)):
             true_label_vec = []
             true_pred_vec = []
             # get the subtasks according to mod of index
-            task_name = self.subtasks[i % len(self.subtasks)]
+            subtask_number = i % len(self.subtasks)
+            task_name = self.subtasks[subtask_number]
             for (pr, la) in zip(prediction, label):
                 if la != -100:
                     true_label = self.label_names[task_name][la]
@@ -267,35 +277,33 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
         self.train_args.metric_for_best_model = "f1"
         self.train_args.greater_is_better = True
         # Get the metric function
-        metric = evaluate.load("seqeval")
+        self.metric = evaluate.load("seqeval")
 
-        def compute_f1(p: EvalPrediction):
-            predictions, labels = self._retransform_labels(p.predictions, p.label_ids)
-            per_tasks_metrics = {}
+    def compute_metrics(self, p: EvalPrediction):
+        predictions, labels = self._retransform_labels(p.predictions, p.label_ids)
+        per_tasks_metrics = {}
 
-            for st in self.subtasks:
-                m = metric.compute(
-                    predictions=predictions[st],
-                    references=labels[st],
-                )
-                per_tasks_metrics[st] = m
+        for st in self.subtasks:
+            m = self.metric.compute(
+                predictions=predictions[st],
+                references=labels[st],
+            )
+            per_tasks_metrics[st] = m
 
-            return {
-                "precision": np.mean(
-                    [per_tasks_metrics[st]["overall_precision"] for st in self.subtasks]
-                ),
-                "recall": np.mean(
-                    [per_tasks_metrics[st]["overall_recall"] for st in self.subtasks]
-                ),
-                "f1": np.mean(
-                    [per_tasks_metrics[st]["overall_f1"] for st in self.subtasks]
-                ),
-                "accuracy": np.mean(
-                    [per_tasks_metrics[st]["overall_accuracy"] for st in self.subtasks]
-                ),
-            }
-
-        self.compute_metrics = compute_f1
+        return {
+            "precision": np.mean(
+                [per_tasks_metrics[st]["overall_precision"] for st in self.subtasks]
+            ),
+            "recall": np.mean(
+                [per_tasks_metrics[st]["overall_recall"] for st in self.subtasks]
+            ),
+            "f1": np.mean(
+                [per_tasks_metrics[st]["overall_f1"] for st in self.subtasks]
+            ),
+            "accuracy": np.mean(
+                [per_tasks_metrics[st]["overall_accuracy"] for st in self.subtasks]
+            ),
+        }
 
     def _run_train_loop(self) -> None:
         # Initialize the Trainer
@@ -331,39 +339,53 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
 
         # Evaluation
         if self.train_args.do_eval:
-            logger.info("*** Evaluate ***")
-            self.eval_metrics = self.trainer.evaluate(eval_dataset=self.eval_dataset)
-            self.eval_metrics["eval_samples"] = len(self.eval_dataset)
+            self.logger.info("*** Evaluate ***")
+            metrics = self.trainer.evaluate(eval_dataset=self.eval_dataset)
+            metrics["eval_samples"] = len(self.eval_dataset)
 
-            self.trainer.log_metrics("eval", self.eval_metrics)
-            self.trainer.save_metrics("eval", self.eval_metrics)
+            self.trainer.log_metrics("eval", metrics)
+            self.trainer.save_metrics("eval", metrics)
 
         # Prediction
         if self.train_args.do_predict:
-            logger.info("*** Predict ***")
-            predictions, labels, self.predict_metrics = self.trainer.predict(
+            self.logger.info("*** Predict ***")
+            predictions, labels, metrics = self.trainer.predict(
                 self.predict_dataset, metric_key_prefix="predict"
             )
-            self.predict_metrics["predict_samples"] = len(self.predict_dataset)
+            metrics["predict_samples"] = len(self.predict_dataset)
 
-            self.trainer.log_metrics("predict", self.predict_metrics)
-            self.trainer.log(self.predict_metrics)
-            self.trainer.save_metrics("predict", self.predict_metrics)
+            self.trainer.log_metrics("predict", metrics)
+            self.trainer.log(metrics)
+            self.trainer.save_metrics("predict", metrics)
 
             predictions_per_task, labels_per_task = self._retransform_labels(
                 predictions, labels
             )
 
-            output_predict_file = os.path.join(
-                self.train_args.output_dir, "predictions.txt"
-            )
+            # assemble predictions into dictionary for dumping
+            prediction_dump = [
+                {
+                    "id": index,
+                    "task": task,
+                    "text": input_text,
+                    "gold_label": gold_label,
+                    "predicted_label": predicted_label,
+                }
+                for i, task in enumerate(self.subtasks)
+                for index, (input_text, gold_label, predicted_label) in enumerate(
+                    zip(
+                        # fmt: off
+                        self.raw_datasets["test"]["tokens"][i::len(self.subtasks)],
+                        # fmt: on
+                        labels_per_task[task],
+                        predictions_per_task[task],
+                    )
+                )
+            ]
+
+            # dump prediction outputs
             if self.trainer.is_world_process_zero():
-                with open(output_predict_file, "w") as writer:
-                    writer.write("index\tprediction\ttrue_label\n")
-                    for st in self.subtasks:
-                        for index, (seq, true_seq) in enumerate(
-                            zip(predictions_per_task[st], labels_per_task[st])
-                        ):
-                            writer.write(
-                                f"{index}\t{' '.join(seq)}\t{' '.join(true_seq)}\n"
-                            )
+                with open(
+                    os.path.join(self.train_args.output_dir, "predictions.json"), "w"
+                ) as output_file_stream:
+                    json.dump(prediction_dump, output_file_stream, indent=4)
