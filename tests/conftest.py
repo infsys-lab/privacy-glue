@@ -21,6 +21,9 @@ def pytest_configure():
     # globally disable caching with datasets
     datasets.disable_caching()
 
+    # globally disable CUDA (if activated)
+    os.environ["CUDA_VISIBLE_DEVICES"] = ""
+
 
 def get_mocked_arguments(
     task="all",
@@ -39,6 +42,7 @@ def get_mocked_arguments(
     do_clean=True,
     config_name=None,
     tokenizer_name=None,
+    use_fast_tokenizer=True,
     cache_dir=None,
     model_revision="main",
     wandb_group_id="experiment_test",
@@ -80,6 +84,7 @@ def get_mocked_arguments(
         do_clean=do_clean,
         config_name=config_name,
         tokenizer_name=tokenizer_name,
+        use_fast_tokenizer=use_fast_tokenizer,
         cache_dir=cache_dir,
         model_revision=model_revision,
         wandb_group_id=wandb_group_id,
