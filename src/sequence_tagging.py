@@ -377,9 +377,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
                 for i, task in enumerate(self.subtasks)
                 for index, (input_text, gold_label, predicted_label) in enumerate(
                     zip(
-                        # fmt: off
-                        self.raw_datasets["test"]["tokens"][i::len(self.subtasks)],
-                        # fmt: on
+                        self.raw_datasets["test"]["tokens"][i :: len(self.subtasks)],
                         labels_per_task[task],
                         predictions_per_task[task],
                     )
