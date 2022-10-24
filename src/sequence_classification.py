@@ -260,7 +260,7 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
 
     def _set_metrics(self) -> None:
         # set training arguments for metrics
-        self.train_args.metric_for_best_model = "f1"
+        self.train_args.metric_for_best_model = "macro_f1"
         self.train_args.greater_is_better = True
         metric_config = (
             "multiclass" if self.problem_type == "single_label" else "multilabel"
