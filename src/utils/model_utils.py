@@ -48,7 +48,6 @@ class MultiTaskModel(nn.Module):
             inputs_embeds=inputs_embeds,
         )
         sequence_output, pooled_output = outputs[:2]
-
         unique_task_ids_list = torch.unique(task_ids).tolist()
 
         loss_list = []
@@ -64,16 +63,14 @@ class MultiTaskModel(nn.Module):
 
             if labels is not None:
                 loss_list.append(task_loss)
-            # TODO: note to future self: this might not be correct way to do it
-            logits_list.append(logits[0])
+
+            logits_list.append(logits)
         # logits are only used for eval. and in case of eval the batch is not multi task
         # For training only the loss is used
         outputs = (logits_list, outputs[2:])
-
         if len(loss_list) > 0:
             loss = torch.stack(loss_list)
             outputs = (loss.mean(),) + outputs
-        # breakpoint()
         return outputs
 
 

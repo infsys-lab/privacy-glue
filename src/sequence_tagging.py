@@ -161,14 +161,8 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
                                 w_label = label[word_idx][:find_dot]
                             else:
                                 w_label = label[word_idx]
-                            try:
-                                label_ids.append(
-                                    b_to_i_label[st][label_to_ids[w_label]]
-                                )
-                            except IndexError:
-                                print(label_ids)
-                                print(w_label)
-                                breakpoint()
+
+                            label_ids.append(b_to_i_label[st][label_to_ids[w_label]])
                         else:
                             label_ids.append(-100)
                     previous_word_idx = word_idx
@@ -290,7 +284,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
             )
             per_tasks_metrics[st] = m
 
-        return {
+        return_metrics = {
             "precision": np.mean(
                 [per_tasks_metrics[st]["overall_precision"] for st in self.subtasks]
             ),
@@ -304,6 +298,15 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
                 [per_tasks_metrics[st]["overall_accuracy"] for st in self.subtasks]
             ),
         }
+        return_metrics.update(
+            {
+                f"{st}_{metric}": per_tasks_metrics[st][f"overall_{metric}"]
+                for st in self.subtasks
+                for metric in ["precision", "recall", "f1", "accuracy"]
+            }
+        )
+
+        return return_metrics
 
     def _run_train_loop(self) -> None:
         # Initialize the Trainer
