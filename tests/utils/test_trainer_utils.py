@@ -4,9 +4,13 @@
 from types import SimpleNamespace
 
 import pytest
+import torch
 from transformers import TrainingArguments
 
-from utils.trainer_utils import QuestionAnsweringTrainer
+from utils.trainer_utils import (
+    QuestionAnsweringTrainer,
+    Weighted_Random_Sampler_Trainer,
+)
 
 
 @pytest.fixture
@@ -17,7 +21,15 @@ def mocked_qa_trainer(mocked_regression_model, mocked_regression_config, tmp_pat
     )
 
 
-def test__init__(mocked_qa_trainer, mocked_arguments):
+@pytest.fixture
+def mocked_wrs_trainer(mocked_regression_model, mocked_regression_config, tmp_path):
+    return Weighted_Random_Sampler_Trainer(
+        model=mocked_regression_model(mocked_regression_config()),
+        args=TrainingArguments(output_dir=tmp_path),
+    )
+
+
+def test__init__qa_trainer(mocked_qa_trainer, mocked_arguments):
     assert mocked_qa_trainer.eval_examples is None
     assert mocked_qa_trainer.post_process_function is None
 
@@ -30,7 +42,9 @@ def test__init__(mocked_qa_trainer, mocked_arguments):
     "post_process_function",
     [True, False],
 )
-def test_evaluate(compute_metrics, post_process_function, mocked_qa_trainer, mocker):
+def test_evaluate_qa_trainer(
+    compute_metrics, post_process_function, mocked_qa_trainer, mocker
+):
     # create relevant mocks
     mocked_qa_trainer_eval_loop = mocker.patch.object(
         mocked_qa_trainer,
@@ -139,7 +153,9 @@ def test_evaluate(compute_metrics, post_process_function, mocked_qa_trainer, moc
     "post_process_function",
     [True, False],
 )
-def test_predict(compute_metrics, post_process_function, mocked_qa_trainer, mocker):
+def test_predict_qa_trainer(
+    compute_metrics, post_process_function, mocked_qa_trainer, mocker
+):
     # create relevant mocks
     mocked_qa_trainer_eval_loop = mocker.patch.object(
         mocked_qa_trainer,
@@ -216,3 +232,61 @@ def test_predict(compute_metrics, post_process_function, mocked_qa_trainer, mock
         )
     else:
         assert output.predictions == [4, 5, 6]
+
+
+@pytest.mark.parametrize(
+    "train_dataset, expected_sample_weights",
+    [
+        ({"label": [0, 0, 0, 0, 1]}, torch.Tensor([0.25, 0.25, 0.25, 0.25, 1.0])),
+        ({"label": [0, 0, 1, 1]}, torch.Tensor([0.5, 0.5, 0.5, 0.5])),
+        ({"label": [0] * 100 + [1]}, torch.Tensor([0.01] * 100 + [1.0])),
+    ],
+)
+def test__get_sample_weights_wrs_trainer(
+    train_dataset, expected_sample_weights, mocked_wrs_trainer
+):
+    # assign mock data
+    mocked_wrs_trainer.train_dataset = train_dataset
+
+    # compute sample weights
+    sample_weights = mocked_wrs_trainer._get_sample_weights()
+
+    # assert expected outcome
+    assert torch.equal(sample_weights, expected_sample_weights)
+
+
+@pytest.mark.parametrize(
+    "train_dataset, sample_weights", [(None, None), ([1, 2, 3], [4, 5, 6])]
+)
+def test_get_train_dataloader_wrs_trainer(
+    train_dataset, sample_weights, mocked_wrs_trainer, mocker
+):
+    # mock relevant attributes and methods
+    mocked_wrs_trainer.train_dataset = train_dataset
+    mocked_wrs_trainer.data_collator = "data_collator"
+    mocker.patch.object(
+        mocked_wrs_trainer, "_get_sample_weights", return_value=sample_weights
+    )
+    weighted_random_sampler = mocker.patch(
+        "utils.trainer_utils.WeightedRandomSampler",
+        return_value="weighted_random_sampler",
+    )
+    train_dataloader = mocker.patch(
+        "utils.trainer_utils.DataLoader", return_value="train_dataloader"
+    )
+
+    # execute relevant pipeline method
+    if train_dataset:
+        assert mocked_wrs_trainer.get_train_dataloader() == "train_dataloader"
+        weighted_random_sampler.assert_called_once_with([4, 5, 6], 3)
+        train_dataloader.assert_called_once_with(
+            [1, 2, 3],
+            batch_size=mocker.ANY,
+            sampler="weighted_random_sampler",
+            collate_fn="data_collator",
+        )
+    else:
+        with pytest.raises(ValueError):
+            mocked_wrs_trainer.get_train_dataloader()
+        weighted_random_sampler.assert_not_called()
+        train_dataloader.assert_not_called()
