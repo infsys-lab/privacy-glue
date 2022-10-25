@@ -7,6 +7,7 @@ from sequence_classification import Sequence_Classification_Pipeline
 import numpy as np
 import datasets
 import pytest
+import os
 
 
 class Sequence_Classification_Pipeline_Override(Sequence_Classification_Pipeline):
@@ -731,15 +732,14 @@ def test__run_train_loop(
     mocker,
 ):
     # create mocked pipeline object
-    mocked_pipeline = Sequence_Classification_Pipeline(
-        *mocked_arguments(
-            task=task,
-            do_train=do_train,
-            do_eval=do_eval,
-            do_predict=do_predict,
-            early_stopping_patience=early_stopping_patience,
-        )
+    current_arguments = mocked_arguments(
+        task=task,
+        do_train=do_train,
+        do_eval=do_eval,
+        do_predict=do_predict,
+        early_stopping_patience=early_stopping_patience,
     )
+    mocked_pipeline = Sequence_Classification_Pipeline(*current_arguments)
     mocked_pipeline.model = "model"
     mocked_pipeline.train_dataset = [1, 2, 3]
     mocked_pipeline.eval_dataset = [4, 5, 6]
@@ -800,8 +800,13 @@ def test__run_train_loop(
     early_stopping_callback = mocker.patch(
         "sequence_classification.EarlyStoppingCallback",
     )
-    json_dump = mocker.patch("sequence_classification.json.dump")
-    mocker.patch("sequence_classification.open")
+    json_open_dump = mocker.MagicMock()
+    json_open_dump.attach_mock(
+        mocker.patch("sequence_classification.open", mocker.mock_open()), "open"
+    )
+    json_open_dump.attach_mock(
+        mocker.patch("sequence_classification.json.dump"), "json_dump"
+    )
     mocker.patch.object(mocked_pipeline, "logger", create=True)
 
     # execute relevant pipeline method
@@ -884,10 +889,13 @@ def test__run_train_loop(
         mocked_pipeline.trainer.save_metrics.assert_any_call(
             "predict", {"predict_samples": 3}
         )
+        json_open_dump.open.assert_called_once_with(
+            os.path.join(current_arguments[2].output_dir, "predictions.json"), "w"
+        )
 
         # conditionally check dumped dictionary
         if task == "privacy_qa":
-            json_dump.assert_called_once_with(
+            json_open_dump.json_dump.assert_called_once_with(
                 [
                     {
                         "id": 0,
@@ -914,7 +922,7 @@ def test__run_train_loop(
                 mocker.ANY,
             )
         elif task == "opp_115":
-            json_dump.assert_called_once_with(
+            json_open_dump.json_dump.assert_called_once_with(
                 [
                     {
                         "id": 0,
@@ -938,7 +946,7 @@ def test__run_train_loop(
                 mocker.ANY,
             )
         else:
-            json_dump.assert_called_once_with(
+            json_open_dump.json_dump.assert_called_once_with(
                 [
                     {
                         "id": 0,
@@ -967,4 +975,5 @@ def test__run_train_loop(
             mocked_pipeline.trainer.log_metrics.assert_any_call("predict", mocker.ANY)
         with pytest.raises(AssertionError):
             mocked_pipeline.trainer.save_metrics.assert_any_call("predict", mocker.ANY)
-        json_dump.assert_not_called()
+        json_open_dump.open.assert_not_called()
+        json_open_dump.json_dump.assert_not_called()
