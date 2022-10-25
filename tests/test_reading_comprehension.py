@@ -1150,30 +1150,28 @@ def test__run_train_loop(
     do_predict,
     early_stopping_patience,
     mocked_qa_examples,
-    mocked_arguments_with_tmp_path,
+    mocked_arguments,
     mocker,
 ):
     # create mocked pipeline object
-    mocked_pipeline_with_tmp_path = Reading_Comprehension_Pipeline(
-        *mocked_arguments_with_tmp_path(
+    mocked_pipeline = Reading_Comprehension_Pipeline(
+        *mocked_arguments(
             do_train=do_train,
             do_eval=do_eval,
             do_predict=do_predict,
             early_stopping_patience=early_stopping_patience,
         )
     )
-    mocked_pipeline_with_tmp_path.raw_datasets = mocked_qa_examples
-    mocked_pipeline_with_tmp_path.model = "model"
-    mocked_pipeline_with_tmp_path.train_dataset = [1, 2, 3]
-    mocked_pipeline_with_tmp_path.eval_dataset = [4, 5, 6]
-    mocked_pipeline_with_tmp_path.predict_dataset = [7, 8, 9]
-    mocked_pipeline_with_tmp_path.tokenizer = "tokenizer"
-    mocked_pipeline_with_tmp_path.data_collator = "data_collator"
-    mocked_pipeline_with_tmp_path._post_processing_function = (
-        "_post_processing_function"
-    )
-    mocked_pipeline_with_tmp_path._compute_metrics = "_compute_metrics"
-    mocked_pipeline_with_tmp_path.last_checkpoint = "last_checkpoint"
+    mocked_pipeline.raw_datasets = mocked_qa_examples
+    mocked_pipeline.model = "model"
+    mocked_pipeline.train_dataset = [1, 2, 3]
+    mocked_pipeline.eval_dataset = [4, 5, 6]
+    mocked_pipeline.predict_dataset = [7, 8, 9]
+    mocked_pipeline.tokenizer = "tokenizer"
+    mocked_pipeline.data_collator = "data_collator"
+    mocked_pipeline._post_processing_function = "_post_processing_function"
+    mocked_pipeline._compute_metrics = "_compute_metrics"
+    mocked_pipeline.last_checkpoint = "last_checkpoint"
 
     # create mocked objects
     qa_trainer = mocker.patch(
@@ -1192,10 +1190,11 @@ def test__run_train_loop(
         "reading_comprehension.EarlyStoppingCallback",
     )
     json_dump = mocker.patch("reading_comprehension.json.dump")
-    mocker.patch.object(mocked_pipeline_with_tmp_path, "logger", create=True)
+    mocker.patch("reading_comprehension.open")
+    mocker.patch.object(mocked_pipeline, "logger", create=True)
 
     # execute relevant pipeline method
-    mocked_pipeline_with_tmp_path._run_train_loop()
+    mocked_pipeline._run_train_loop()
 
     # make common assertion
     qa_trainer.assert_called_once_with(
@@ -1215,59 +1214,49 @@ def test__run_train_loop(
 
     # make conditional assertions for training
     if do_train:
-        mocked_pipeline_with_tmp_path.trainer.train.assert_called_once_with(
+        mocked_pipeline.trainer.train.assert_called_once_with(
             resume_from_checkpoint="last_checkpoint"
         )
-        mocked_pipeline_with_tmp_path.trainer.save_model.assert_called_once()
-        mocked_pipeline_with_tmp_path.trainer.log_metrics.assert_any_call(
+        mocked_pipeline.trainer.save_model.assert_called_once()
+        mocked_pipeline.trainer.log_metrics.assert_any_call(
             "train", {"train_samples": 3}
         )
-        mocked_pipeline_with_tmp_path.trainer.save_metrics.assert_any_call(
+        mocked_pipeline.trainer.save_metrics.assert_any_call(
             "train", {"train_samples": 3}
         )
-        mocked_pipeline_with_tmp_path.trainer.save_state.assert_called_once()
+        mocked_pipeline.trainer.save_state.assert_called_once()
     else:
-        mocked_pipeline_with_tmp_path.trainer.train.assert_not_called()
-        mocked_pipeline_with_tmp_path.trainer.save_model.assert_not_called()
-        mocked_pipeline_with_tmp_path.trainer.save_state.assert_not_called()
+        mocked_pipeline.trainer.train.assert_not_called()
+        mocked_pipeline.trainer.save_model.assert_not_called()
+        mocked_pipeline.trainer.save_state.assert_not_called()
         with pytest.raises(AssertionError):
-            mocked_pipeline_with_tmp_path.trainer.log_metrics.assert_any_call(
-                "train", mocker.ANY
-            )
+            mocked_pipeline.trainer.log_metrics.assert_any_call("train", mocker.ANY)
         with pytest.raises(AssertionError):
-            mocked_pipeline_with_tmp_path.trainer.save_metrics.assert_any_call(
-                "train", mocker.ANY
-            )
+            mocked_pipeline.trainer.save_metrics.assert_any_call("train", mocker.ANY)
 
     # make conditional assertions for evaluation
     if do_eval:
-        mocked_pipeline_with_tmp_path.trainer.evaluate.assert_called_once()
-        mocked_pipeline_with_tmp_path.trainer.log_metrics.assert_any_call(
-            "eval", {"eval_samples": 3}
-        )
-        mocked_pipeline_with_tmp_path.trainer.save_metrics.assert_any_call(
+        mocked_pipeline.trainer.evaluate.assert_called_once()
+        mocked_pipeline.trainer.log_metrics.assert_any_call("eval", {"eval_samples": 3})
+        mocked_pipeline.trainer.save_metrics.assert_any_call(
             "eval", {"eval_samples": 3}
         )
     else:
-        mocked_pipeline_with_tmp_path.trainer.evaluate.assert_not_called()
+        mocked_pipeline.trainer.evaluate.assert_not_called()
         with pytest.raises(AssertionError):
-            mocked_pipeline_with_tmp_path.trainer.log_metrics.assert_any_call(
-                "eval", mocker.ANY
-            )
+            mocked_pipeline.trainer.log_metrics.assert_any_call("eval", mocker.ANY)
         with pytest.raises(AssertionError):
-            mocked_pipeline_with_tmp_path.trainer.save_metrics.assert_any_call(
-                "eval", mocker.ANY
-            )
+            mocked_pipeline.trainer.save_metrics.assert_any_call("eval", mocker.ANY)
 
     # make conditional assertions for prediction
     if do_predict:
-        mocked_pipeline_with_tmp_path.trainer.predict.assert_called_once_with(
+        mocked_pipeline.trainer.predict.assert_called_once_with(
             [7, 8, 9], mocked_qa_examples["test"]
         )
-        mocked_pipeline_with_tmp_path.trainer.log_metrics.assert_any_call(
+        mocked_pipeline.trainer.log_metrics.assert_any_call(
             "predict", {"predict_samples": 3}
         )
-        mocked_pipeline_with_tmp_path.trainer.save_metrics.assert_any_call(
+        mocked_pipeline.trainer.save_metrics.assert_any_call(
             "predict", {"predict_samples": 3}
         )
         json_dump.assert_called_once_with(
@@ -1275,13 +1264,9 @@ def test__run_train_loop(
             mocker.ANY,
         )
     else:
-        mocked_pipeline_with_tmp_path.trainer.predict.assert_not_called()
+        mocked_pipeline.trainer.predict.assert_not_called()
         with pytest.raises(AssertionError):
-            mocked_pipeline_with_tmp_path.trainer.log_metrics.assert_any_call(
-                "predict", mocker.ANY
-            )
+            mocked_pipeline.trainer.log_metrics.assert_any_call("predict", mocker.ANY)
         with pytest.raises(AssertionError):
-            mocked_pipeline_with_tmp_path.trainer.save_metrics.assert_any_call(
-                "predict", mocker.ANY
-            )
+            mocked_pipeline.trainer.save_metrics.assert_any_call("predict", mocker.ANY)
         json_dump.assert_not_called()
