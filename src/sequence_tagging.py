@@ -362,7 +362,6 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
             metrics["predict_samples"] = len(self.predict_dataset)
 
             self.trainer.log_metrics("predict", metrics)
-            self.trainer.log(metrics)
             self.trainer.save_metrics("predict", metrics)
 
             predictions_per_task, labels_per_task = self._retransform_labels(
