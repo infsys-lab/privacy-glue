@@ -690,3 +690,281 @@ def test__compute_metrics(
         "micro_recall",
         "accuracy",
     ]
+
+
+@pytest.mark.parametrize(
+    "do_train",
+    [True, False],
+)
+@pytest.mark.parametrize(
+    "do_eval",
+    [True, False],
+)
+@pytest.mark.parametrize(
+    "do_predict",
+    [True, False],
+)
+@pytest.mark.parametrize(
+    "early_stopping_patience",
+    [3, 5],
+)
+@pytest.mark.parametrize(
+    "task, problem_type",
+    [
+        ("opp_115", "multi_label"),
+        ("policy_detection", "single_label"),
+        ("policy_ie_a", "single_label"),
+        ("privacy_qa", "single_label"),
+    ],
+)
+def test__run_train_loop(
+    do_train,
+    do_eval,
+    do_predict,
+    early_stopping_patience,
+    task,
+    problem_type,
+    mocked_single_label_single_key_examples,
+    mocked_single_label_dual_key_examples,
+    mocked_multi_label_single_key_examples,
+    mocked_arguments,
+    mocker,
+):
+    # create mocked pipeline object
+    mocked_pipeline = Sequence_Classification_Pipeline(
+        *mocked_arguments(
+            task=task,
+            do_train=do_train,
+            do_eval=do_eval,
+            do_predict=do_predict,
+            early_stopping_patience=early_stopping_patience,
+        )
+    )
+    mocked_pipeline.model = "model"
+    mocked_pipeline.train_dataset = [1, 2, 3]
+    mocked_pipeline.eval_dataset = [4, 5, 6]
+    mocked_pipeline.predict_dataset = [7, 8, 9]
+    mocked_pipeline.tokenizer = "tokenizer"
+    mocked_pipeline.data_collator = "data_collator"
+    mocked_pipeline._compute_metrics = "_compute_metrics"
+    mocked_pipeline.last_checkpoint = "last_checkpoint"
+    mocked_pipeline.label_names = ["a", "b", "c"]
+    if task == "opp_115":
+        mocked_pipeline.raw_datasets = mocked_multi_label_single_key_examples
+    elif task == "privacy_qa":
+        mocked_pipeline.raw_datasets = mocked_single_label_dual_key_examples
+    else:
+        mocked_pipeline.raw_datasets = mocked_single_label_single_key_examples
+
+    # create mocked objects
+    sc_trainer = mocker.patch(
+        "sequence_classification.Trainer",
+    )
+    sc_trainer.return_value.configure_mock(
+        **{
+            "train.return_value": SimpleNamespace(metrics={}),
+            "evaluate.return_value": {},
+            "predict.return_value": (
+                np.array([[0.8, 0.1, 0.1], [0.1, 0.8, 0.1], [0.1, 0.1, 0.8]]),
+                np.array([0, 0, 2]),
+                {},
+            )
+            if problem_type == "single_label"
+            else (
+                np.array([[0.8, 0.8, -100.0], [-100.0, 0.8, 0.8], [0.8, -100.0, 0.8]]),
+                np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 1.0, 1.0]]),
+                {},
+            ),
+        }
+    )
+    wrs_trainer = mocker.patch(
+        "sequence_classification.Weighted_Random_Sampler_Trainer",
+    )
+    wrs_trainer.return_value.configure_mock(
+        **{
+            "train.return_value": SimpleNamespace(metrics={}),
+            "evaluate.return_value": {},
+            "predict.return_value": (
+                np.array([[0.8, 0.1, 0.1], [0.1, 0.8, 0.1], [0.1, 0.1, 0.8]]),
+                np.array([0, 0, 2]),
+                {},
+            )
+            if problem_type == "single_label"
+            else (
+                np.array([[0.8, 0.8, -100.0], [-100.0, 0.8, 0.8], [0.8, -100.0, 0.8]]),
+                np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 1.0, 1.0]]),
+                {},
+            ),
+        }
+    )
+    early_stopping_callback = mocker.patch(
+        "sequence_classification.EarlyStoppingCallback",
+    )
+    json_dump = mocker.patch("sequence_classification.json.dump")
+    mocker.patch("sequence_classification.open")
+    mocker.patch.object(mocked_pipeline, "logger", create=True)
+
+    # execute relevant pipeline method
+    mocked_pipeline._run_train_loop()
+
+    # make conditional assertions for trainer
+    if task == "privacy_qa":
+        wrs_trainer.assert_called_once_with(
+            model="model",
+            args=mocker.ANY,
+            train_dataset=[1, 2, 3] if do_train else None,
+            eval_dataset=[4, 5, 6] if do_eval else None,
+            tokenizer="tokenizer",
+            data_collator="data_collator",
+            compute_metrics="_compute_metrics",
+            callbacks=[
+                early_stopping_callback(early_stopping_patience=early_stopping_patience)
+            ],
+        )
+        sc_trainer.assert_not_called()
+    else:
+        sc_trainer.assert_called_once_with(
+            model="model",
+            args=mocker.ANY,
+            train_dataset=[1, 2, 3] if do_train else None,
+            eval_dataset=[4, 5, 6] if do_eval else None,
+            tokenizer="tokenizer",
+            data_collator="data_collator",
+            compute_metrics="_compute_metrics",
+            callbacks=[
+                early_stopping_callback(early_stopping_patience=early_stopping_patience)
+            ],
+        )
+        wrs_trainer.assert_not_called()
+
+    # make conditional assertions for training
+    if do_train:
+        mocked_pipeline.trainer.train.assert_called_once_with(
+            resume_from_checkpoint="last_checkpoint"
+        )
+        mocked_pipeline.trainer.save_model.assert_called_once()
+        mocked_pipeline.trainer.log_metrics.assert_any_call(
+            "train", {"train_samples": 3}
+        )
+        mocked_pipeline.trainer.save_metrics.assert_any_call(
+            "train", {"train_samples": 3}
+        )
+        mocked_pipeline.trainer.save_state.assert_called_once()
+    else:
+        mocked_pipeline.trainer.train.assert_not_called()
+        mocked_pipeline.trainer.save_model.assert_not_called()
+        mocked_pipeline.trainer.save_state.assert_not_called()
+        with pytest.raises(AssertionError):
+            mocked_pipeline.trainer.log_metrics.assert_any_call("train", mocker.ANY)
+        with pytest.raises(AssertionError):
+            mocked_pipeline.trainer.save_metrics.assert_any_call("train", mocker.ANY)
+
+    # make conditional assertions for evaluation
+    if do_eval:
+        mocked_pipeline.trainer.evaluate.assert_called_once()
+        mocked_pipeline.trainer.log_metrics.assert_any_call("eval", {"eval_samples": 3})
+        mocked_pipeline.trainer.save_metrics.assert_any_call(
+            "eval", {"eval_samples": 3}
+        )
+    else:
+        mocked_pipeline.trainer.evaluate.assert_not_called()
+        with pytest.raises(AssertionError):
+            mocked_pipeline.trainer.log_metrics.assert_any_call("eval", mocker.ANY)
+        with pytest.raises(AssertionError):
+            mocked_pipeline.trainer.save_metrics.assert_any_call("eval", mocker.ANY)
+
+    # make conditional assertions for prediction
+    if do_predict:
+        mocked_pipeline.trainer.predict.assert_called_once_with(
+            [7, 8, 9], metric_key_prefix="predict"
+        )
+        mocked_pipeline.trainer.log_metrics.assert_any_call(
+            "predict", {"predict_samples": 3}
+        )
+        mocked_pipeline.trainer.save_metrics.assert_any_call(
+            "predict", {"predict_samples": 3}
+        )
+
+        # conditionally check dumped dictionary
+        if task == "privacy_qa":
+            json_dump.assert_called_once_with(
+                [
+                    {
+                        "id": 0,
+                        "question": "test question for SC 1",
+                        "text": "test text for SC 1",
+                        "gold_label": "a",
+                        "predicted_label": "a",
+                    },
+                    {
+                        "id": 1,
+                        "question": "test question for SC 2",
+                        "text": "test text for SC 2",
+                        "gold_label": "a",
+                        "predicted_label": "b",
+                    },
+                    {
+                        "id": 2,
+                        "question": "test question for SC 3",
+                        "text": "test text for SC 3",
+                        "gold_label": "c",
+                        "predicted_label": "c",
+                    },
+                ],
+                mocker.ANY,
+            )
+        elif task == "opp_115":
+            json_dump.assert_called_once_with(
+                [
+                    {
+                        "id": 0,
+                        "text": "test text for SC 1",
+                        "gold_label": ["a"],
+                        "predicted_label": ["a", "b"],
+                    },
+                    {
+                        "id": 1,
+                        "text": "test text for SC 2",
+                        "gold_label": ["b"],
+                        "predicted_label": ["b", "c"],
+                    },
+                    {
+                        "id": 2,
+                        "text": "test text for SC 3",
+                        "gold_label": ["b", "c"],
+                        "predicted_label": ["a", "c"],
+                    },
+                ],
+                mocker.ANY,
+            )
+        else:
+            json_dump.assert_called_once_with(
+                [
+                    {
+                        "id": 0,
+                        "text": "test text for SC 1",
+                        "gold_label": "a",
+                        "predicted_label": "a",
+                    },
+                    {
+                        "id": 1,
+                        "text": "test text for SC 2",
+                        "gold_label": "a",
+                        "predicted_label": "b",
+                    },
+                    {
+                        "id": 2,
+                        "text": "test text for SC 3",
+                        "gold_label": "c",
+                        "predicted_label": "c",
+                    },
+                ],
+                mocker.ANY,
+            )
+    else:
+        mocked_pipeline.trainer.predict.assert_not_called()
+        with pytest.raises(AssertionError):
+            mocked_pipeline.trainer.log_metrics.assert_any_call("predict", mocker.ANY)
+        with pytest.raises(AssertionError):
+            mocked_pipeline.trainer.save_metrics.assert_any_call("predict", mocker.ANY)
+        json_dump.assert_not_called()
