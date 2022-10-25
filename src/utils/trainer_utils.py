@@ -145,22 +145,22 @@ class Weighted_Random_Sampler_Trainer(Trainer):
     def _get_sample_weights(self):
         train_dataset_labels = self.train_dataset["label"]
         unique_labels = sorted(set(train_dataset_labels))
-        samples_count = [train_dataset_labels.count(label) for label in unique_labels]
-        samples_weight = 1 / torch.Tensor(samples_count)
-        samples_weight = torch.Tensor(
+        sample_count = [train_dataset_labels.count(label) for label in unique_labels]
+        sample_weights = 1 / torch.Tensor(sample_count)
+        sample_weights = torch.Tensor(
             [
-                samples_weight[unique_labels.index(label)]
+                sample_weights[unique_labels.index(label)]
                 for label in train_dataset_labels
             ]
         )
-        return samples_weight
+        return sample_weights
 
     def get_train_dataloader(self) -> DataLoader:
         if self.train_dataset is None:
             raise ValueError("Trainer: training requires a train_dataset.")
         data_collator = self.data_collator
-        samples_weight = self._get_sample_weights()
-        train_sampler = WeightedRandomSampler(samples_weight, len(samples_weight))
+        sample_weights = self._get_sample_weights()
+        train_sampler = WeightedRandomSampler(sample_weights, len(sample_weights))
         return DataLoader(
             self.train_dataset,
             batch_size=self.args.per_device_train_batch_size,
