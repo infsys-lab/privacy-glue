@@ -70,6 +70,9 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
             cache_dir=self.model_args.cache_dir,
             revision=self.model_args.model_revision,
         )
+        # We need to instantiate RobertaTokenizerFast with add_prefix_space=True
+        # to use it with pretokenized inputs.
+        add_prefix_space = self.config.__class__.__name__.startswith("Roberta")
 
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.model_args.tokenizer_name
@@ -78,6 +81,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
             cache_dir=self.model_args.cache_dir,
             use_fast=True,
             revision=self.model_args.model_revision,
+            add_prefix_space=add_prefix_space,
         )
 
         self.model = MultiTaskModel(
