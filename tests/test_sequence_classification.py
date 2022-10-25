@@ -4,6 +4,7 @@
 from types import SimpleNamespace
 from collections import defaultdict
 from sequence_classification import Sequence_Classification_Pipeline
+import numpy as np
 import datasets
 import pytest
 
@@ -602,3 +603,90 @@ def test__set_metrics(problem_type, expected_metric_config, mocked_arguments, mo
     assert mocked_pipeline.recall_metric == ("recall", expected_metric_config)
     assert mocked_pipeline.train_args.metric_for_best_model == "macro_f1"
     assert mocked_pipeline.train_args.greater_is_better
+
+
+@pytest.mark.parametrize(
+    "problem_type, scores, expected_predictions, label_ids",
+    [
+        (
+            "single_label",
+            [[0.8, 0.1, 0.1], [0.1, 0.8, 0.1]],
+            np.array([0, 1]),
+            np.array([1, 1]),
+        ),
+        (
+            "multi_label",
+            [[0.8, 0.8, -100], [-100, 0.8, 0.8]],
+            np.array([[1, 1, 0], [0, 1, 1]]),
+            np.array([[1, 0, 0], [0, 1, 0]]),
+        ),
+    ],
+)
+def test__compute_metrics(
+    problem_type, scores, expected_predictions, label_ids, mocked_arguments, mocker
+):
+    # create mocked pipeline object
+    mocked_pipeline = Sequence_Classification_Pipeline_Override(*mocked_arguments())
+    mocked_pipeline.problem_type = problem_type
+    f1_metric = mocker.patch.object(mocked_pipeline, "f1_metric", create=True)
+    precision_metric = mocker.patch.object(
+        mocked_pipeline, "precision_metric", create=True
+    )
+    recall_metric = mocker.patch.object(mocked_pipeline, "recall_metric", create=True)
+    accuracy_metric = mocker.patch.object(
+        mocked_pipeline, "accuracy_metric", create=True
+    )
+
+    # execute relevant pipeline method
+    metric_dict = mocked_pipeline._compute_metrics(
+        SimpleNamespace(predictions=scores, label_ids=label_ids)
+    )
+
+    # make assertions on calls
+    for mocked_metric, metric in [
+        (f1_metric, "f1"),
+        (precision_metric, "precision"),
+        (recall_metric, "recall"),
+        (accuracy_metric, "accuracy"),
+    ]:
+        # cast all numpy arrays to lists for comparison
+        for call in mocked_metric.mock_calls:
+            for key, value in call.kwargs.items():
+                if isinstance(value, np.ndarray):
+                    call.kwargs[key] = value.tolist()
+
+        # make conditional assertions
+        if metric != "accuracy":
+            assert mocked_metric.mock_calls == [
+                mocker.call.compute(
+                    predictions=expected_predictions.tolist(),
+                    references=label_ids.tolist(),
+                    average="macro",
+                ),
+                mocker.call.compute().__getitem__(metric),
+                mocker.call.compute(
+                    predictions=expected_predictions.tolist(),
+                    references=label_ids.tolist(),
+                    average="micro",
+                ),
+                mocker.call.compute().__getitem__(metric),
+            ]
+        else:
+            assert mocked_metric.mock_calls == [
+                mocker.call.compute(
+                    predictions=expected_predictions.tolist(),
+                    references=label_ids.tolist(),
+                ),
+                mocker.call.compute().__getitem__(metric),
+            ]
+
+    # make relevant assertions
+    assert list(metric_dict.keys()) == [
+        "macro_f1",
+        "micro_f1",
+        "macro_precision",
+        "micro_precision",
+        "macro_recall",
+        "micro_recall",
+        "accuracy",
+    ]
