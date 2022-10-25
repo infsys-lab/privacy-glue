@@ -351,19 +351,45 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
                 gold_labels = [self.label_names[item] for item in labels.tolist()]
 
             # assemble predictions into dictionary for dumping
-            prediction_dump = [
-                {
-                    "id": index,
-                    "text": input_text,
-                    "gold_label": gold_label,
-                    "predicted_label": predicted_label,
-                }
-                for index, (input_text, gold_label, predicted_label) in enumerate(
-                    zip(
-                        self.raw_datasets["test"]["text"], gold_labels, predicted_labels
+            if self.data_args.task == "privacy_qa":
+                prediction_dump = [
+                    {
+                        "id": index,
+                        "question": input_question,
+                        "text": input_text,
+                        "gold_label": gold_label,
+                        "predicted_label": predicted_label,
+                    }
+                    for index, (
+                        input_question,
+                        input_text,
+                        gold_label,
+                        predicted_label,
+                    ) in enumerate(
+                        zip(
+                            self.raw_datasets["test"]["question"],
+                            self.raw_datasets["test"]["text"],
+                            gold_labels,
+                            predicted_labels,
+                        )
                     )
-                )
-            ]
+                ]
+            else:
+                prediction_dump = [
+                    {
+                        "id": index,
+                        "text": input_text,
+                        "gold_label": gold_label,
+                        "predicted_label": predicted_label,
+                    }
+                    for index, (input_text, gold_label, predicted_label) in enumerate(
+                        zip(
+                            self.raw_datasets["test"]["text"],
+                            gold_labels,
+                            predicted_labels,
+                        )
+                    )
+                ]
 
             # dump prediction outputs
             if self.trainer.is_world_process_zero():
