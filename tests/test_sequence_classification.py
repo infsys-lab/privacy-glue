@@ -31,6 +31,45 @@ def mocked_single_label_single_key_examples():
     return combined
 
 
+@pytest.fixture
+def mocked_multi_label_single_key_examples():
+    combined = datasets.DatasetDict()
+    for split in ["train", "validation", "test"]:
+        sample = {
+            "text": [
+                f"{split} text for SC 1",
+                f"{split} text for SC 2",
+                f"{split} text for SC 3",
+            ],
+            "label": [[0, 1], [1, 2], [0, 2]],
+        }
+        combined[split] = datasets.Dataset.from_dict(sample)
+
+    return combined
+
+
+@pytest.fixture
+def mocked_single_label_dual_key_examples():
+    combined = datasets.DatasetDict()
+    for split in ["train", "validation", "test"]:
+        sample = {
+            "question": [
+                f"{split} question for SC 1",
+                f"{split} question for SC 2",
+                f"{split} question for SC 3",
+            ],
+            "text": [
+                f"{split} text for SC 1",
+                f"{split} text for SC 2",
+                f"{split} text for SC 3",
+            ],
+            "label": [0, 1, 2],
+        }
+        combined[split] = datasets.Dataset.from_dict(sample)
+
+    return combined
+
+
 @pytest.mark.parametrize(
     "task, problem_type, input_keys",
     [
@@ -439,6 +478,105 @@ def test__apply_preprocessing(
                 data_collator_with_padding.call_args.kwargs["pad_to_multiple_of"]
                 is None
             )
+
+
+@pytest.mark.parametrize(
+    "problem_type, input_keys",
+    [
+        ("single_label", ["text"]),
+        ("single_label", ["question", "text"]),
+        ("multi_label", ["text"]),
+    ],
+)
+@pytest.mark.parametrize(
+    "pad_to_max_length",
+    [True, False],
+)
+def test__preprocess_function(
+    problem_type,
+    input_keys,
+    pad_to_max_length,
+    mocked_single_label_single_key_examples,
+    mocked_single_label_dual_key_examples,
+    mocked_multi_label_single_key_examples,
+    mocked_arguments,
+    mocker,
+):
+    # create mocked pipeline object
+    mocked_pipeline = Sequence_Classification_Pipeline_Override(
+        *mocked_arguments(pad_to_max_length=pad_to_max_length)
+    )
+    mocked_pipeline.problem_type = problem_type
+    mocked_pipeline.input_keys = input_keys
+    mocked_pipeline.max_seq_length = 512
+    mocked_pipeline.label_names = ["a", "b", "c"]
+
+    # mock pipeline attributes
+    tokenizer = mocker.patch.object(
+        mocked_pipeline, "tokenizer", create=True, return_value={}
+    )
+
+    # execute relevant pipeline method
+    if problem_type == "single_label" and len(input_keys) == 1:
+        tokenized_examples = mocked_pipeline._preprocess_function(
+            mocked_single_label_single_key_examples["train"]
+        )
+    elif problem_type == "single_label" and len(input_keys) == 2:
+        tokenized_examples = mocked_pipeline._preprocess_function(
+            mocked_single_label_dual_key_examples["train"]
+        )
+    else:
+        tokenized_examples = mocked_pipeline._preprocess_function(
+            mocked_multi_label_single_key_examples["train"]
+        )
+
+    # make conditional assertions
+    if problem_type == "single_label" and len(input_keys) == 1:
+        assert tokenized_examples == {}
+        tokenizer.assert_called_once_with(
+            [
+                "train text for SC 1",
+                "train text for SC 2",
+                "train text for SC 3",
+            ],
+            padding="max_length" if pad_to_max_length else False,
+            max_length=512,
+            truncation=True,
+        )
+    elif problem_type == "single_label" and len(input_keys) == 2:
+        assert tokenized_examples == {}
+        tokenizer.assert_called_once_with(
+            [
+                "train question for SC 1",
+                "train question for SC 2",
+                "train question for SC 3",
+            ],
+            [
+                "train text for SC 1",
+                "train text for SC 2",
+                "train text for SC 3",
+            ],
+            padding="max_length" if pad_to_max_length else False,
+            max_length=512,
+            truncation=True,
+        )
+    else:
+        tokenizer.assert_called_once_with(
+            [
+                "train text for SC 1",
+                "train text for SC 2",
+                "train text for SC 3",
+            ],
+            padding="max_length" if pad_to_max_length else False,
+            max_length=512,
+            truncation=True,
+        )
+        assert list(tokenized_examples.keys()) == ["labels"]
+        assert tokenized_examples["labels"] == [
+            [1.0, 1.0, 0.0],
+            [0.0, 1.0, 1.0],
+            [1.0, 0.0, 1.0],
+        ]
 
 
 @pytest.mark.parametrize(
