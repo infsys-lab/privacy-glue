@@ -12,6 +12,7 @@ from reading_comprehension import Reading_Comprehension_Pipeline
 import numpy as np
 import datasets
 import pytest
+import os
 
 
 @pytest.fixture
@@ -1154,14 +1155,13 @@ def test__run_train_loop(
     mocker,
 ):
     # create mocked pipeline object
-    mocked_pipeline = Reading_Comprehension_Pipeline(
-        *mocked_arguments(
-            do_train=do_train,
-            do_eval=do_eval,
-            do_predict=do_predict,
-            early_stopping_patience=early_stopping_patience,
-        )
+    current_arguments = mocked_arguments(
+        do_train=do_train,
+        do_eval=do_eval,
+        do_predict=do_predict,
+        early_stopping_patience=early_stopping_patience,
     )
+    mocked_pipeline = Reading_Comprehension_Pipeline(*current_arguments)
     mocked_pipeline.raw_datasets = mocked_qa_examples
     mocked_pipeline.model = "model"
     mocked_pipeline.train_dataset = [1, 2, 3]
@@ -1189,8 +1189,13 @@ def test__run_train_loop(
     early_stopping_callback = mocker.patch(
         "reading_comprehension.EarlyStoppingCallback",
     )
-    json_dump = mocker.patch("reading_comprehension.json.dump")
-    mocker.patch("reading_comprehension.open")
+    json_open_dump = mocker.MagicMock()
+    json_open_dump.attach_mock(
+        mocker.patch("reading_comprehension.open", mocker.mock_open()), "open"
+    )
+    json_open_dump.attach_mock(
+        mocker.patch("reading_comprehension.json.dump"), "json_dump"
+    )
     mocker.patch.object(mocked_pipeline, "logger", create=True)
 
     # execute relevant pipeline method
@@ -1259,7 +1264,10 @@ def test__run_train_loop(
         mocked_pipeline.trainer.save_metrics.assert_any_call(
             "predict", {"predict_samples": 3}
         )
-        json_dump.assert_called_once_with(
+        json_open_dump.open.assert_called_once_with(
+            os.path.join(current_arguments[2].output_dir, "predictions.json"), "w"
+        )
+        json_open_dump.json_dump.assert_called_once_with(
             [10, 11, 12],
             mocker.ANY,
         )
@@ -1269,4 +1277,5 @@ def test__run_train_loop(
             mocked_pipeline.trainer.log_metrics.assert_any_call("predict", mocker.ANY)
         with pytest.raises(AssertionError):
             mocked_pipeline.trainer.save_metrics.assert_any_call("predict", mocker.ANY)
-        json_dump.assert_not_called()
+        json_open_dump.open.assert_not_called()
+        json_open_dump.json_dump.assert_not_called()
