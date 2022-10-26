@@ -81,7 +81,7 @@ def mocked_single_label_dual_key_examples():
         ("privacy_qa", "single_label", ["question", "text"]),
     ],
 )
-def test__init(task, problem_type, input_keys, mocked_arguments):
+def test__init__(task, problem_type, input_keys, mocked_arguments):
     # create mocked pipeline object
     mocked_pipeline = Sequence_Classification_Pipeline(*mocked_arguments(task=task))
 
