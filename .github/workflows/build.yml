@@ -55,3 +55,4 @@ jobs:
           create-new-comment: true
           pytest-xml-coverage-path: ./coverage.xml
           junitxml-path: ./pytest.xml
+          coverage-path-prefix: ./src/

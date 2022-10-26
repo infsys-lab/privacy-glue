@@ -33,6 +33,16 @@ TASKS = [
 
 
 @dataclass
+class ExperimentArguments:
+    random_seed_iterations: int = field(
+        default=5, metadata={"help": "Number of random seed iterations to run"}
+    )
+    do_summarize: bool = field(
+        default=False, metadata={"help": "Summarize over all random seeds"}
+    )
+
+
+@dataclass
 class ModelArguments:
     model_name_or_path: str = field(
         metadata={
@@ -75,25 +85,17 @@ class ModelArguments:
             "tokenizers library) or not"
         },
     )
-    random_seed_iterations: int = field(
-        default=5, metadata={"help": "Number of random seed iterations to run"}
-    )
     early_stopping_patience: int = field(
         default=5, metadata={"help": "Early stopping patience value"}
-    )
-    do_summarize: bool = field(
-        default=False, metadata={"help": "Summarize over all random seeds"}
     )
     do_clean: bool = field(
         default=False, metadata={"help": "Clean all old checkpoints after training"}
     )
 
     def __post_init__(self):
-        assert (
-            self.model_name_or_path in MODELS
-        ), "Model '%s' is not supported, please select model from %s" % (
-            self.model_name_or_path,
-            MODELS,
+        assert self.model_name_or_path in MODELS, (
+            f"Model '{self.model_name_or_path}' is not supported, "
+            f"please select model from {MODELS}"
         )
 
 
@@ -160,19 +162,18 @@ class DataArguments:
     )
 
     def __post_init__(self):
-        assert os.path.isdir(self.data_dir), (
-            "%s is not a valid directory" % self.data_dir
-        )
+        assert os.path.isdir(self.data_dir), f"{self.data_dir} is not a valid directory"
         assert (
             self.task in TASKS
-        ), "Task '%s' is not supported, please select task from %s" % (self.task, TASKS)
+        ), f"Task '{self.task}' is not supported, please select task from {TASKS}"
 
 
 def get_parser() -> HfArgumentParser:
     return HfArgumentParser(
         (
-            DataClassType(ModelArguments),
             DataClassType(DataArguments),
+            DataClassType(ModelArguments),
             DataClassType(TrainingArguments),
+            DataClassType(ExperimentArguments),
         )
     )

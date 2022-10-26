@@ -35,15 +35,15 @@ This repository documents PrivacyGLUE; a NLP benchmark consisting of legal-priva
 
 ## Tasks :runner:
 
-| Task             | Type                                              | Study                                                                                |
-|------------------|---------------------------------------------------|--------------------------------------------------------------------------------------|
-| OPP-115          | Multi-label<sup>\*</sup> sequence classification  | [Wilson et al. (2016)](https://usableprivacy.org/data)<sup>\*\*\*</sup>              |
-| PI-Extract       | Multi-label<sup>\*</sup> sequence tagging         | [Duc et al. (2021)](https://github.com/um-rtcl/piextract_dataset)                    |
-| Policy-Detection | Binary sequence classification                    | [Amos et al. (2021)](https://privacypolicies.cs.princeton.edu/)                      |
-| PolicyIE-A       | Multi-class<sup>\**</sup> sequence classification | [Ahmad et al. (2021)](https://github.com/wasiahmad/PolicyIE)                         |
-| PolicyIE-B       | Multi-label<sup>\*</sup> sequence tagging         | [Ahmad et al. (2021)](https://github.com/wasiahmad/PolicyIE)                         |
-| PolicyQA         | Reading comprehension                             | [Ahmad et al. (2021)](https://github.com/wasiahmad/PolicyQA)                         |
-| PrivacyQA        | Binary sequence classification                    | [Ravichander et al. (2019)](https://github.com/AbhilashaRavichander/PrivacyQA_EMNLP) |
+| Task             | Type                                               | Study                                                                                |
+|------------------|----------------------------------------------------|--------------------------------------------------------------------------------------|
+| OPP-115          | Multi-label<sup>\*</sup> sequence classification   | [Wilson et al. (2016)](https://usableprivacy.org/data)<sup>\*\*\*</sup>              |
+| PI-Extract       | Joint multi-class<sup>\*\*</sup> sequence tagging  | [Duc et al. (2021)](https://github.com/um-rtcl/piextract_dataset)                    |
+| Policy-Detection | Binary sequence classification                     | [Amos et al. (2021)](https://privacypolicies.cs.princeton.edu/)                      |
+| PolicyIE-A       | Multi-class<sup>\*\*</sup> sequence classification | [Ahmad et al. (2021)](https://github.com/wasiahmad/PolicyIE)                         |
+| PolicyIE-B       | Joint multi-class<sup>\*\*</sup> sequence tagging  | [Ahmad et al. (2021)](https://github.com/wasiahmad/PolicyIE)                         |
+| PolicyQA         | Reading comprehension                              | [Ahmad et al. (2021)](https://github.com/wasiahmad/PolicyQA)                         |
+| PrivacyQA        | Binary sequence classification                     | [Ravichander et al. (2019)](https://github.com/AbhilashaRavichander/PrivacyQA_EMNLP) |
 
 <sup>\*</sup>Multi-label implies that each classification task can have more than one gold standard label
 

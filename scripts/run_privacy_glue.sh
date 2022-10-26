@@ -12,7 +12,7 @@ optional arguments:
                           the "CUDA_VISIBLE_DEVICES" environmental variable
                           (default: 0)
 
-  --fp_16                 enable 16-bit mixed precision computation
+  --fp16_all              enable 16-bit mixed precision computation
                           through NVIDIA Apex for both training and evaluation
                           (default: False)
 
@@ -24,6 +24,8 @@ optional arguments:
                           "nlpaueb/legal-bert-base-uncased",
                           "mukund/privbert"
                           (default: bert-base-uncased)
+
+  --no_cuda               disable CUDA even when available (default: False)
 
   --num_workers           <int>
                           number of workers to be used for preprocessing
@@ -39,7 +41,7 @@ optional arguments:
                           "policy_qa", "privacy_qa", "all"
                           (default: all)
 
-  --wandb                 log metrics and result to wandb
+  --wandb                 log metrics and results to wandb
                           (default: False)
 
   -h, --help              show this help message and exit
@@ -49,48 +51,99 @@ EOF
 parser() {
   while [[ -n "$1" ]]; do
     case "$1" in
-    --fp_16)
-      FP_16=("--fp16" "--fp16_full_eval")
+    --fp16_all)
+      FP16_ALL=("--fp16" "--fp16_full_eval")
       ;;
     --overwrite)
       OVERWRITE=("--overwrite_cache" "--overwrite_output_dir")
+      ;;
+    --no_cuda)
+      NO_CUDA=("--no_cuda")
       ;;
     --wandb)
       WANDB="wandb"
       ;;
     --model_name_or_path)
-      shift
-      MODEL_NAME_OR_PATH="$1"
+      if [[ -n "$2" ]]; then
+        shift
+        MODEL_NAME_OR_PATH="$1"
+      else
+        {
+          printf "%s\n\n" "Missing --model_name_or_path argument"
+          usage
+        } >&2
+        exit 1
+      fi
       ;;
     --num_workers)
-      shift
-      NUM_WORKERS="$1"
+      if [[ -n "$2" ]]; then
+        shift
+        NUM_WORKERS="$1"
+      else
+        {
+          printf "%s\n\n" "Missing --num_workers argument"
+          usage
+        } >&2
+        exit 1
+      fi
       ;;
     --task)
-      shift
-      TASK="$1"
+      if [[ -n "$2" ]]; then
+        shift
+        TASK="$1"
+      else
+        {
+          printf "%s\n\n" "Missing --task argument"
+          usage
+        } >&2
+        exit 1
+      fi
       ;;
     --cuda_visible_devices)
-      shift
-      CUDA_VISIBLE_DEVICES="$1"
+      if [[ -n "$2" ]]; then
+        shift
+        CUDA_VISIBLE_DEVICES="$1"
+        N_GPU=$(($(printf "%s" "$CUDA_VISIBLE_DEVICES" |
+          sed 's/^,\+//g; s/,\+$//g; s/,\+ */,/g' |
+          tr -cd , |
+          wc -c) + 1))
+      else
+        {
+          printf "%s\n\n" "Missing --cuda_visible_devices argument"
+          usage
+        } >&2
+        exit 1
+      fi
       ;;
     -h | --help)
       usage
       exit 0
       ;;
     *)
-      printf "%s\n" "Unknown option $1"
-      usage
+      {
+        printf "%s\n\n" "Unknown option $1"
+        usage
+      } >&2
       exit 1
       ;;
     esac
     shift
   done
+
+  # add post-parsing sanity checks
+  if [ -n "${NO_CUDA[*]}" ]; then
+    CUDA_VISIBLE_DEVICES=""
+    N_GPU=0
+  elif [ "$N_GPU" -gt "1" ]; then
+    PROGRAM_RUNTIME=("torchrun" "--nproc_per_node" "$N_GPU")
+  fi
 }
 
 main() {
   # execute fine-tuning
-  CUDA_VISIBLE_DEVICES="$CUDA_VISIBLE_DEVICES" python3 src/privacy_glue.py \
+  CUDA_VISIBLE_DEVICES="$CUDA_VISIBLE_DEVICES" \
+    "${PROGRAM_RUNTIME[@]}" \
+    src/privacy_glue.py \
     --task "$TASK" \
     --model_name_or_path "$MODEL_NAME_OR_PATH" \
     --preprocessing_num_workers "$NUM_WORKERS" \
@@ -112,21 +165,25 @@ main() {
     --per_device_eval_batch_size "$((GLOBAL_BATCH_SIZE / ACCUMULATION_STEPS))" \
     --gradient_accumulation_steps "$ACCUMULATION_STEPS" \
     --eval_accumulation_steps "$ACCUMULATION_STEPS" \
-    "${FP_16[@]}" \
-    "${OVERWRITE[@]}"
+    "${FP16_ALL[@]}" \
+    "${OVERWRITE[@]}" \
+    "${NO_CUDA[@]}"
 }
 
 # declare global variable defaults
-FP_16=()
+FP16_ALL=()
 OVERWRITE=()
+NO_CUDA=()
 TASK="all"
 OUTPUT_DIR="runs"
 WANDB="none"
 CUDA_VISIBLE_DEVICES=0
+N_GPU=1
 GLOBAL_BATCH_SIZE=16
 ACCUMULATION_STEPS=1
 NUM_WORKERS=1
 MODEL_NAME_OR_PATH="bert-base-uncased"
+PROGRAM_RUNTIME=("python3")
 
 # overall workflow
 parser "$@"
