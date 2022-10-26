@@ -28,6 +28,7 @@ flake8 = "^5.0.4"
 shellcheck-py = "^0.8.0"
 shfmt-py = "^3.4.3"
 pytest-mock = "^3.8.2"
+isort = "^5.10.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
