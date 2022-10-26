@@ -48,6 +48,12 @@ extend-exclude = """
 )/
 """
 
+[tool.isort]
+profile = "black"
+skip_glob = ["data/*", "runs/*", "scripts/*",
+             "submodules/*", ".venv/*", "cov_html/*"]
+line_length = 88
+
 [tool.coverage.run]
 branch = true
 source = ["src"]
