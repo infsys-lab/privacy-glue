@@ -1151,6 +1151,7 @@ def test__run_train_loop(
     do_predict,
     early_stopping_patience,
     mocked_qa_examples,
+    mocked_qa_examples_features_predictions,
     mocked_arguments,
     mocker,
 ):
@@ -1163,6 +1164,7 @@ def test__run_train_loop(
     )
     mocked_pipeline = Reading_Comprehension_Pipeline(*current_arguments)
     mocked_pipeline.raw_datasets = mocked_qa_examples
+    mocked_pipeline.raw_datasets["test"] = mocked_qa_examples_features_predictions[0]
     mocked_pipeline.model = "model"
     mocked_pipeline.train_dataset = [1, 2, 3]
     mocked_pipeline.eval_dataset = [4, 5, 6]
@@ -1182,7 +1184,12 @@ def test__run_train_loop(
             "train.return_value": SimpleNamespace(metrics={}),
             "evaluate.return_value": {},
             "predict.return_value": SimpleNamespace(
-                metrics={}, predictions=[10, 11, 12]
+                metrics={},
+                predictions=[
+                    {"id": "sample_id_1", "prediction_text": "answer"},
+                    {"id": "sample_id_2", "prediction_text": "answer"},
+                    {"id": "sample_id_3", "prediction_text": "answer"},
+                ],
             ),
         }
     )
@@ -1256,7 +1263,7 @@ def test__run_train_loop(
     # make conditional assertions for prediction
     if do_predict:
         mocked_pipeline.trainer.predict.assert_called_once_with(
-            [7, 8, 9], mocked_qa_examples["test"]
+            [7, 8, 9], mocked_qa_examples_features_predictions[0]
         )
         mocked_pipeline.trainer.log_metrics.assert_any_call(
             "predict", {"predict_samples": 3}
@@ -1268,7 +1275,32 @@ def test__run_train_loop(
             os.path.join(current_arguments[2].output_dir, "predictions.json"), "w"
         )
         json_open_dump.json_dump.assert_called_once_with(
-            [10, 11, 12],
+            [
+                {
+                    "id": "sample_id_1",
+                    "prediction_text": "answer",
+                    "title": "sample.com",
+                    "context": "sample answer for PolicyQA",
+                    "question": "sample question for PolicyQA 1?",
+                    "gold_answers": ["sample", "answer for PolicyQA"],
+                },
+                {
+                    "id": "sample_id_2",
+                    "prediction_text": "answer",
+                    "title": "sample.com",
+                    "context": "another sample answer for PolicyQA",
+                    "question": "sample question for PolicyQA 2?",
+                    "gold_answers": ["another", "sample"],
+                },
+                {
+                    "id": "sample_id_3",
+                    "prediction_text": "answer",
+                    "title": "sample.com",
+                    "context": "yet another sample answer for PolicyQA with extra text",
+                    "question": "sample question for PolicyQA 3?",
+                    "gold_answers": ["answer"],
+                },
+            ],
             mocker.ANY,
         )
     else:
