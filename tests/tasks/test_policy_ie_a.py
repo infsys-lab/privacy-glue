@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from tasks.policy_ie_a import load_policy_ie_a
+import os
+
 import datasets
 import pytest
-import os
+
+from tasks.policy_ie_a import load_policy_ie_a
 
 
 def test_load_policy_ie_a():

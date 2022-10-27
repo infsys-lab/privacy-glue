@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from tasks.policy_detection import load_policy_detection
+import os
+
 import pandas as pd
 import pytest
-import os
+
+from tasks.policy_detection import load_policy_detection
 
 
 def test_load_policy_detection():

@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from typing import cast
-from utils.task_utils import policy_ie_file_mapping
+
 import datasets
+
+from utils.task_utils import policy_ie_file_mapping
 
 LABELS = [
     "Other",

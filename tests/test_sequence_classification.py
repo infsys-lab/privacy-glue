@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from types import SimpleNamespace
-from collections import defaultdict
-from sequence_classification import Sequence_Classification_Pipeline
-import numpy as np
-import datasets
-import pytest
 import os
+from collections import defaultdict
+from types import SimpleNamespace
+
+import datasets
+import numpy as np
+import pytest
+
+from sequence_classification import Sequence_Classification_Pipeline
 
 
 class Sequence_Classification_Pipeline_Override(Sequence_Classification_Pipeline):

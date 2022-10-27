@@ -1,25 +1,27 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import json
+import os
+from parser import DataArguments, ModelArguments
+
+import evaluate
+import numpy as np
+import torch
 from transformers import (
     AutoConfig,
     AutoModelForSequenceClassification,
     AutoTokenizer,
     DataCollatorWithPadding,
+    EarlyStoppingCallback,
     EvalPrediction,
     Trainer,
     TrainingArguments,
-    EarlyStoppingCallback,
     default_data_collator,
 )
-from parser import DataArguments, ModelArguments
-from utils.trainer_utils import Weighted_Random_Sampler_Trainer
+
 from utils.pipeline_utils import Privacy_GLUE_Pipeline
-import numpy as np
-import evaluate
-import torch
-import json
-import os
+from utils.trainer_utils import Weighted_Random_Sampler_Trainer
 
 
 class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):

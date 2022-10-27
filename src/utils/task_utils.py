@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from typing import Dict
 import os
+from typing import Dict
 
 
 def policy_ie_file_mapping(directory: str, filename: str) -> Dict[str, str]:

@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from tasks.opp_115 import load_opp_115
+import os
+
 import pandas as pd
 import pytest
-import os
+
+from tasks.opp_115 import load_opp_115
 
 
 def test_load_opp_115():
