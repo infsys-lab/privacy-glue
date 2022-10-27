@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from typing import Dict, List, Any
-from glob import glob
-import datasets
 import json
 import os
+from glob import glob
+from typing import Any, Dict, List
+
+import datasets
 
 
 def load_policy_qa(directory: str) -> datasets.DatasetDict:

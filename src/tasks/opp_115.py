@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import os
+
 import datasets
 import pandas as pd
-import os
 
 
 def load_opp_115(directory: str) -> datasets.DatasetDict:

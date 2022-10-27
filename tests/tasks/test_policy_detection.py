@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from tasks.policy_detection import load_policy_detection
-import datasets
 import os
+
+import datasets
+
+from tasks.policy_detection import load_policy_detection
 
 
 def test_load_policy_detection():

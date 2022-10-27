@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from .policy_ie_a import file_mapping
 from typing import cast
+
 import datasets
+
+from .policy_ie_a import file_mapping
 
 
 def load_policy_ie_b(directory: str) -> datasets.DatasetDict:

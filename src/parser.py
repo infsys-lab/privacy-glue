@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from transformers.hf_argparser import DataClassType
-from transformers import HfArgumentParser, TrainingArguments
+import os
 from dataclasses import dataclass, field
 from typing import Optional
-import os
+
+from transformers import HfArgumentParser, TrainingArguments
+from transformers.hf_argparser import DataClassType
 
 # 1. NOTE: Fields with no default value set will be transformed
 # into`required arguments within the HuggingFace argument parser

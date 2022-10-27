@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from utils.parser_utils import dir_path, file_path
-import tempfile
 import argparse
+import tempfile
+
 import pytest
+
+from utils.parser_utils import dir_path, file_path
 
 
 def test_dir_path():

@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from utils.experiment_utils import Privacy_GLUE_Experiment_Manager
-import pytest
 import os
+
+import pytest
+
+from utils.experiment_utils import Privacy_GLUE_Experiment_Manager
 
 
 def test__init__():

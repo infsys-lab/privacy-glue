@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from typing import Iterable, Optional, cast
-from operator import attrgetter
 import argparse
 import os
 import re
+from operator import attrgetter
+from typing import Iterable, Optional, cast
 
 
 def dir_path(path: str) -> str:

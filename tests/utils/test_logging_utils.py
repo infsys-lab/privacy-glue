@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from utils.logging_utils import (
-    init_logger,
-    add_file_handler,
-    remove_all_file_handlers,
-    FORMATTER,
-)
 import logging
-import pytest
-import tempfile
 import os
+import tempfile
+
+import pytest
+
+from utils.logging_utils import (
+    FORMATTER,
+    add_file_handler,
+    init_logger,
+    remove_all_file_handlers,
+)
 
 
 @pytest.mark.parametrize(

@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from types import SimpleNamespace
-from functools import partial
-from unittest.mock import MagicMock
-from copy import deepcopy
-import datasets
 import logging
-import pytest
 import os
+from copy import deepcopy
+from functools import partial
+from types import SimpleNamespace
+from unittest.mock import MagicMock
+
+import datasets
+import pytest
 
 
 def pytest_configure():

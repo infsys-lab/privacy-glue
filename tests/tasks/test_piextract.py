@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from tasks.piextract import load_piextract, merge_ner_tags, read_conll_file
+import os
+
 import datasets
 import pytest
-import os
+
+from tasks.piextract import load_piextract, merge_ner_tags, read_conll_file
 
 
 def mocked_conll_output():

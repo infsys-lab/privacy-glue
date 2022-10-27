@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from typing import Dict, cast
-import datasets
 import os
+from typing import Dict, cast
+
+import datasets
 
 
 def file_mapping(directory: str, filename: str) -> Dict[str, str]:

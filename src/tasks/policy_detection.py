@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import pandas as pd
-import datasets
 import os
+
+import datasets
+import pandas as pd
 
 
 def load_policy_detection(directory: str) -> datasets.DatasetDict:
