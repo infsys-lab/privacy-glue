@@ -61,7 +61,7 @@ def load_piextract(directory: str) -> datasets.DatasetDict:
     combined = datasets.DatasetDict()
 
     # loop over tasks and CONLL files associated per task
-    for task in ["CollectUse_true", "CollectUse_false", "Share_true", "Share_false"]:
+    for task in ["CollectUse_true", "CollectUse_false", "Share_false", "Share_true"]:
         for conll_file in glob(os.path.join(directory, task, "*.conll03")):
             if os.path.basename(conll_file).startswith("train"):
                 split = "train"
