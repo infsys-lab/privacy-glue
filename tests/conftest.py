@@ -1,26 +1,20 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from types import SimpleNamespace
-from functools import partial
-from contextlib import nullcontext
-from unittest.mock import MagicMock
-from copy import deepcopy
-from transformers import PreTrainedModel, PretrainedConfig
-import numpy as np
-import datasets
 import logging
-import random
-import pytest
-import torch
 import os
+import random
+from contextlib import nullcontext
 from copy import deepcopy
 from functools import partial
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
 import datasets
+import numpy as np
 import pytest
+import torch
+from transformers import PretrainedConfig, PreTrainedModel
 
 
 def pytest_configure():

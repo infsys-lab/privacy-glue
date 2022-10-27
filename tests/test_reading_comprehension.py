@@ -1,18 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from types import SimpleNamespace
-from datasets.arrow_dataset import Batch
-from transformers import (
-    PreTrainedTokenizer,
-    PreTrainedTokenizerFast,
-    AutoTokenizer,
-)
-from reading_comprehension import Reading_Comprehension_Pipeline
-import numpy as np
-import datasets
-import pytest
 import os
+from types import SimpleNamespace
+
+import datasets
+import numpy as np
+import pytest
+from datasets.arrow_dataset import Batch
+from transformers import AutoTokenizer, PreTrainedTokenizer, PreTrainedTokenizerFast
+
+from reading_comprehension import Reading_Comprehension_Pipeline
 
 
 @pytest.fixture
