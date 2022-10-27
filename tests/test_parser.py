@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import tempfile
 from parser import (
-    ModelArguments,
     DataArguments,
-    TrainingArguments,
     ExperimentArguments,
+    ModelArguments,
+    TrainingArguments,
     get_parser,
 )
-import tempfile
+
 import pytest
 
 

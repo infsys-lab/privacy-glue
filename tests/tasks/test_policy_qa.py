@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from tasks.policy_qa import load_policy_qa
 import os
+
+from tasks.policy_qa import load_policy_qa
 
 
 def test_load_policy_qa():

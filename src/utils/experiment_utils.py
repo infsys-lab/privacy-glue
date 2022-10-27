@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from wandb.util import generate_id
-from sequence_classification import Sequence_Classification_Pipeline
-from sequence_tagging import Sequence_Tagging_Pipeline
-from reading_comprehension import Reading_Comprehension_Pipeline
-from parser import TASKS
 import os
 import re
+from parser import TASKS
+
+from wandb.util import generate_id
+
+from reading_comprehension import Reading_Comprehension_Pipeline
+from sequence_classification import Sequence_Classification_Pipeline
+from sequence_tagging import Sequence_Tagging_Pipeline
 
 
 class Privacy_GLUE_Experiment_Manager:

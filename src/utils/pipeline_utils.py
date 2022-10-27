@@ -1,12 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import logging
+import os
+import shutil
 from abc import ABC, abstractmethod
-from datasets import DatasetDict
 from glob import glob
+from parser import DataArguments, ModelArguments
+
+import datasets
+import torch
+import transformers
+import wandb
+from datasets import DatasetDict
 from transformers import TrainingArguments, set_seed
 from transformers.trainer_utils import get_last_checkpoint
-from parser import DataArguments, ModelArguments
+
 from tasks.opp_115 import load_opp_115
 from tasks.piextract import load_piextract
 from tasks.policy_detection import load_policy_detection
@@ -14,14 +23,7 @@ from tasks.policy_ie_a import load_policy_ie_a
 from tasks.policy_ie_b import load_policy_ie_b
 from tasks.policy_qa import load_policy_qa
 from tasks.privacy_qa import load_privacy_qa
-from utils.logging_utils import init_logger, add_file_handler
-import transformers
-import datasets
-import logging
-import wandb
-import shutil
-import torch
-import os
+from utils.logging_utils import add_file_handler, init_logger
 
 
 class SuccessFileFoundException(Exception):

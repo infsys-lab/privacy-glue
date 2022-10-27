@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from tasks.policy_ie_b import load_policy_ie_b
 import os
+
+from tasks.policy_ie_b import load_policy_ie_b
 
 
 def test_load_policy_ie_b():

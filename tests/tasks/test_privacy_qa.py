@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from tasks.privacy_qa import load_privacy_qa
-import datasets
 import os
+
+import datasets
+
+from tasks.privacy_qa import load_privacy_qa
 
 
 def test_load_privacy_qa():

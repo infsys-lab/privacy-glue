@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from typing import Dict, List, Tuple
-from glob import glob
-import datasets
 import os
+from glob import glob
+from typing import Dict, List, Tuple
+
+import datasets
 
 
 def read_conll_file(file_path: str) -> Dict[str, List[List[str]]]:

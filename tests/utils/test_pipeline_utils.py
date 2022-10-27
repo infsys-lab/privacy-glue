@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from utils.pipeline_utils import Privacy_GLUE_Pipeline, SuccessFileFoundException
-import transformers
-import datasets
 import logging
-import pytest
 import os
+
+import datasets
+import pytest
+import transformers
+
+from utils.pipeline_utils import Privacy_GLUE_Pipeline, SuccessFileFoundException
 
 
 class Mocked_Pipeline(Privacy_GLUE_Pipeline):
