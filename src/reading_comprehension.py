@@ -1,25 +1,27 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import collections
+import json
+import os
 from typing import Tuple
+
+import evaluate
+import numpy as np
 from tqdm.auto import tqdm
 from transformers import (
     AutoConfig,
     AutoModelForQuestionAnswering,
     AutoTokenizer,
     DataCollatorWithPadding,
+    EarlyStoppingCallback,
     EvalPrediction,
     PreTrainedTokenizerFast,
-    EarlyStoppingCallback,
     default_data_collator,
 )
+
 from utils.pipeline_utils import Privacy_GLUE_Pipeline
 from utils.trainer_utils import QuestionAnsweringTrainer
-import numpy as np
-import collections
-import evaluate
-import json
-import os
 
 
 class Reading_Comprehension_Pipeline(Privacy_GLUE_Pipeline):

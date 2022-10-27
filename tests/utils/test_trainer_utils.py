@@ -2,9 +2,11 @@
 # -*- coding: utf-8 -*-
 
 from types import SimpleNamespace
-from transformers import TrainingArguments
-from utils.trainer_utils import QuestionAnsweringTrainer
+
 import pytest
+from transformers import TrainingArguments
+
+from utils.trainer_utils import QuestionAnsweringTrainer
 
 
 @pytest.fixture
