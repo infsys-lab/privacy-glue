@@ -9,15 +9,15 @@ import os
 from utils.tasks_utils import expand_dataset_per_task
 
 
-SUBTASKS = ["COLLECT", "NOT_COLLECT", "SHARE", "NOT_SHARE"]
-LABELS = [
-    ["COLLECT"],
-    ["NOT_COLLECT"],
-    ["SHARE"],
-    ["NOT_SHARE"],
-]
-# define task loading order (necessary for multi-label task)
-TASK_ORDER = ["CollectUse_true", "CollectUse_false", "Share_true", "Share_false"]
+SUBTASKS = sorted(["COLLECT", "NOT_COLLECT", "NOT_SHARE", "SHARE"])
+LABELS = sorted(
+    [
+        ["COLLECT"],
+        ["NOT_COLLECT"],
+        ["NOT_SHARE"],
+        ["SHARE"],
+    ]
+)
 
 
 def read_conll_file(file_path: str) -> Dict[str, List[List[str]]]:
@@ -61,7 +61,7 @@ def load_piextract(directory: str) -> datasets.DatasetDict:
     combined = datasets.DatasetDict()
 
     # loop over tasks and CONLL files associated per task
-    for task in TASK_ORDER:
+    for task in ["CollectUse_true", "CollectUse_false", "Share_true", "Share_false"]:
         for conll_file in glob(os.path.join(directory, task, "*.conll03")):
             if os.path.basename(conll_file).startswith("train"):
                 split = "train"
@@ -94,7 +94,6 @@ def load_piextract(directory: str) -> datasets.DatasetDict:
     train_valid_dataset_dict = combined["train"].train_test_split(
         test_size=0.15, seed=42
     )
-
     # reassign splits to combined and multiply tags to rows
     combined["train"] = expand_dataset_per_task(
         train_valid_dataset_dict["train"], SUBTASKS
@@ -111,8 +110,9 @@ def load_piextract(directory: str) -> datasets.DatasetDict:
         for task, tags in zip(SUBTASKS, LABELS)
     }
     for split in ["train", "validation", "test"]:
-        combined[split].features["tags"] = datasets.Sequence(
-            feature=datasets.ClassLabel(names=label_names)
-        )
+        for st in SUBTASKS:
+            combined[split][st].features["tags"] = datasets.Sequence(
+                feature=datasets.ClassLabel(names=label_names[st])
+            )
 
     return combined

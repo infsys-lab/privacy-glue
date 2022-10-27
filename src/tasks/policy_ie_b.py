@@ -86,9 +86,11 @@ def load_policy_ie_b(directory: str) -> datasets.DatasetDict:
         task: ["O"] + [f"{pre}-{label}" for pre in ["B", "I"] for label in tags]
         for task, tags in zip(SUBTASKS, LABELS)
     }
+
     for split in ["train", "validation", "test"]:
-        combined[split].features["tags"] = datasets.Sequence(
-            feature=datasets.ClassLabel(names=label_names)
-        )
+        for st in SUBTASKS:
+            combined[split][st].features["tags"] = datasets.Sequence(
+                feature=datasets.ClassLabel(names=label_names[st])
+            )
 
     return combined
