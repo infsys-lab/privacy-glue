@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from tasks.privacy_qa import load_privacy_qa
-import pandas as pd
-import datasets
-import pytest
 import os
+
+import datasets
+import pandas as pd
+import pytest
+
+from tasks.privacy_qa import load_privacy_qa
 
 
 def test_load_privacy_qa():
