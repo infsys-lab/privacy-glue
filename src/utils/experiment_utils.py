@@ -17,7 +17,7 @@ from sequence_tagging import Sequence_Tagging_Pipeline
 
 
 class Privacy_GLUE_Experiment_Manager:
-    track_metrics = {
+    task_metrics = {
         "opp_115": ["macro_f1", "micro_f1"],
         "piextract": [
             "macro_f1",
@@ -62,7 +62,7 @@ class Privacy_GLUE_Experiment_Manager:
             task = os.path.basename(os.path.normpath(task_dir))
 
             # if directory is not part of our tasks, ignore it
-            if task not in self.track_metrics:
+            if task not in self.task_metrics:
                 continue
             else:
                 # loop over all seed directories inside valid task directory
@@ -77,13 +77,13 @@ class Privacy_GLUE_Experiment_Manager:
                     metric_by_seed_group.append(
                         [
                             all_results[f"predict_{metric}"]
-                            for metric in self.track_metrics[task]
+                            for metric in self.task_metrics[task]
                         ]
                     )
 
             # convert seed-group order to group-seed
             metric_by_group_seed = list(zip(*metric_by_seed_group))
-            benchmark_summary[task] = {"metrics": self.track_metrics[task]}
+            benchmark_summary[task] = {"metrics": self.task_metrics[task]}
             benchmark_summary[task]["mean"] = [
                 mean(metric_group) for metric_group in metric_by_group_seed
             ]

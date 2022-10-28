@@ -242,7 +242,7 @@ def test__summarize(
     random.seed(42)
 
     # create directory structure and data
-    for task, metric_names in experiment_manager.track_metrics.items():
+    for task, metric_names in experiment_manager.task_metrics.items():
         # skip task if we should test this
         if missing_task and task == "piextract":
             continue
