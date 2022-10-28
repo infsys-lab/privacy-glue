@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import json
 import os
+import random
+import shutil
+from statistics import mean, stdev
 
 import pytest
 
@@ -195,3 +199,108 @@ def test_run_experiments(
         summarize.assert_called_once()
     else:
         summarize.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "model_name_or_path, model_dir_basename",
+    [
+        ("bert-base-uncased", "bert_base_uncased"),
+        ("nlpaueb/legal-bert-base-uncased", "nlpaueb_legal_bert_base_uncased"),
+    ],
+)
+@pytest.mark.parametrize(
+    "random_seed_iterations",
+    [5, 10],
+)
+@pytest.mark.parametrize("add_unrelated_directory", [True, False])
+@pytest.mark.parametrize("missing_task", [True, False])
+def test__summarize(
+    model_name_or_path,
+    model_dir_basename,
+    random_seed_iterations,
+    add_unrelated_directory,
+    missing_task,
+    mocked_arguments_with_tmp_path,
+):
+    # get mocked arguments and create experiment manager
+    data_args, model_args, train_args, experiment_args = mocked_arguments_with_tmp_path(
+        model_name_or_path=model_name_or_path,
+        random_seed_iterations=random_seed_iterations,
+        with_experiment_args=True,
+    )
+    experiment_manager = Privacy_GLUE_Experiment_Manager(
+        data_args, model_args, train_args, experiment_args
+    )
+    experiment_manager.experiment_args.model_dir = os.path.join(
+        train_args.output_dir, model_dir_basename
+    )
+
+    # create expected summary to fill up
+    expected_benchmark_summary = {}
+
+    # set random seed before for-loop
+    random.seed(42)
+
+    # create directory structure and data
+    for task, metric_names in experiment_manager.track_metrics.items():
+        # skip task if we should test this
+        if missing_task and task == "piextract":
+            continue
+
+        # create task directory
+        task_dir = os.path.join(experiment_manager.experiment_args.model_dir, task)
+        os.makedirs(task_dir)
+
+        # generate random (seeded) metric values
+        metric_by_seed_group = [
+            [random.uniform(0, 1) for _ in metric_names]
+            for _ in range(random_seed_iterations)
+        ]
+
+        # pre-compute mean and standard deviations for checks
+        metric_by_group_seed = list(zip(*metric_by_seed_group))
+        expected_benchmark_summary[task] = {
+            "metrics": metric_names,
+            "mean": [mean(metric_group) for metric_group in metric_by_group_seed],
+            "std": [stdev(metric_group) for metric_group in metric_by_group_seed],
+            "num_samples": random_seed_iterations,
+        }
+
+        # iterate over random seeds
+        for index, seed in enumerate(range(random_seed_iterations)):
+            # create seed directory
+            seed_dir = os.path.join(task_dir, f"seed_{seed}")
+            os.makedirs(seed_dir)
+
+            # create metrics dictionary
+            metrics_dump = {
+                f"predict_{metric_name}": metric_by_seed_group[index][sub_index]
+                for sub_index, metric_name in enumerate(metric_names)
+            }
+
+            # dump metrics file
+            with open(
+                os.path.join(seed_dir, "all_results.json"), "w"
+            ) as output_file_stream:
+                json.dump(metrics_dump, output_file_stream)
+
+    # add unrelated directory if required
+    if add_unrelated_directory:
+        shutil.copytree(
+            os.path.join(experiment_manager.experiment_args.model_dir, "policy_qa"),
+            os.path.join(experiment_manager.experiment_args.model_dir, "misc"),
+        )
+
+    # execute manager method
+    experiment_manager._summarize()
+
+    # read JSON file
+    with open(
+        os.path.join(
+            experiment_manager.experiment_args.model_dir, "benchmark_summary.json"
+        )
+    ) as input_file_stream:
+        benchmark_summary = json.load(input_file_stream)
+
+    # make assertion
+    assert benchmark_summary == expected_benchmark_summary
