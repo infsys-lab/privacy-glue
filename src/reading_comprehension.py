@@ -605,14 +605,13 @@ class Reading_Comprehension_Pipeline(Privacy_GLUE_Pipeline):
             self.trainer.save_metrics("predict", metrics)
 
             # create prediction dump
+            test_dict = self.raw_datasets["test"].to_dict()
             for prediction in results.predictions:
-                matched_row = self.raw_datasets["test"].filter(
-                    lambda example: example["id"] == prediction["id"]
-                )
-                prediction["title"] = matched_row["title"].pop()
-                prediction["context"] = matched_row["context"].pop()
-                prediction["question"] = matched_row["question"].pop()
-                prediction["gold_answers"] = matched_row["answers"].pop()["text"]
+                index = test_dict["id"].index(prediction["id"])
+                prediction["title"] = test_dict["title"][index]
+                prediction["context"] = test_dict["context"][index]
+                prediction["question"] = test_dict["question"][index]
+                prediction["gold_answers"] = test_dict["answers"][index]["text"]
 
             # dump predicted results
             if self.trainer.is_world_process_zero():
