@@ -546,11 +546,13 @@ class Reading_Comprehension_Pipeline(Privacy_GLUE_Pipeline):
 
     def _set_metrics(self) -> None:
         self.metric = evaluate.load("squad")
-        self.train_args.metric_for_best_model = "f1"
+        self.train_args.metric_for_best_model = "sample_f1"
         self.train_args.greater_is_better = True
 
     def _compute_metrics(self, p: EvalPrediction):
-        return self.metric.compute(predictions=p.predictions, references=p.label_ids)
+        metrics = self.metric.compute(predictions=p.predictions, references=p.label_ids)
+        metrics["sample_f1"] = metrics.pop("f1")
+        return metrics
 
     def _run_train_loop(self) -> None:
         # Initialize our Trainer

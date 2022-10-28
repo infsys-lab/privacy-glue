@@ -1105,7 +1105,7 @@ def test__set_metrics(mocked_arguments, mocker):
     # make assertions
     evaluate_load.assert_called_once_with("squad")
     assert mocked_pipeline.metric == "squad"
-    assert mocked_pipeline.train_args.metric_for_best_model == "f1"
+    assert mocked_pipeline.train_args.metric_for_best_model == "sample_f1"
     assert mocked_pipeline.train_args.greater_is_better
 
 
@@ -1115,13 +1115,15 @@ def test__compute_metrics(mocked_arguments, mocker):
 
     # create mocked objects
     metric = mocker.patch.object(mocked_pipeline, "metric", create=True)
+    metric.configure_mock(**{"compute.return_value": {"exact_match": 0.0, "f1": 0.0}})
 
     # execute relevant pipeline method
-    mocked_pipeline._compute_metrics(
+    metrics = mocked_pipeline._compute_metrics(
         mocker.MagicMock(predictions="sample_predictions", label_ids="sample_label_ids")
     )
 
     # make assertions
+    assert metrics == {"exact_match": 0.0, "sample_f1": 0.0}
     metric.compute.assert_called_once_with(
         predictions="sample_predictions", references="sample_label_ids"
     )
