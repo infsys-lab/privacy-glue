@@ -4,7 +4,6 @@
 import json
 import os
 import re
-from collections import defaultdict
 from glob import glob
 from parser import TASKS
 from statistics import mean, stdev
@@ -53,7 +52,7 @@ class Privacy_GLUE_Experiment_Manager:
 
     def _summarize(self) -> None:
         # create dictionary used for collecting metrics
-        benchmark_summary = defaultdict(dict)
+        benchmark_summary = {}
 
         # loop over all task directories available
         for task_dir in glob(os.path.join(self.experiment_args.model_dir, "*/")):
