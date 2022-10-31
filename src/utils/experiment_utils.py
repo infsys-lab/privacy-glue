@@ -49,8 +49,12 @@ class Privacy_GLUE_Experiment_Manager:
         self.model_args = model_args
         self.train_args = train_args
         self.experiment_args = experiment_args
+        self.experiment_args.model_dir = os.path.join(
+            self.train_args.output_dir,
+            re.sub(r"[/-]", "_", self.model_args.model_name_or_path),
+        )
 
-    def _summarize(self) -> None:
+    def summarize(self) -> None:
         # create dictionary used for collecting metrics
         benchmark_summary = {}
 
@@ -98,13 +102,6 @@ class Privacy_GLUE_Experiment_Manager:
             json.dump(benchmark_summary, output_file_stream)
 
     def run_experiments(self) -> None:
-        # capture base output directory
-        output_dir = self.train_args.output_dir
-        self.experiment_args.model_dir = os.path.join(
-            output_dir,
-            re.sub(r"[/-]", "_", self.model_args.model_name_or_path),
-        )
-
         # decide iteration strategy
         if self.data_args.task != "all":
             tasks = [self.data_args.task]
@@ -147,4 +144,4 @@ class Privacy_GLUE_Experiment_Manager:
 
         # summarize PrivacyGLUE benchmark
         if self.experiment_args.do_summarize:
-            self._summarize()
+            self.summarize()
