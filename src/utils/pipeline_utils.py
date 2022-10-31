@@ -5,6 +5,7 @@ import logging
 import os
 import shutil
 from abc import ABC, abstractmethod
+from functools import wraps
 from glob import glob
 from parser import DataArguments, ModelArguments
 
@@ -24,6 +25,16 @@ from tasks.policy_ie_b import load_policy_ie_b
 from tasks.policy_qa import load_policy_qa
 from tasks.privacy_qa import load_privacy_qa
 from utils.logging_utils import add_file_handler, init_logger
+
+
+def main_process_first_only(function):
+    @wraps(function)
+    def wrapper(self, *args, **kwargs):
+        with self.train_args.main_process_first():
+            if self.train_args.local_rank in [-1, 0]:
+                return function(self, *args, **kwargs)
+
+    return wrapper
 
 
 class SuccessFileFoundException(Exception):
@@ -65,6 +76,7 @@ class Privacy_GLUE_Pipeline(ABC):
 
         return data
 
+    @main_process_first_only
     def _init_run_dir(self) -> None:
         if (
             os.path.exists(self.train_args.output_dir)
@@ -112,6 +124,7 @@ class Privacy_GLUE_Pipeline(ABC):
             self.logger.info(message)
             raise SuccessFileFoundException(message)
 
+    @main_process_first_only
     def _dump_misc_args(self) -> None:
         # dump miscellaneous arguments
         torch.save(
@@ -154,6 +167,7 @@ class Privacy_GLUE_Pipeline(ABC):
         else:
             self.last_checkpoint = None
 
+    @main_process_first_only
     def _init_wandb_run(self) -> None:
         if "wandb" in self.train_args.report_to:
             wandb.init(
@@ -167,6 +181,7 @@ class Privacy_GLUE_Pipeline(ABC):
                 resume=True if self.last_checkpoint else None,
             )
 
+    @main_process_first_only
     def _clean_checkpoint_dirs(self) -> None:
         if self.model_args.do_clean and self.train_args.do_train:
             for checkpoint in glob(
@@ -174,6 +189,7 @@ class Privacy_GLUE_Pipeline(ABC):
             ):
                 shutil.rmtree(checkpoint)
 
+    @main_process_first_only
     def _save_success_file(self) -> None:
         if self.train_args.do_train:
             with open(
@@ -187,6 +203,7 @@ class Privacy_GLUE_Pipeline(ABC):
         if hasattr(self, "logger"):
             self.logger.handlers = []
 
+    @main_process_first_only
     def _close_wandb(self) -> None:
         if "wandb" in self.train_args.report_to and wandb.run is not None:
             wandb.run.finish()
