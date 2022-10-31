@@ -207,7 +207,8 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
         if self.train_args.do_eval:
             if self.data_args.max_eval_samples is not None:
                 max_eval_samples = min(
-                    len(self.eval_dataset), self.data_args.max_eval_samples
+                    len(self.raw_datasets["validation"]),
+                    self.data_args.max_eval_samples,
                 )
                 self.raw_datasets["validation"] = self.raw_datasets[
                     "validation"
@@ -256,14 +257,11 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
 
     def _retransform_labels(self, predictions, labels) -> Dict:
         predictions = predictions[0] if isinstance(predictions, tuple) else predictions
-        predictions = [np.argmax(p, axis=2) for p in predictions]
-        # interleave predictions
-        predictions = [st for subtasks in zip(*predictions) for st in subtasks]
+        predictions = np.argmax(predictions, axis=2)
 
         # Remove ignored index (special tokens)
         true_predictions = {st: [] for st in self.subtasks}
         true_labels = {st: [] for st in self.subtasks}
-
         assert len(predictions) == len(labels)
         for i, (prediction, label) in enumerate(zip(predictions, labels)):
             true_label_vec = []
@@ -319,7 +317,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
                 for metric in ["precision", "recall", "f1"]:
                     # average metric over tasks
                     m_key = f"{avg_mode}_{metric}"
-                    return_metrics[f"{avg_mode}_{metric}"] = np.mean(
+                    return_metrics[m_key] = np.mean(
                         [per_tasks_metrics[st][m_key] for st in self.subtasks]
                     )
                     # metric per task
@@ -330,7 +328,6 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
 
     def _run_train_loop(self) -> None:
         # Initialize the Trainer
-        self.train_args.include_inputs_for_metrics = True
         self.trainer = Trainer(
             model=self.model,
             args=self.train_args,

@@ -67,7 +67,26 @@ class MultiTaskModel(nn.Module):
             logits_list.append(logits)
         # logits are only used for eval. and in case of eval the batch is not multi task
         # For training only the loss is used
-        outputs = (logits_list, outputs[2:])
+
+        # zip and flatten subtasks logit lists to interleave them and have all examples
+        # in one list
+        logits_list = [
+            logits
+            for zipped_subtask_logits in zip(*logits_list)
+            for logits in zipped_subtask_logits
+        ]
+
+        # Pad the smaller output layers so logit outputs can be transformed to tensor
+        max_output_layer_size = max([logits.shape[1] for logits in logits_list])
+        logits_list = [
+            nn.functional.pad(
+                logits, (0, max_output_layer_size - logits.shape[1]), "constant", -100
+            )
+            for logits in logits_list
+        ]
+
+        outputs = (torch.stack(logits_list), outputs[2:])
+
         if len(loss_list) > 0:
             loss = torch.stack(loss_list)
             outputs = (loss.mean(),) + outputs
