@@ -6,8 +6,8 @@ import os
 import re
 from glob import glob
 from parser import TASKS
-from statistics import mean, stdev
 
+import numpy as np
 from wandb.util import generate_id
 
 from reading_comprehension import Reading_Comprehension_Pipeline
@@ -88,10 +88,12 @@ class Privacy_GLUE_Experiment_Manager:
             metric_by_group_seed = list(zip(*metric_by_seed_group))
             benchmark_summary[task] = {"metrics": self.task_metrics[task]}
             benchmark_summary[task]["mean"] = [
-                mean(metric_group) for metric_group in metric_by_group_seed
+                np.round(np.mean(metric_group), 8).item()
+                for metric_group in metric_by_group_seed
             ]
             benchmark_summary[task]["std"] = [
-                stdev(metric_group) for metric_group in metric_by_group_seed
+                np.round(np.std(metric_group), 8).item()
+                for metric_group in metric_by_group_seed
             ]
             benchmark_summary[task]["num_samples"] = len(metric_by_seed_group)
 

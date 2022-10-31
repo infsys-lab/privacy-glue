@@ -3,10 +3,9 @@
 
 import json
 import os
-import random
 import shutil
-from statistics import mean, stdev
 
+import numpy as np
 import pytest
 
 from utils.experiment_utils import Privacy_GLUE_Experiment_Manager
@@ -218,7 +217,7 @@ def test_run_experiments(
 )
 @pytest.mark.parametrize(
     "random_seed_iterations",
-    [5, 10],
+    [1, 5, 10],
 )
 @pytest.mark.parametrize("add_unrelated_directory", [True, False])
 @pytest.mark.parametrize("missing_task", [True, False])
@@ -247,7 +246,7 @@ def test_summarize(
     expected_benchmark_summary = {}
 
     # set random seed before for-loop
-    random.seed(42)
+    np.random.seed(42)
 
     # create directory structure and data
     for task, metric_names in experiment_manager.task_metrics.items():
@@ -261,7 +260,7 @@ def test_summarize(
 
         # generate random (seeded) metric values
         metric_by_seed_group = [
-            [random.uniform(0, 1) for _ in metric_names]
+            [np.random.uniform() for _ in metric_names]
             for _ in range(random_seed_iterations)
         ]
 
@@ -269,8 +268,14 @@ def test_summarize(
         metric_by_group_seed = list(zip(*metric_by_seed_group))
         expected_benchmark_summary[task] = {
             "metrics": metric_names,
-            "mean": [mean(metric_group) for metric_group in metric_by_group_seed],
-            "std": [stdev(metric_group) for metric_group in metric_by_group_seed],
+            "mean": [
+                np.round(np.mean(metric_group), 8).item()
+                for metric_group in metric_by_group_seed
+            ],
+            "std": [
+                np.round(np.std(metric_group), 8).item()
+                for metric_group in metric_by_group_seed
+            ],
             "num_samples": random_seed_iterations,
         }
 
