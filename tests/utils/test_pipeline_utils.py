@@ -8,7 +8,11 @@ import datasets
 import pytest
 import transformers
 
-from utils.pipeline_utils import Privacy_GLUE_Pipeline, SuccessFileFoundException
+from utils.pipeline_utils import (
+    Privacy_GLUE_Pipeline,
+    SuccessFileFoundException,
+    main_process_first_only,
+)
 
 
 class Mocked_Pipeline(Privacy_GLUE_Pipeline):
@@ -26,6 +30,29 @@ class Mocked_Pipeline(Privacy_GLUE_Pipeline):
 
     def _run_train_loop(self):
         pass
+
+
+@pytest.mark.parametrize(
+    "local_rank",
+    [-1, 0, 1],
+)
+def test_main_process_first_only(local_rank, mocked_arguments, mocker):
+    class Mocked_Pipeline_Override(Mocked_Pipeline):
+        @main_process_first_only
+        def test_function(self):
+            return "test"
+
+    # create mocked pipeline class
+    mocked_pipeline = Mocked_Pipeline_Override(*mocked_arguments(local_rank=local_rank))
+
+    # execute sample pipeline method
+    return_value = mocked_pipeline.test_function()
+
+    # make assertions
+    if local_rank in [-1, 0]:
+        assert return_value == "test"
+    else:
+        assert return_value is None
 
 
 @pytest.mark.parametrize(
