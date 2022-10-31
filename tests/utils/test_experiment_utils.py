@@ -12,14 +12,27 @@ import pytest
 from utils.experiment_utils import Privacy_GLUE_Experiment_Manager
 
 
-def test__init__():
-    experiment_manager = Privacy_GLUE_Experiment_Manager(
-        "data_args", "model_args", "train_args", "experiment_args"
+@pytest.mark.parametrize(
+    "model_name_or_path, model_dir_basename",
+    [
+        ("bert-base-uncased", "bert_base_uncased"),
+        ("nlpaueb/legal-bert-base-uncased", "nlpaueb_legal_bert_base_uncased"),
+    ],
+)
+def test__init__(model_name_or_path, model_dir_basename, mocked_arguments):
+    data_args, model_args, train_args, experiment_args = mocked_arguments(
+        model_name_or_path=model_name_or_path, with_experiment_args=True
     )
-    assert experiment_manager.data_args == "data_args"
-    assert experiment_manager.model_args == "model_args"
-    assert experiment_manager.train_args == "train_args"
-    assert experiment_manager.experiment_args == "experiment_args"
+    experiment_manager = Privacy_GLUE_Experiment_Manager(
+        data_args, model_args, train_args, experiment_args
+    )
+    assert experiment_manager.data_args == data_args
+    assert experiment_manager.model_args == model_args
+    assert experiment_manager.train_args == train_args
+    assert experiment_manager.experiment_args == experiment_args
+    assert experiment_manager.experiment_args.model_dir == os.path.join(
+        train_args.output_dir, model_dir_basename
+    )
 
 
 @pytest.mark.parametrize(
@@ -105,7 +118,7 @@ def test_run_experiments(
         train_args,
         experiment_args,
     )
-    summarize = mocker.patch.object(experiment_manager, "_summarize")
+    summarize = mocker.patch.object(experiment_manager, "summarize")
     seq_class = mocker.patch(
         "utils.experiment_utils.Sequence_Classification_Pipeline",
         new_callable=deep_mocker,
@@ -166,11 +179,6 @@ def test_run_experiments(
     # execute main
     experiment_manager.run_experiments()
 
-    # make initial assertion on model directory
-    assert experiment_manager.experiment_args.model_dir == os.path.join(
-        output_dir, model_dir_basename
-    )
-
     # make assertions on arguments based on task
     if task in [
         "opp_115",
@@ -214,7 +222,7 @@ def test_run_experiments(
 )
 @pytest.mark.parametrize("add_unrelated_directory", [True, False])
 @pytest.mark.parametrize("missing_task", [True, False])
-def test__summarize(
+def test_summarize(
     model_name_or_path,
     model_dir_basename,
     random_seed_iterations,
@@ -292,7 +300,7 @@ def test__summarize(
         )
 
     # execute manager method
-    experiment_manager._summarize()
+    experiment_manager.summarize()
 
     # read JSON file
     with open(
