@@ -76,9 +76,6 @@ directory = "cov_html"
 addopts = "--cov=src --basetemp=tests/artefacts"
 testpaths = ["tests"]
 pythonpath = ["src"]
-markers = [
-    "integration: integration tests",
-]
 
 [tool.mypy]
 allow_redefinition = true

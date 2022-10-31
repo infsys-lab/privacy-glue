@@ -135,7 +135,6 @@ def test_load_piextract_mocked(mocker):
         )
 
 
-@pytest.mark.integration
 def test_load_piextract():
     # load sample data
     data = load_piextract(
