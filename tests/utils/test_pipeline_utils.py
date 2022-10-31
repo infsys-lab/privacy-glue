@@ -257,7 +257,7 @@ def test__check_for_success_file(
             ),
             "w",
         ):
-            if do_train and not overwrite_output_dir:
+            if do_train:
                 with pytest.raises(SuccessFileFoundException):
                     mocked_pipeline_with_tmp_path._check_for_success_file()
             else:
@@ -359,7 +359,7 @@ def test__find_existing_checkpoint(
     mocked_pipeline._find_existing_checkpoint()
 
     # make conditional assertions
-    if do_train and not overwrite_output_dir:
+    if do_train:
         get_last_checkpoint.assert_called_once()
         if checkpoint_existing:
             assert mocked_pipeline.last_checkpoint == "/path/to/some/checkpoint"
@@ -749,3 +749,93 @@ def test_run_pipeline(
         run_task.assert_not_called()
         run_end.assert_not_called()
         run_finally.assert_called_once()
+
+
+@pytest.mark.parametrize(
+    "overwrite_output_dir",
+    [True, False],
+)
+@pytest.mark.parametrize(
+    "success_file_present, checkpoint_existing, output_dir_existing",
+    [
+        (True, True, True),
+        (True, False, True),
+        (False, True, True),
+        (False, False, True),
+        (False, False, False),
+    ],
+)
+def test_overwrite_output_dir_interaction(
+    overwrite_output_dir,
+    output_dir_existing,
+    success_file_present,
+    checkpoint_existing,
+    mocked_arguments_with_tmp_path,
+    mocker,
+):
+    # create mocked pipeline class
+    mocked_pipeline_with_tmp_path = Mocked_Pipeline(
+        *mocked_arguments_with_tmp_path(overwrite_output_dir=overwrite_output_dir)
+    )
+    seed_dir = os.path.join(
+        mocked_pipeline_with_tmp_path.train_args.output_dir, "seed_0"
+    )
+    mocked_pipeline_with_tmp_path.train_args.output_dir = seed_dir
+
+    # create mocked objects
+    mocker.patch.object(mocked_pipeline_with_tmp_path, "logger", create=True)
+
+    # create conditional scenarios and make assertions
+    if overwrite_output_dir:
+        if output_dir_existing:
+            os.makedirs(seed_dir)
+            open(
+                os.path.join(seed_dir, "some_file"),
+                "w",
+            ).close()
+            if success_file_present:
+                open(
+                    os.path.join(seed_dir, mocked_pipeline_with_tmp_path.success_file),
+                    "w",
+                ).close()
+            if checkpoint_existing:
+                os.makedirs(os.path.join(seed_dir, "checkpoint-0"))
+        mocked_pipeline_with_tmp_path._init_run_dir()
+        assert os.listdir(seed_dir) == []
+        mocked_pipeline_with_tmp_path._check_for_success_file()
+        mocked_pipeline_with_tmp_path._find_existing_checkpoint()
+        assert mocked_pipeline_with_tmp_path.last_checkpoint is None
+    else:
+        if success_file_present:
+            os.makedirs(seed_dir)
+            open(
+                os.path.join(seed_dir, mocked_pipeline_with_tmp_path.success_file), "w"
+            ).close()
+            mocked_pipeline_with_tmp_path._init_run_dir()
+            assert os.listdir(seed_dir) == [".success"]
+            with pytest.raises(SuccessFileFoundException):
+                mocked_pipeline_with_tmp_path._check_for_success_file()
+        else:
+            if checkpoint_existing:
+                checkpoint_dir = os.path.join(seed_dir, "checkpoint-0")
+                os.makedirs(checkpoint_dir)
+                mocked_pipeline_with_tmp_path._init_run_dir()
+                assert os.listdir(seed_dir) == ["checkpoint-0"]
+                mocked_pipeline_with_tmp_path._check_for_success_file()
+                mocked_pipeline_with_tmp_path._find_existing_checkpoint()
+                assert mocked_pipeline_with_tmp_path.last_checkpoint == checkpoint_dir
+            else:
+                if output_dir_existing:
+                    os.makedirs(seed_dir)
+                    open(
+                        os.path.join(seed_dir, "some_file"),
+                        "w",
+                    ).close()
+                    mocked_pipeline_with_tmp_path._init_run_dir()
+                    assert os.listdir(seed_dir) == ["some_file"]
+                else:
+                    mocked_pipeline_with_tmp_path._init_run_dir()
+                    assert os.listdir(seed_dir) == []
+                mocked_pipeline_with_tmp_path._check_for_success_file()
+                mocked_pipeline_with_tmp_path._find_existing_checkpoint()
+                assert mocked_pipeline_with_tmp_path.last_checkpoint is None

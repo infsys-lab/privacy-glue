@@ -104,7 +104,6 @@ class Privacy_GLUE_Pipeline(ABC):
         # check for existing exit code and decide action
         if (
             os.path.exists(os.path.join(self.train_args.output_dir, self.success_file))
-            and not self.train_args.overwrite_output_dir
             and self.train_args.do_train
         ):
             message = (
@@ -141,7 +140,7 @@ class Privacy_GLUE_Pipeline(ABC):
 
     def _find_existing_checkpoint(self) -> None:
         # detect last checkpoint if necessary
-        if self.train_args.do_train and not self.train_args.overwrite_output_dir:
+        if self.train_args.do_train:
             # use upstream function for detection
             self.last_checkpoint = get_last_checkpoint(self.train_args.output_dir)
 
