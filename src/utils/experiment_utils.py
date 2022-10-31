@@ -4,6 +4,7 @@
 import json
 import os
 import re
+import warnings
 from glob import glob
 from parser import TASKS
 
@@ -70,19 +71,25 @@ class Privacy_GLUE_Experiment_Manager:
             else:
                 # loop over all seed directories inside valid task directory
                 for seed_dir in glob(os.path.join(task_dir, "seed_*")):
-                    # load JSON results file to dictionary
-                    with open(
-                        os.path.join(seed_dir, "all_results.json")
-                    ) as input_file_stream:
-                        all_results = json.load(input_file_stream)
+                    all_results_file = os.path.join(seed_dir, "all_results.json")
 
-                    # add metrics to upper list
-                    metric_by_seed_group.append(
-                        [
-                            all_results[f"predict_{metric}"]
-                            for metric in self.task_metrics[task]
-                        ]
-                    )
+                    # load JSON results file to dictionary
+                    if os.path.exists(all_results_file):
+                        with open(all_results_file) as input_file_stream:
+                            all_results = json.load(input_file_stream)
+
+                        # add metrics to upper list
+                        metric_by_seed_group.append(
+                            [
+                                all_results[f"predict_{metric}"]
+                                for metric in self.task_metrics[task]
+                            ]
+                        )
+                    else:
+                        warnings.warn(
+                            f"Results file {all_results_file} not found, "
+                            "skipping directory"
+                        )
 
             # convert seed-group order to group-seed
             metric_by_group_seed = list(zip(*metric_by_seed_group))

@@ -221,13 +221,16 @@ def test_run_experiments(
 )
 @pytest.mark.parametrize("add_unrelated_directory", [True, False])
 @pytest.mark.parametrize("missing_task", [True, False])
+@pytest.mark.parametrize("missing_results_file", [True, False])
 def test_summarize(
     model_name_or_path,
     model_dir_basename,
     random_seed_iterations,
     add_unrelated_directory,
     missing_task,
+    missing_results_file,
     mocked_arguments_with_tmp_path,
+    mocker,
 ):
     # get mocked arguments and create experiment manager
     data_args, model_args, train_args, experiment_args = mocked_arguments_with_tmp_path(
@@ -241,6 +244,9 @@ def test_summarize(
     experiment_manager.experiment_args.model_dir = os.path.join(
         train_args.output_dir, model_dir_basename
     )
+
+    # create mocks
+    warn = mocker.patch("utils.experiment_utils.warnings.warn")
 
     # create expected summary to fill up
     expected_benchmark_summary = {}
@@ -264,6 +270,10 @@ def test_summarize(
             for _ in range(random_seed_iterations)
         ]
 
+        # simulate a missing file
+        if missing_results_file:
+            metric_by_seed_group = metric_by_seed_group[: (random_seed_iterations - 1)]
+
         # pre-compute mean and standard deviations for checks
         metric_by_group_seed = list(zip(*metric_by_seed_group))
         expected_benchmark_summary[task] = {
@@ -276,7 +286,7 @@ def test_summarize(
                 np.round(np.std(metric_group), 8).item()
                 for metric_group in metric_by_group_seed
             ],
-            "num_samples": random_seed_iterations,
+            "num_samples": len(metric_by_seed_group),
         }
 
         # iterate over random seeds
@@ -285,17 +295,20 @@ def test_summarize(
             seed_dir = os.path.join(task_dir, f"seed_{seed}")
             os.makedirs(seed_dir)
 
-            # create metrics dictionary
-            metrics_dump = {
-                f"predict_{metric_name}": metric_by_seed_group[index][sub_index]
-                for sub_index, metric_name in enumerate(metric_names)
-            }
+            if missing_results_file and index == (random_seed_iterations - 1):
+                continue
+            else:
+                # create metrics dictionary
+                metrics_dump = {
+                    f"predict_{metric_name}": metric_by_seed_group[index][sub_index]
+                    for sub_index, metric_name in enumerate(metric_names)
+                }
 
-            # dump metrics file
-            with open(
-                os.path.join(seed_dir, "all_results.json"), "w"
-            ) as output_file_stream:
-                json.dump(metrics_dump, output_file_stream)
+                # dump metrics file
+                with open(
+                    os.path.join(seed_dir, "all_results.json"), "w"
+                ) as output_file_stream:
+                    json.dump(metrics_dump, output_file_stream)
 
     # add unrelated directory if required
     if add_unrelated_directory:
@@ -306,6 +319,12 @@ def test_summarize(
 
     # execute manager method
     experiment_manager.summarize()
+
+    # assert conditional warnings
+    if missing_results_file:
+        warn.assert_called()
+    else:
+        warn.assert_not_called()
 
     # read JSON file
     with open(
