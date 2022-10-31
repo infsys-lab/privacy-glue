@@ -13,8 +13,8 @@ import torch
 import transformers
 import wandb
 from datasets import DatasetDict
-from transformers import TrainingArguments, set_seed
-from transformers.trainer_utils import get_last_checkpoint
+from transformers import TrainingArguments
+from transformers.trainer_utils import enable_full_determinism, get_last_checkpoint
 
 from tasks.opp_115 import load_opp_115
 from tasks.piextract import load_piextract
@@ -134,9 +134,9 @@ class Privacy_GLUE_Pipeline(ABC):
         self.logger.info(f"Model arguments: {self.model_args}")
         self.logger.info(f"Training arguments: {self.train_args}")
 
-    def _set_global_seeds(self) -> None:
-        # set seed before initializing model
-        set_seed(self.train_args.seed)
+    def _make_deterministic(self) -> None:
+        # enable full determinism by setting seeds and other arguments
+        enable_full_determinism(self.train_args.seed)
 
     def _find_existing_checkpoint(self) -> None:
         # detect last checkpoint if necessary
@@ -224,7 +224,7 @@ class Privacy_GLUE_Pipeline(ABC):
         self._check_for_success_file()
         self._dump_misc_args()
         self._log_starting_arguments()
-        self._set_global_seeds()
+        self._make_deterministic()
         self._find_existing_checkpoint()
         self._init_wandb_run()
 

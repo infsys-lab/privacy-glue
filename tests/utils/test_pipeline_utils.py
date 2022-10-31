@@ -304,18 +304,20 @@ def test__log_starting_arguments(mocked_arguments, mocker):
     "seed",
     list(range(5)),
 )
-def test__set_global_seeds(seed, mocked_arguments, mocker):
+def test__make_deterministic(seed, mocked_arguments, mocker):
     # create mocked pipeline class
     mocked_pipeline = Mocked_Pipeline(*mocked_arguments(seed=seed))
 
     # mock set_seed in pipeline
-    set_seed = mocker.patch("utils.pipeline_utils.set_seed")
+    enable_full_determinism = mocker.patch(
+        "utils.pipeline_utils.enable_full_determinism"
+    )
 
     # call the pipeline method
-    mocked_pipeline._set_global_seeds()
+    mocked_pipeline._make_deterministic()
 
     # make assertion
-    set_seed.assert_called_once_with(seed)
+    enable_full_determinism.assert_called_once_with(seed)
 
 
 @pytest.mark.parametrize(
@@ -581,7 +583,7 @@ def test_run_start(mocked_arguments, mocker):
         "f_6",
     )
     mock.attach_mock(
-        mocker.patch("utils.pipeline_utils.Privacy_GLUE_Pipeline._set_global_seeds"),
+        mocker.patch("utils.pipeline_utils.Privacy_GLUE_Pipeline._make_deterministic"),
         "f_7",
     )
     mock.attach_mock(
