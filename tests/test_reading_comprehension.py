@@ -1116,6 +1116,10 @@ def test__compute_metrics(mocked_arguments, mocker):
 
 
 @pytest.mark.parametrize(
+    "local_rank",
+    [-1, 0, 1],
+)
+@pytest.mark.parametrize(
     "do_train",
     [True, False],
 )
@@ -1132,6 +1136,7 @@ def test__compute_metrics(mocked_arguments, mocker):
     [3, 5],
 )
 def test__run_train_loop(
+    local_rank,
     do_train,
     do_eval,
     do_predict,
@@ -1143,6 +1148,7 @@ def test__run_train_loop(
 ):
     # create mocked pipeline object
     current_arguments = mocked_arguments(
+        local_rank=local_rank,
         do_train=do_train,
         do_eval=do_eval,
         do_predict=do_predict,
@@ -1167,6 +1173,8 @@ def test__run_train_loop(
     )
     qa_trainer.return_value.configure_mock(
         **{
+            "is_world_process_zero.return_value": current_arguments[2].local_rank
+            in [-1, 0],
             "train.return_value": SimpleNamespace(metrics={}),
             "evaluate.return_value": {},
             "predict.return_value": SimpleNamespace(
@@ -1257,38 +1265,44 @@ def test__run_train_loop(
         mocked_pipeline.trainer.save_metrics.assert_any_call(
             "predict", {"predict_samples": 3}
         )
-        json_open_dump.open.assert_called_once_with(
-            os.path.join(current_arguments[2].output_dir, "predictions.json"), "w"
-        )
-        json_open_dump.json_dump.assert_called_once_with(
-            [
-                {
-                    "id": "sample_id_1",
-                    "prediction_text": "answer",
-                    "title": "sample.com",
-                    "context": "sample answer for PolicyQA",
-                    "question": "sample question for PolicyQA 1?",
-                    "gold_answers": ["sample", "answer for PolicyQA"],
-                },
-                {
-                    "id": "sample_id_2",
-                    "prediction_text": "answer",
-                    "title": "sample.com",
-                    "context": "another sample answer for PolicyQA",
-                    "question": "sample question for PolicyQA 2?",
-                    "gold_answers": ["another", "sample"],
-                },
-                {
-                    "id": "sample_id_3",
-                    "prediction_text": "answer",
-                    "title": "sample.com",
-                    "context": "yet another sample answer for PolicyQA with extra text",
-                    "question": "sample question for PolicyQA 3?",
-                    "gold_answers": ["answer"],
-                },
-            ],
-            mocker.ANY,
-        )
+        if local_rank in [-1, 0]:
+            json_open_dump.open.assert_called_once_with(
+                os.path.join(current_arguments[2].output_dir, "predictions.json"), "w"
+            )
+            json_open_dump.json_dump.assert_called_once_with(
+                [
+                    {
+                        "id": "sample_id_1",
+                        "prediction_text": "answer",
+                        "title": "sample.com",
+                        "context": "sample answer for PolicyQA",
+                        "question": "sample question for PolicyQA 1?",
+                        "gold_answers": ["sample", "answer for PolicyQA"],
+                    },
+                    {
+                        "id": "sample_id_2",
+                        "prediction_text": "answer",
+                        "title": "sample.com",
+                        "context": "another sample answer for PolicyQA",
+                        "question": "sample question for PolicyQA 2?",
+                        "gold_answers": ["another", "sample"],
+                    },
+                    {
+                        "id": "sample_id_3",
+                        "prediction_text": "answer",
+                        "title": "sample.com",
+                        "context": (
+                            "yet another sample answer for PolicyQA with extra " "text"
+                        ),
+                        "question": "sample question for PolicyQA 3?",
+                        "gold_answers": ["answer"],
+                    },
+                ],
+                mocker.ANY,
+            )
+        else:
+            json_open_dump.open.assert_not_called()
+            json_open_dump.json_dump.assert_not_called()
     else:
         mocked_pipeline.trainer.predict.assert_not_called()
         with pytest.raises(AssertionError):

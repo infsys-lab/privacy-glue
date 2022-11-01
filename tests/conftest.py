@@ -100,7 +100,6 @@ def get_mocked_arguments(
         fp16=fp16,
         seed=seed,
         main_process_first=lambda *args, **kwargs: nullcontext(),
-        is_world_process_zero=lambda *args, **kwargs: nullcontext(),
         no_cuda=no_cuda,
         use_legacy_prediction_loop=use_legacy_prediction_loop,
     )
