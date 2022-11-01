@@ -319,7 +319,7 @@ def mocked_qa_examples_features_predictions():
                     0.0,
                     0.0,
                     0.0,
-                    0.0,
+                    1.0,
                 ],
                 [
                     0.0,
@@ -339,7 +339,7 @@ def mocked_qa_examples_features_predictions():
                     0.9,
                     0.0,
                     0.0,
-                    0.0,
+                    1.0,
                 ],
                 [
                     0.0,
@@ -359,7 +359,7 @@ def mocked_qa_examples_features_predictions():
                     0.1,
                     0.1,
                     0.9,
-                    0.0,
+                    1.0,
                 ],
                 [
                     0.0,
@@ -379,7 +379,7 @@ def mocked_qa_examples_features_predictions():
                     1.0,
                     0.0,
                     0.0,
-                    0.0,
+                    1.0,
                 ],
             ]
         ),
