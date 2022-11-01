@@ -33,7 +33,7 @@ def get_mocked_arguments(
     max_answer_length=30,
     preprocessing_num_workers=1,
     overwrite_cache=False,
-    pad_to_max_length=True,
+    pad_to_max_length=False,
     doc_stride=128,
     model_name_or_path="bert-base-uncased",
     do_clean=True,
