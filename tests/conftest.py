@@ -21,9 +21,6 @@ def pytest_configure():
     # globally disable caching with datasets
     datasets.disable_caching()
 
-    # globally disable CUDA (if activated)
-    os.environ["CUDA_VISIBLE_DEVICES"] = ""
-
 
 def get_mocked_arguments(
     task="all",
