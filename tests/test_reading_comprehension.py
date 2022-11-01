@@ -16,7 +16,7 @@ from reading_comprehension import Reading_Comprehension_Pipeline
 @pytest.fixture
 def mocked_qa_examples_features_predictions():
     # define configuration in case it is useful
-    config = {"max_seq_length": 18, "doc_stride": 4}
+    config = {"max_length": 18, "stride": 4, "padding": False}
 
     # define hard-coded examples
     examples = datasets.Dataset.from_dict(
