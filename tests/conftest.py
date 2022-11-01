@@ -21,6 +21,10 @@ def pytest_configure():
     # globally disable caching with datasets
     datasets.disable_caching()
 
+    # handle CUDA_VISIBLE_DEVICES depending on inputs
+    if "CUDA_VISIBLE_DEVICES" not in os.environ:
+        os.environ["CUDA_VISIBLE_DEVICES"] = ""
+
 
 def pytest_collection_modifyitems(config, items):
     # source: https://stackoverflow.com/a/56379871
