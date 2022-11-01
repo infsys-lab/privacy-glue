@@ -696,6 +696,10 @@ def test__compute_metrics(
 
 
 @pytest.mark.parametrize(
+    "local_rank",
+    [-1, 0, 1],
+)
+@pytest.mark.parametrize(
     "do_train",
     [True, False],
 )
@@ -721,6 +725,7 @@ def test__compute_metrics(
     ],
 )
 def test__run_train_loop(
+    local_rank,
     do_train,
     do_eval,
     do_predict,
@@ -736,6 +741,7 @@ def test__run_train_loop(
     # create mocked pipeline object
     current_arguments = mocked_arguments(
         task=task,
+        local_rank=local_rank,
         do_train=do_train,
         do_eval=do_eval,
         do_predict=do_predict,
@@ -764,6 +770,8 @@ def test__run_train_loop(
     )
     sc_trainer.return_value.configure_mock(
         **{
+            "is_world_process_zero.return_value": current_arguments[2].local_rank
+            in [-1, 0],
             "train.return_value": SimpleNamespace(metrics={}),
             "evaluate.return_value": {},
             "predict.return_value": (
@@ -784,6 +792,8 @@ def test__run_train_loop(
     )
     wrs_trainer.return_value.configure_mock(
         **{
+            "is_world_process_zero.return_value": current_arguments[2].local_rank
+            in [-1, 0],
             "train.return_value": SimpleNamespace(metrics={}),
             "evaluate.return_value": {},
             "predict.return_value": (
@@ -891,86 +901,91 @@ def test__run_train_loop(
         mocked_pipeline.trainer.save_metrics.assert_any_call(
             "predict", {"predict_samples": 3}
         )
-        json_open_dump.open.assert_called_once_with(
-            os.path.join(current_arguments[2].output_dir, "predictions.json"), "w"
-        )
+        if local_rank in [-1, 0]:
+            # check that file was opened
+            json_open_dump.open.assert_called_once_with(
+                os.path.join(current_arguments[2].output_dir, "predictions.json"), "w"
+            )
 
-        # conditionally check dumped dictionary
-        if task == "privacy_qa":
-            json_open_dump.json_dump.assert_called_once_with(
-                [
-                    {
-                        "id": 0,
-                        "question": "test question for SC 1",
-                        "text": "test text for SC 1",
-                        "gold_label": "a",
-                        "predicted_label": "a",
-                    },
-                    {
-                        "id": 1,
-                        "question": "test question for SC 2",
-                        "text": "test text for SC 2",
-                        "gold_label": "a",
-                        "predicted_label": "b",
-                    },
-                    {
-                        "id": 2,
-                        "question": "test question for SC 3",
-                        "text": "test text for SC 3",
-                        "gold_label": "c",
-                        "predicted_label": "c",
-                    },
-                ],
-                mocker.ANY,
-            )
-        elif task == "opp_115":
-            json_open_dump.json_dump.assert_called_once_with(
-                [
-                    {
-                        "id": 0,
-                        "text": "test text for SC 1",
-                        "gold_label": ["a"],
-                        "predicted_label": ["a", "b"],
-                    },
-                    {
-                        "id": 1,
-                        "text": "test text for SC 2",
-                        "gold_label": ["b"],
-                        "predicted_label": ["b", "c"],
-                    },
-                    {
-                        "id": 2,
-                        "text": "test text for SC 3",
-                        "gold_label": ["b", "c"],
-                        "predicted_label": ["a", "c"],
-                    },
-                ],
-                mocker.ANY,
-            )
+            # conditionally check dumped dictionary
+            if task == "privacy_qa":
+                json_open_dump.json_dump.assert_called_once_with(
+                    [
+                        {
+                            "id": 0,
+                            "question": "test question for SC 1",
+                            "text": "test text for SC 1",
+                            "gold_label": "a",
+                            "predicted_label": "a",
+                        },
+                        {
+                            "id": 1,
+                            "question": "test question for SC 2",
+                            "text": "test text for SC 2",
+                            "gold_label": "a",
+                            "predicted_label": "b",
+                        },
+                        {
+                            "id": 2,
+                            "question": "test question for SC 3",
+                            "text": "test text for SC 3",
+                            "gold_label": "c",
+                            "predicted_label": "c",
+                        },
+                    ],
+                    mocker.ANY,
+                )
+            elif task == "opp_115":
+                json_open_dump.json_dump.assert_called_once_with(
+                    [
+                        {
+                            "id": 0,
+                            "text": "test text for SC 1",
+                            "gold_label": ["a"],
+                            "predicted_label": ["a", "b"],
+                        },
+                        {
+                            "id": 1,
+                            "text": "test text for SC 2",
+                            "gold_label": ["b"],
+                            "predicted_label": ["b", "c"],
+                        },
+                        {
+                            "id": 2,
+                            "text": "test text for SC 3",
+                            "gold_label": ["b", "c"],
+                            "predicted_label": ["a", "c"],
+                        },
+                    ],
+                    mocker.ANY,
+                )
+            else:
+                json_open_dump.json_dump.assert_called_once_with(
+                    [
+                        {
+                            "id": 0,
+                            "text": "test text for SC 1",
+                            "gold_label": "a",
+                            "predicted_label": "a",
+                        },
+                        {
+                            "id": 1,
+                            "text": "test text for SC 2",
+                            "gold_label": "a",
+                            "predicted_label": "b",
+                        },
+                        {
+                            "id": 2,
+                            "text": "test text for SC 3",
+                            "gold_label": "c",
+                            "predicted_label": "c",
+                        },
+                    ],
+                    mocker.ANY,
+                )
         else:
-            json_open_dump.json_dump.assert_called_once_with(
-                [
-                    {
-                        "id": 0,
-                        "text": "test text for SC 1",
-                        "gold_label": "a",
-                        "predicted_label": "a",
-                    },
-                    {
-                        "id": 1,
-                        "text": "test text for SC 2",
-                        "gold_label": "a",
-                        "predicted_label": "b",
-                    },
-                    {
-                        "id": 2,
-                        "text": "test text for SC 3",
-                        "gold_label": "c",
-                        "predicted_label": "c",
-                    },
-                ],
-                mocker.ANY,
-            )
+            json_open_dump.open.assert_not_called()
+            json_open_dump.json_dump.assert_not_called()
     else:
         mocked_pipeline.trainer.predict.assert_not_called()
         with pytest.raises(AssertionError):
