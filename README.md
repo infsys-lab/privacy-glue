@@ -53,13 +53,20 @@ This repository documents PrivacyGLUE; a NLP benchmark consisting of legal-priva
 
 ## Test :microscope:
 
-1. To run unit and integration tests, execute:
+1. To run unit tests, execute:
 
     ```
     $ pytest
     ```
 
-2. To run a `mypy` type-integrity test, execute:
+2. To run integration tests, execute:
+
+    ```
+    $ CUDA_VISIBLE_DEVICES=<device> pytest -m slow
+    ```
+    **Note**: Replace the `<device>` argument with GPU ID(s) in order to run single or multi-GPU integration tests. Alternatively, remove the `CUDA_VISIBLE_DEVICES` environment variable for CPU integration tests.
+
+3. To run a `mypy` type-integrity test, execute:
 
     ```
     $ mypy
