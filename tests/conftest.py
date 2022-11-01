@@ -22,6 +22,18 @@ def pytest_configure():
     datasets.disable_caching()
 
 
+def pytest_collection_modifyitems(config, items):
+    # source: https://stackoverflow.com/a/56379871
+    keywordexpr = config.option.keyword
+    markexpr = config.option.markexpr
+    if keywordexpr or markexpr:
+        return
+    skip_mymarker = pytest.mark.skip(reason="slow not selected")
+    for item in items:
+        if "slow" in item.keywords:
+            item.add_marker(skip_mymarker)
+
+
 def get_mocked_arguments(
     task="all",
     data_dir="/tmp/data",

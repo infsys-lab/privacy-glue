@@ -76,6 +76,7 @@ directory = "cov_html"
 addopts = "--cov=src --basetemp=tests/artifacts"
 testpaths = ["tests"]
 pythonpath = ["src"]
+markers = ["slow: slow integration tests on multiple devices"]
 
 [tool.mypy]
 allow_redefinition = true
