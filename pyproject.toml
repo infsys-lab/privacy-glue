@@ -73,7 +73,7 @@ skip_empty = true
 directory = "cov_html"
 
 [tool.pytest.ini_options]
-addopts = "--cov=src --basetemp=tests/artefacts"
+addopts = "--cov=src --basetemp=tests/artifacts"
 testpaths = ["tests"]
 pythonpath = ["src"]
 
