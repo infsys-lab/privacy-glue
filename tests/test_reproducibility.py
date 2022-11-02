@@ -80,10 +80,10 @@ def convert_dict_to_flat_list(input_dict):
 @pytest.mark.parametrize(
     "device, runtime, extra_args",
     [
-        pytest.param("cpu", "python3", ["--no_cuda"], marks=require_cpu),
+        pytest.param("cpu", ["python3"], ["--no_cuda"], marks=require_cpu),
         pytest.param(
             "gpu",
-            "python3",
+            ["python3"],
             [
                 "--fp16",
                 "--fp16_full_eval",
@@ -92,7 +92,7 @@ def convert_dict_to_flat_list(input_dict):
         ),
         pytest.param(
             "multi_gpu",
-            "torchrun",
+            ["torchrun", "--nproc_per_node", str(torch.cuda.device_count())],
             [
                 "--fp16",
                 "--fp16_full_eval",
@@ -131,10 +131,10 @@ def test_reproducibility_across_seeds(
 
     # run experiments
     process_one = subprocess.run(
-        [runtime, "src/privacy_glue.py"] + args_list_one, env=subprocess_env
+        runtime + ["src/privacy_glue.py"] + args_list_one, env=subprocess_env
     )
     process_two = subprocess.run(
-        [runtime, "src/privacy_glue.py"] + args_list_two, env=subprocess_env
+        runtime + ["src/privacy_glue.py"] + args_list_two, env=subprocess_env
     )
 
     # load dumped benchmark summary one
