@@ -15,7 +15,7 @@ from transformers import (
     TrainingArguments,
     EvalPrediction,
     EarlyStoppingCallback,
-    DataCollatorWithPadding,
+    DataCollatorForTokenClassification,
     default_data_collator,
 )
 
@@ -168,11 +168,11 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
         )
 
         def preprocess_function(examples):
-            # padding = self.model.encoder.config.max_length
+            padding = False
             # Tokenize the texts
             tokenized_inputs = self.tokenizer(
                 examples["tokens"],
-                padding="max_length" if self.data_args.pad_to_max_length else False,
+                padding="max_length" if self.data_args.pad_to_max_length else padding,
                 max_length=self.data_args.max_seq_length,
                 truncation=True,
                 is_split_into_words=True,
@@ -249,7 +249,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
         self.data_collator = (
             default_data_collator
             if self.data_args.pad_to_max_length
-            else DataCollatorWithPadding(
+            else DataCollatorForTokenClassification(
                 self.tokenizer,
                 pad_to_multiple_of=8 if self.train_args.fp16 else None,
             )
