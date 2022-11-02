@@ -44,7 +44,7 @@ def get_cli_arguments(task, model_name_or_path, output_dir):
         "--num_train_epochs": "4",
         "--per_device_train_batch_size": "2",
         "--per_device_eval_batch_size": "2",
-        "--random_seed_iterations": "2",
+        "--random_seed_iterations": "1",
         "--report_to": "none",
         "--overwrite_output_dir": None,
         "--overwrite_cache": None,
@@ -155,37 +155,36 @@ def test_reproducibility_across_seeds(
     assert benchmark_summary_one == benchmark_summary_two
 
     # check weights of final models
-    for seed in ["seed_0", "seed_1"]:
-        weights_one = torch.load(
-            glob(
-                os.path.join(
-                    str(tmp_path),
-                    "run_one",
-                    "**",
-                    seed,
-                    "checkpoint-32",
-                    "pytorch_model.bin",
-                ),
-                recursive=True,
-            )[0]
-        )
-        weights_two = torch.load(
-            glob(
-                os.path.join(
-                    str(tmp_path),
-                    "run_two",
-                    "**",
-                    seed,
-                    "checkpoint-32",
-                    "pytorch_model.bin",
-                ),
-                recursive=True,
-            )[0]
-        )
+    weights_one = torch.load(
+        glob(
+            os.path.join(
+                str(tmp_path),
+                "run_one",
+                "**",
+                "seed_0",
+                "checkpoint-32",
+                "pytorch_model.bin",
+            ),
+            recursive=True,
+        )[0]
+    )
+    weights_two = torch.load(
+        glob(
+            os.path.join(
+                str(tmp_path),
+                "run_two",
+                "**",
+                "seed_0",
+                "checkpoint-32",
+                "pytorch_model.bin",
+            ),
+            recursive=True,
+        )[0]
+    )
 
-        # assert that keys are the same
-        assert weights_one.keys() == weights_two.keys()
+    # assert that keys are the same
+    assert weights_one.keys() == weights_two.keys()
 
-        # now assert values of keys are the same
-        for key in weights_one.keys():
-            assert torch.allclose(weights_one[key], weights_two[key])
+    # now assert values of keys are the same
+    for key in weights_one.keys():
+        assert torch.allclose(weights_one[key], weights_two[key])
