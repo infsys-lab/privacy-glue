@@ -8,6 +8,7 @@ from glob import glob
 
 import pytest
 import torch
+from transformers.trainer_utils import get_last_checkpoint
 
 require_cpu = pytest.mark.skipif(
     torch.cuda.device_count() != 0,
@@ -154,33 +155,17 @@ def test_reproducibility_across_seeds(
     assert process_two.returncode == 0
     assert benchmark_summary_one == benchmark_summary_two
 
+    # get latest checkpoint directories
+    checkpoint_one = get_last_checkpoint(
+        glob(os.path.join(str(tmp_path), "run_one", "**", "seed_0"), recursive=True)[0]
+    )
+    checkpoint_two = get_last_checkpoint(
+        glob(os.path.join(str(tmp_path), "run_two", "**", "seed_0"), recursive=True)[0]
+    )
+
     # check weights of final models
-    weights_one = torch.load(
-        glob(
-            os.path.join(
-                str(tmp_path),
-                "run_one",
-                "**",
-                "seed_0",
-                "checkpoint-32",
-                "pytorch_model.bin",
-            ),
-            recursive=True,
-        )[0]
-    )
-    weights_two = torch.load(
-        glob(
-            os.path.join(
-                str(tmp_path),
-                "run_two",
-                "**",
-                "seed_0",
-                "checkpoint-32",
-                "pytorch_model.bin",
-            ),
-            recursive=True,
-        )[0]
-    )
+    weights_one = torch.load(os.path.join(checkpoint_one, "pytorch_model.bin"))
+    weights_two = torch.load(os.path.join(checkpoint_two, "pytorch_model.bin"))
 
     # assert that keys are the same
     assert weights_one.keys() == weights_two.keys()
