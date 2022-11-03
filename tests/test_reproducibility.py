@@ -58,19 +58,13 @@ require_multi_gpu = pytest.mark.skipif(
         pytest.param(
             "gpu",
             ["python3"],
-            [
-                "--fp16",
-                "--fp16_full_eval",
-            ],
+            ["--fp16"],
             marks=require_single_gpu,
         ),
         pytest.param(
             "multi_gpu",
             ["torchrun", "--nproc_per_node", str(torch.cuda.device_count())],
-            [
-                "--fp16",
-                "--fp16_full_eval",
-            ],
+            ["--fp16"],
             marks=require_multi_gpu,
         ),
     ],
