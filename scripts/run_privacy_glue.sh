@@ -168,6 +168,7 @@ main() {
     --num_train_epochs 20 \
     --learning_rate 3e-5 \
     --warmup_ratio 0.1 \
+    --early_stopping_patience 5 \
     --report_to "$WANDB" \
     --per_device_train_batch_size "$((GLOBAL_BATCH_SIZE / ACCUMULATION_STEPS))" \
     --per_device_eval_batch_size "$((GLOBAL_BATCH_SIZE / ACCUMULATION_STEPS))" \
