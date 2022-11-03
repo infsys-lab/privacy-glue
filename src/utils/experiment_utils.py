@@ -14,6 +14,7 @@ from wandb.util import generate_id
 from reading_comprehension import Reading_Comprehension_Pipeline
 from sequence_classification import Sequence_Classification_Pipeline
 from sequence_tagging import Sequence_Tagging_Pipeline
+from utils.pipeline_utils import main_process_first_only
 
 
 class Privacy_GLUE_Experiment_Manager:
@@ -55,6 +56,7 @@ class Privacy_GLUE_Experiment_Manager:
             re.sub(r"[/-]", "_", self.model_args.model_name_or_path),
         )
 
+    @main_process_first_only
     def summarize(self) -> None:
         # create dictionary used for collecting metrics
         benchmark_summary = {}
