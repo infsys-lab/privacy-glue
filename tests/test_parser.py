@@ -15,7 +15,7 @@ import pytest
 
 @pytest.mark.parametrize(
     "model_name_or_path",
-    ["bert-base-uncased", "sentence-transformers/all-mpnet-base-v2"],
+    ["bert-base-uncased", "roberta-base"],
 )
 def test_ModelArguments_valid(model_name_or_path):
     # no error on known models
@@ -24,7 +24,7 @@ def test_ModelArguments_valid(model_name_or_path):
 
 @pytest.mark.parametrize(
     "model_name_or_path",
-    ["bert", "all-mpnet-base-v2"],
+    ["bert", "roberta"],
 )
 def test_ModelArguments_invalid(model_name_or_path):
     # error on unknown models

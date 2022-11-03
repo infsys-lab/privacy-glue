@@ -19,9 +19,10 @@ optional arguments:
   --model_name_or_path    <str>
                           model to be used for fine-tuning. Currently only the
                           following are supported:
-                          "all-mpnet-base-v2",
                           "bert-base-uncased",
+                          "roberta-base",
                           "nlpaueb/legal-bert-base-uncased",
+                          "saibo/legal-roberta-base",
                           "mukund/privbert"
                           (default: bert-base-uncased)
 
