@@ -56,12 +56,13 @@ This repository documents PrivacyGLUE; a NLP benchmark consisting of legal-priva
 1. To run unit tests, execute:
 
     ```
-    $ pytest
+    $ make test
     ```
 
 2. To run integration tests, execute:
 
     ```
-    $ CUDA_VISIBLE_DEVICES=<device> pytest -m slow
+    $ CUDA_VISIBLE_DEVICES=<device_ids> make integration_test
     ```
-    **Note**: Replace the `<device>` argument with GPU ID(s) in order to run single or multi-GPU integration tests. Alternatively, remove the `CUDA_VISIBLE_DEVICES` environment variable for CPU integration tests.
+
+    **Note**: Replace the `<device_ids>` argument with GPU ID(s) in order to run single or multi-GPU integration tests. Alternatively, remove the `CUDA_VISIBLE_DEVICES` environment variable for CPU integration tests.
