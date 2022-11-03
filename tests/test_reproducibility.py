@@ -44,9 +44,10 @@ require_multi_gpu = pytest.mark.skipif(
 @pytest.mark.parametrize(
     "model_name_or_path",
     [
-        "sentence-transformers/all-mpnet-base-v2",
         "bert-base-uncased",
+        "roberta-base",
         "nlpaueb/legal-bert-base-uncased",
+        "saibo/legal-roberta-base",
         "mukund/privbert",
     ],
 )
