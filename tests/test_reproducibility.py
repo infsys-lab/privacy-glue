@@ -164,10 +164,10 @@ class Test_Reproducibility:
             subprocess_env["CUDA_VISIBLE_DEVICES"] = ""
 
         # run experiments
-        subprocess.run(
+        process_one = subprocess.run(
             runtime + ["src/privacy_glue.py"] + args_list_one, env=subprocess_env
         )
-        subprocess.run(
+        process_two = subprocess.run(
             runtime + ["src/privacy_glue.py"] + args_list_two, env=subprocess_env
         )
 
@@ -202,6 +202,10 @@ class Test_Reproducibility:
         # check weights of final models
         weights_one = torch.load(os.path.join(checkpoint_one, "pytorch_model.bin"))
         weights_two = torch.load(os.path.join(checkpoint_two, "pytorch_model.bin"))
+
+        # assert that both processes exited zero
+        assert process_one.returncode == 0
+        assert process_two.returncode == 0
 
         # assert that benchmark summaries are the same
         assert benchmark_summary_one == benchmark_summary_two
@@ -248,12 +252,12 @@ class Test_Reproducibility:
             subprocess_env["CUDA_VISIBLE_DEVICES"] = ""
 
         # run full training experiment
-        subprocess.run(
+        process_one = subprocess.run(
             runtime + ["src/privacy_glue.py"] + args_list_one, env=subprocess_env
         )
 
         # run partial training experiment
-        subprocess.run(
+        process_two = subprocess.run(
             runtime + ["src/privacy_glue.py"] + args_list_two, env=subprocess_env
         )
 
@@ -284,7 +288,7 @@ class Test_Reproducibility:
             shutil.rmtree(checkpoint)
 
         # run resumed training experiment
-        subprocess.run(
+        process_two_prime = subprocess.run(
             runtime + ["src/privacy_glue.py"] + args_list_two, env=subprocess_env
         )
 
@@ -328,6 +332,11 @@ class Test_Reproducibility:
         # check weights of final models
         weights_one = torch.load(os.path.join(checkpoint_one, "pytorch_model.bin"))
         weights_two = torch.load(os.path.join(checkpoint_two, "pytorch_model.bin"))
+
+        # assert that all processes exited zero
+        assert process_one.returncode == 0
+        assert process_two.returncode == 0
+        assert process_two_prime.returncode == 0
 
         # assert that training was indeed resumed
         assert "Checkpoint detected, resuming training" in session_log_two
