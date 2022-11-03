@@ -1133,7 +1133,7 @@ def test__compute_metrics(mocked_arguments, mocker):
 )
 @pytest.mark.parametrize(
     "early_stopping_patience",
-    [3, 5],
+    [None, 5],
 )
 def test__run_train_loop(
     local_rank,
@@ -1215,7 +1215,9 @@ def test__run_train_loop(
         compute_metrics="_compute_metrics",
         callbacks=[
             early_stopping_callback(early_stopping_patience=early_stopping_patience)
-        ],
+        ]
+        if early_stopping_patience
+        else None,
     )
 
     # make conditional assertions for training

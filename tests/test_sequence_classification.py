@@ -713,7 +713,7 @@ def test__compute_metrics(
 )
 @pytest.mark.parametrize(
     "early_stopping_patience",
-    [3, 5],
+    [None, 5],
 )
 @pytest.mark.parametrize(
     "task, problem_type",
@@ -836,7 +836,9 @@ def test__run_train_loop(
             compute_metrics="_compute_metrics",
             callbacks=[
                 early_stopping_callback(early_stopping_patience=early_stopping_patience)
-            ],
+            ]
+            if early_stopping_patience
+            else None,
         )
         sc_trainer.assert_not_called()
     else:
@@ -850,7 +852,9 @@ def test__run_train_loop(
             compute_metrics="_compute_metrics",
             callbacks=[
                 early_stopping_callback(early_stopping_patience=early_stopping_patience)
-            ],
+            ]
+            if early_stopping_patience
+            else None,
         )
         wrs_trainer.assert_not_called()
 

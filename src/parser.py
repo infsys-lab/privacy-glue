@@ -87,8 +87,8 @@ class ModelArguments:
             "tokenizers library) or not"
         },
     )
-    early_stopping_patience: int = field(
-        default=5, metadata={"help": "Early stopping patience value"}
+    early_stopping_patience: Optional[int] = field(
+        default=None, metadata={"help": "Early stopping patience value"}
     )
     do_clean: bool = field(
         default=False, metadata={"help": "Clean all old checkpoints after training"}
