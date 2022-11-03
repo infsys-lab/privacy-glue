@@ -100,7 +100,6 @@ class Test_Reproducibility:
             "--max_eval_samples": "16",
             "--max_predict_samples": "16",
             "--overwrite_cache": None,
-            "--early_stopping_patience": str(int(1e5)),
             "--random_seed_iterations": "1",
         }
 
