@@ -13,13 +13,13 @@ from transformers.hf_argparser import DataClassType
 # 2. NOTE: Enum-type objects will be transformed into choices
 
 
-MODELS = [
-    "bert-base-uncased",
-    "roberta-base",
-    "nlpaueb/legal-bert-base-uncased",
-    "saibo/legal-roberta-base",
-    "mukund/privbert",
-]
+MODELS = {
+    "bert-base-uncased": "5546055f03398095e385d7dc625e636cc8910bf2",
+    "roberta-base": "ff46155979338ff8063cdad90908b498ab91b181",
+    "nlpaueb/legal-bert-base-uncased": "15b570cbf88259610b082a167dacc190124f60f6",
+    "saibo/legal-roberta-base": "e0d78f4e064ff27621d61fa2320c79addb528d81",
+    "mukund/privbert": "48228b4661fa8252bdb39ca44a4d9758f6b37f88",
+}
 
 
 TASKS = [
@@ -59,8 +59,8 @@ class ModelArguments:
             "model_name_or_path"
         },
     )
-    model_revision: str = field(
-        default="main",
+    model_revision: Optional[str] = field(
+        default=None,
         metadata={
             "help": "The specific model version to use (can be a branch name, "
             "tag name or commit id)."
@@ -99,6 +99,8 @@ class ModelArguments:
             f"Model '{self.model_name_or_path}' is not supported, "
             f"please select model from {MODELS}"
         )
+        if self.model_revision is None:
+            self.model_revision = MODELS[self.model_name_or_path]
 
 
 @dataclass
