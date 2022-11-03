@@ -43,10 +43,6 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
         elif self.data_args.task == "policy_ie_b":
             from tasks.policy_ie_b import SUBTASKS as subtasks
         else:
-            self.logger.warn(
-                f"Task: {self.data_args.task} is not an instance of \
-                multitask learning problem!"
-            )
             subtasks = [self.data_args.task]
 
         self.subtasks = subtasks
@@ -86,9 +82,9 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
 
         self.model = MultiTaskModel(
             self.model_args.model_name_or_path,
-            self.subtasks,
-            self.label_names,
-            self.config,
+            tasks=self.subtasks,
+            labels=self.label_names,
+            config=self.config,
         )
 
     def _create_b_to_i_label_map(self) -> Dict:
@@ -149,6 +145,22 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
             task_ids.append(task_id)
         return labels, task_ids
 
+    def _preprocess_function(self, examples):
+        padding = False
+        # Tokenize the texts
+        tokenized_inputs = self.tokenizer(
+            examples["tokens"],
+            padding="max_length" if self.data_args.pad_to_max_length else padding,
+            max_length=self.data_args.max_seq_length,
+            truncation=True,
+            is_split_into_words=True,
+        )
+
+        labels, task_ids = self._transform_labels_to_ids(examples, tokenized_inputs)
+        tokenized_inputs["labels"] = labels
+        tokenized_inputs["task_ids"] = task_ids
+        return tokenized_inputs
+
     def _apply_preprocessing(self) -> None:
         self.data_args.label_all_tokens = True
         self.b_to_i_label = self._create_b_to_i_label_map()
@@ -167,22 +179,6 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
             self.data_args.max_seq_length, self.tokenizer.model_max_length
         )
 
-        def preprocess_function(examples):
-            padding = False
-            # Tokenize the texts
-            tokenized_inputs = self.tokenizer(
-                examples["tokens"],
-                padding="max_length" if self.data_args.pad_to_max_length else padding,
-                max_length=self.data_args.max_seq_length,
-                truncation=True,
-                is_split_into_words=True,
-            )
-
-            labels, task_ids = self._transform_labels_to_ids(examples, tokenized_inputs)
-            tokenized_inputs["labels"] = labels
-            tokenized_inputs["task_ids"] = task_ids
-            return tokenized_inputs
-
         if self.train_args.do_train:
             if self.data_args.max_train_samples is not None:
                 max_train_samples = min(
@@ -196,7 +192,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
                 desc="train dataset map pre-processing"
             ):
                 self.train_dataset = self.raw_datasets["train"].map(
-                    preprocess_function,
+                    self._preprocess_function,
                     batched=True,
                     load_from_cache_file=not self.data_args.overwrite_cache,
                     num_proc=self.data_args.preprocessing_num_workers,
@@ -217,7 +213,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
                 desc="validation dataset map pre-processing"
             ):
                 self.eval_dataset = self.raw_datasets["validation"].map(
-                    preprocess_function,
+                    self._preprocess_function,
                     batched=True,
                     load_from_cache_file=not self.data_args.overwrite_cache,
                     num_proc=self.data_args.preprocessing_num_workers,
@@ -237,7 +233,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
                 desc="prediction dataset map pre-processing"
             ):
                 self.predict_dataset = self.raw_datasets["test"].map(
-                    preprocess_function,
+                    self._preprocess_function,
                     batched=True,
                     load_from_cache_file=not self.data_args.overwrite_cache,
                     num_proc=self.data_args.preprocessing_num_workers,
