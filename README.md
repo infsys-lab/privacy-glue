@@ -89,7 +89,7 @@ optional arguments:
 
   --preprocessing_num_workers  <int>
                                number of workers to be used for preprocessing
-                               (default: 1)
+                               (default: None)
 
   --task                       <str>
                                task to be worked on. The following values are
