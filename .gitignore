@@ -5,3 +5,4 @@
 coverage.xml
 pytest.xml
 wandb/
+tests/artifacts/

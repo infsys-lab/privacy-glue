@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from tasks.privacy_qa import load_privacy_qa
-import datasets
 import os
+
+import datasets
+import pandas as pd
+import pytest
+
+from tasks.privacy_qa import load_privacy_qa
 
 
 def test_load_privacy_qa():
@@ -30,12 +34,12 @@ def test_load_privacy_qa():
                 (
                     f"{split} question for PrivacyQA?",
                     f"{split} answer for PrivacyQA",
-                    f"label-{split}-1",
+                    1,
                 ),
                 (
                     f"another {split} question for PrivacyQA?",
                     f"another {split} answer for PrivacyQA",
-                    f"label-{split}-2",
+                    0,
                 ),
             ]
         )
@@ -44,4 +48,27 @@ def test_load_privacy_qa():
         assert (
             sorted(zip(data_split["question"], data_split["text"], data_split["label"]))
             == expected
+        )
+
+
+def test_load_privacy_qa_failure(mocker):
+    # mock relevant function
+    mocker.patch(
+        "tasks.privacy_qa.pd.read_csv",
+        return_value=pd.DataFrame(
+            {
+                "Query": ["some_query_1", "some_query_2"],
+                "Segment": ["some_segment_1", "some_segment_2"],
+                "Label": ["some_label_1", "some_label_2"],
+                "Any_Relevant": ["some_label_1", "some_label_2"],
+            }
+        ),
+    )
+
+    # load sample data
+    with pytest.raises(ValueError):
+        load_privacy_qa(
+            os.path.join(
+                os.path.dirname(os.path.dirname(__file__)), "data", "privacy_qa"
+            )
         )

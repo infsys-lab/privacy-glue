@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from tasks.piextract import load_piextract, merge_tags, read_conll_file, SUBTASKS
+import os
+
 import datasets
 import pytest
-import os
+
+from tasks.piextract import load_piextract, merge_tags, read_conll_file, SUBTASKS
 
 TASK2TEXTSPAN = {
     "COLLECT": "collect",
@@ -159,7 +161,6 @@ def test_load_piextract_mocked(mocker):
             )
 
 
-@pytest.mark.integration
 def test_load_piextract():
     # load sample data
     data = load_piextract(

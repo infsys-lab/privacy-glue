@@ -28,6 +28,7 @@ flake8 = "^5.0.4"
 shellcheck-py = "^0.8.0"
 shfmt-py = "^3.4.3"
 pytest-mock = "^3.8.2"
+isort = "^5.10.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -48,6 +49,11 @@ extend-exclude = """
 )/
 """
 
+[tool.isort]
+profile = "black"
+skip_glob = ["data/*", "runs/*", "scripts/*",
+             "submodules/*", ".venv/*", "cov_html/*"]
+
 [tool.coverage.run]
 branch = true
 source = ["src"]
@@ -67,12 +73,9 @@ skip_empty = true
 directory = "cov_html"
 
 [tool.pytest.ini_options]
-addopts = "--cov=src"
+addopts = "--cov=src --basetemp=tests/artifacts"
 testpaths = ["tests"]
 pythonpath = ["src"]
-markers = [
-    "integration: integration tests",
-]
 
 [tool.mypy]
 allow_redefinition = true

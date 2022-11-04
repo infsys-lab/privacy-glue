@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from typing import Dict, List, Tuple
-from glob import glob
-import datasets
 import os
+from glob import glob
+from typing import Dict, List, Tuple
+
+import datasets
 
 from utils.tasks_utils import expand_dataset_per_task
 

@@ -1,3 +1,16 @@
-train check for OPP-115,label-train-1
-train check for OPP-115,label-train-2
-another train check for OPP-115,label-train-2
+train check for OPP-115 1,Data Retention
+train check for OPP-115 2,Data Security
+train check for OPP-115 3,Do Not Track
+train check for OPP-115 4,First Party Collection/Use
+train check for OPP-115 5,International and Specific Audiences
+train check for OPP-115 6,Introductory/Generic
+train check for OPP-115 7,Policy Change
+train check for OPP-115 8,Practice not covered
+train check for OPP-115 9,Privacy contact information
+train check for OPP-115 10,Third Party Sharing/Collection
+train check for OPP-115 11,"User Access, Edit and Deletion"
+train check for OPP-115 12,User Choice/Control
+train check for OPP-115 13,Data Retention
+train check for OPP-115 13,Data Security
+train check for OPP-115 14,International and Specific Audiences
+train check for OPP-115 14,Introductory/Generic

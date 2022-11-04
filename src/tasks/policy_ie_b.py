@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from .policy_ie_a import file_mapping
 from typing import cast
+
 import datasets
 
 from utils.tasks_utils import expand_dataset_per_task
+from utils.task_utils import policy_ie_file_mapping
 
 
 SUBTASKS = ["type-I", "type-II"]
@@ -41,18 +42,18 @@ def load_policy_ie_b(directory: str) -> datasets.DatasetDict:
 
     # load tokens which are common for all sub-tasks
     tokens = datasets.load_dataset(
-        "text", data_files=file_mapping(directory, "seq.in")
+        "text", data_files=policy_ie_file_mapping(directory, "seq.in")
     ).map(lambda example: {"tokens": example["text"].split()}, remove_columns=["text"])
 
     # since this is task B, load all NER tags
     ner_tags_first = datasets.load_dataset(
-        "text", data_files=file_mapping(directory, "seq_type_I.out")
+        "text", data_files=policy_ie_file_mapping(directory, "seq_type_I.out")
     ).map(
         lambda example: {"ner_tags_type_one": example["text"].split()},
         remove_columns=["text"],
     )
     ner_tags_second = datasets.load_dataset(
-        "text", data_files=file_mapping(directory, "seq_type_II.out")
+        "text", data_files=policy_ie_file_mapping(directory, "seq_type_II.out")
     ).map(
         lambda example: {"ner_tags_type_two": example["text"].split()},
         remove_columns=["text"],

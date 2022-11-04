@@ -47,6 +47,10 @@ jobs:
         run: |
           poetry run black --diff --check .
 
+      - name: Import-check with isort
+        run: |
+          poetry run isort --diff --check-only .
+
       - name: Lint with flake8
         run: |
           poetry run flake8 --show-source --statistics .

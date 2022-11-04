@@ -1,19 +1,37 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from utils.experiment_utils import Privacy_GLUE_Experiment_Manager
-import pytest
+import json
 import os
+import shutil
+
+import numpy as np
+import pytest
+
+from utils.experiment_utils import Privacy_GLUE_Experiment_Manager
 
 
-def test__init__():
-    experiment_manager = Privacy_GLUE_Experiment_Manager(
-        "data_args", "model_args", "train_args", "experiment_args"
+@pytest.mark.parametrize(
+    "model_name_or_path, model_dir_basename",
+    [
+        ("bert-base-uncased", "bert_base_uncased"),
+        ("nlpaueb/legal-bert-base-uncased", "nlpaueb_legal_bert_base_uncased"),
+    ],
+)
+def test__init__(model_name_or_path, model_dir_basename, mocked_arguments):
+    data_args, model_args, train_args, experiment_args = mocked_arguments(
+        model_name_or_path=model_name_or_path, with_experiment_args=True
     )
-    assert experiment_manager.data_args == "data_args"
-    assert experiment_manager.model_args == "model_args"
-    assert experiment_manager.train_args == "train_args"
-    assert experiment_manager.experiment_args == "experiment_args"
+    experiment_manager = Privacy_GLUE_Experiment_Manager(
+        data_args, model_args, train_args, experiment_args
+    )
+    assert experiment_manager.data_args == data_args
+    assert experiment_manager.model_args == model_args
+    assert experiment_manager.train_args == train_args
+    assert experiment_manager.experiment_args == experiment_args
+    assert experiment_manager.experiment_args.model_dir == os.path.join(
+        train_args.output_dir, model_dir_basename
+    )
 
 
 @pytest.mark.parametrize(
@@ -99,7 +117,7 @@ def test_run_experiments(
         train_args,
         experiment_args,
     )
-    summarize = mocker.patch.object(experiment_manager, "_summarize")
+    summarize = mocker.patch.object(experiment_manager, "summarize")
     seq_class = mocker.patch(
         "utils.experiment_utils.Sequence_Classification_Pipeline",
         new_callable=deep_mocker,
@@ -129,6 +147,7 @@ def test_run_experiments(
                 wandb_group_id="experiment_test" if report_to == ["wandb"] else None,
             )
             train_args.get_process_log_level = mocker.ANY
+            train_args.main_process_first = mocker.ANY
             if _task in [
                 "opp_115",
                 "policy_detection",
@@ -159,11 +178,6 @@ def test_run_experiments(
     # execute main
     experiment_manager.run_experiments()
 
-    # make initial assertion on model directory
-    assert experiment_manager.experiment_args.model_dir == os.path.join(
-        output_dir, model_dir_basename
-    )
-
     # make assertions on arguments based on task
     if task in [
         "opp_115",
@@ -192,3 +206,133 @@ def test_run_experiments(
         summarize.assert_called_once()
     else:
         summarize.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "model_name_or_path, model_dir_basename",
+    [
+        ("bert-base-uncased", "bert_base_uncased"),
+        ("nlpaueb/legal-bert-base-uncased", "nlpaueb_legal_bert_base_uncased"),
+    ],
+)
+@pytest.mark.parametrize(
+    "random_seed_iterations",
+    [1, 5, 10],
+)
+@pytest.mark.parametrize("add_unrelated_directory", [True, False])
+@pytest.mark.parametrize("missing_task", [True, False])
+@pytest.mark.parametrize("missing_results_file", [True, False])
+def test_summarize(
+    model_name_or_path,
+    model_dir_basename,
+    random_seed_iterations,
+    add_unrelated_directory,
+    missing_task,
+    missing_results_file,
+    mocked_arguments_with_tmp_path,
+    mocker,
+):
+    # get mocked arguments and create experiment manager
+    data_args, model_args, train_args, experiment_args = mocked_arguments_with_tmp_path(
+        model_name_or_path=model_name_or_path,
+        random_seed_iterations=random_seed_iterations,
+        with_experiment_args=True,
+    )
+    experiment_manager = Privacy_GLUE_Experiment_Manager(
+        data_args, model_args, train_args, experiment_args
+    )
+    experiment_manager.experiment_args.model_dir = os.path.join(
+        train_args.output_dir, model_dir_basename
+    )
+
+    # create mocks
+    warn = mocker.patch("utils.experiment_utils.warnings.warn")
+
+    # create expected summary to fill up
+    expected_benchmark_summary = {}
+
+    # set random seed before for-loop
+    np.random.seed(42)
+
+    # create directory structure and data
+    for task, metric_names in experiment_manager.task_metrics.items():
+        # skip task if we should test this
+        if missing_task and task == "piextract":
+            continue
+
+        # create task directory
+        task_dir = os.path.join(experiment_manager.experiment_args.model_dir, task)
+        os.makedirs(task_dir)
+
+        # generate random (seeded) metric values
+        metric_by_seed_group = [
+            [np.random.uniform() for _ in metric_names]
+            for _ in range(random_seed_iterations)
+        ]
+
+        # simulate a missing file
+        if missing_results_file:
+            metric_by_seed_group = metric_by_seed_group[: (random_seed_iterations - 1)]
+
+        # pre-compute mean and standard deviations for checks
+        metric_by_group_seed = list(zip(*metric_by_seed_group))
+        expected_benchmark_summary[task] = {
+            "metrics": metric_names,
+            "mean": [
+                np.round(np.mean(metric_group), 8).item()
+                for metric_group in metric_by_group_seed
+            ],
+            "std": [
+                np.round(np.std(metric_group), 8).item()
+                for metric_group in metric_by_group_seed
+            ],
+            "num_samples": len(metric_by_seed_group),
+        }
+
+        # iterate over random seeds
+        for index, seed in enumerate(range(random_seed_iterations)):
+            # create seed directory
+            seed_dir = os.path.join(task_dir, f"seed_{seed}")
+            os.makedirs(seed_dir)
+
+            if missing_results_file and index == (random_seed_iterations - 1):
+                continue
+            else:
+                # create metrics dictionary
+                metrics_dump = {
+                    f"predict_{metric_name}": metric_by_seed_group[index][sub_index]
+                    for sub_index, metric_name in enumerate(metric_names)
+                }
+
+                # dump metrics file
+                with open(
+                    os.path.join(seed_dir, "all_results.json"), "w"
+                ) as output_file_stream:
+                    json.dump(metrics_dump, output_file_stream)
+
+    # add unrelated directory if required
+    if add_unrelated_directory:
+        shutil.copytree(
+            os.path.join(experiment_manager.experiment_args.model_dir, "policy_qa"),
+            os.path.join(experiment_manager.experiment_args.model_dir, "misc"),
+        )
+
+    # execute manager method
+    experiment_manager.summarize()
+
+    # assert conditional warnings
+    if missing_results_file:
+        warn.assert_called()
+    else:
+        warn.assert_not_called()
+
+    # read JSON file
+    with open(
+        os.path.join(
+            experiment_manager.experiment_args.model_dir, "benchmark_summary.json"
+        )
+    ) as input_file_stream:
+        benchmark_summary = json.load(input_file_stream)
+
+    # make assertion
+    assert benchmark_summary == expected_benchmark_summary

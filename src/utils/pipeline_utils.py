@@ -1,12 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import logging
+import os
+import shutil
 from abc import ABC, abstractmethod
-from datasets import DatasetDict
+from functools import wraps
 from glob import glob
-from transformers import TrainingArguments, set_seed
-from transformers.trainer_utils import get_last_checkpoint
 from parser import DataArguments, ModelArguments
+
+import datasets
+import torch
+import transformers
+import wandb
+from datasets import DatasetDict
+from transformers import TrainingArguments
+from transformers.trainer_utils import enable_full_determinism, get_last_checkpoint
+
 from tasks.opp_115 import load_opp_115
 from tasks.piextract import load_piextract
 from tasks.policy_detection import load_policy_detection
@@ -14,14 +24,17 @@ from tasks.policy_ie_a import load_policy_ie_a
 from tasks.policy_ie_b import load_policy_ie_b
 from tasks.policy_qa import load_policy_qa
 from tasks.privacy_qa import load_privacy_qa
-from utils.logging_utils import init_logger, add_file_handler
-import transformers
-import datasets
-import logging
-import wandb
-import shutil
-import torch
-import os
+from utils.logging_utils import add_file_handler, init_logger
+
+
+def main_process_first_only(function):
+    @wraps(function)
+    def wrapper(self, *args, **kwargs):
+        with self.train_args.main_process_first():
+            if self.train_args.local_rank in [-1, 0]:
+                return function(self, *args, **kwargs)
+
+    return wrapper
 
 
 class SuccessFileFoundException(Exception):
@@ -63,6 +76,7 @@ class Privacy_GLUE_Pipeline(ABC):
 
         return data
 
+    @main_process_first_only
     def _init_run_dir(self) -> None:
         if (
             os.path.exists(self.train_args.output_dir)
@@ -102,7 +116,6 @@ class Privacy_GLUE_Pipeline(ABC):
         # check for existing exit code and decide action
         if (
             os.path.exists(os.path.join(self.train_args.output_dir, self.success_file))
-            and not self.train_args.overwrite_output_dir
             and self.train_args.do_train
         ):
             message = (
@@ -111,6 +124,7 @@ class Privacy_GLUE_Pipeline(ABC):
             self.logger.info(message)
             raise SuccessFileFoundException(message)
 
+    @main_process_first_only
     def _dump_misc_args(self) -> None:
         # dump miscellaneous arguments
         torch.save(
@@ -133,13 +147,13 @@ class Privacy_GLUE_Pipeline(ABC):
         self.logger.info(f"Model arguments: {self.model_args}")
         self.logger.info(f"Training arguments: {self.train_args}")
 
-    def _set_global_seeds(self) -> None:
-        # set seed before initializing model
-        set_seed(self.train_args.seed)
+    def _make_deterministic(self) -> None:
+        # enable full determinism by setting seeds and other arguments
+        enable_full_determinism(self.train_args.seed)
 
     def _find_existing_checkpoint(self) -> None:
         # detect last checkpoint if necessary
-        if self.train_args.do_train and not self.train_args.overwrite_output_dir:
+        if self.train_args.do_train:
             # use upstream function for detection
             self.last_checkpoint = get_last_checkpoint(self.train_args.output_dir)
 
@@ -153,6 +167,7 @@ class Privacy_GLUE_Pipeline(ABC):
         else:
             self.last_checkpoint = None
 
+    @main_process_first_only
     def _init_wandb_run(self) -> None:
         if "wandb" in self.train_args.report_to:
             wandb.init(
@@ -166,6 +181,7 @@ class Privacy_GLUE_Pipeline(ABC):
                 resume=True if self.last_checkpoint else None,
             )
 
+    @main_process_first_only
     def _clean_checkpoint_dirs(self) -> None:
         if self.model_args.do_clean and self.train_args.do_train:
             for checkpoint in glob(
@@ -173,6 +189,7 @@ class Privacy_GLUE_Pipeline(ABC):
             ):
                 shutil.rmtree(checkpoint)
 
+    @main_process_first_only
     def _save_success_file(self) -> None:
         if self.train_args.do_train:
             with open(
@@ -186,6 +203,7 @@ class Privacy_GLUE_Pipeline(ABC):
         if hasattr(self, "logger"):
             self.logger.handlers = []
 
+    @main_process_first_only
     def _close_wandb(self) -> None:
         if "wandb" in self.train_args.report_to and wandb.run is not None:
             wandb.run.finish()
@@ -223,7 +241,7 @@ class Privacy_GLUE_Pipeline(ABC):
         self._check_for_success_file()
         self._dump_misc_args()
         self._log_starting_arguments()
-        self._set_global_seeds()
+        self._make_deterministic()
         self._find_existing_checkpoint()
         self._init_wandb_run()
 

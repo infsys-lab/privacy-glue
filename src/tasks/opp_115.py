@@ -1,9 +1,25 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import os
+
 import datasets
 import pandas as pd
-import os
+
+LABELS = [
+    "Data Retention",
+    "Data Security",
+    "Do Not Track",
+    "First Party Collection/Use",
+    "International and Specific Audiences",
+    "Introductory/Generic",
+    "Policy Change",
+    "Practice not covered",
+    "Privacy contact information",
+    "Third Party Sharing/Collection",
+    "User Access, Edit and Deletion",
+    "User Choice/Control",
+]
 
 
 def load_opp_115(directory: str) -> datasets.DatasetDict:
@@ -12,6 +28,9 @@ def load_opp_115(directory: str) -> datasets.DatasetDict:
 
     # define available splits
     splits = ["train", "validation", "test"]
+
+    # define label information
+    label_info = datasets.Sequence(datasets.ClassLabel(names=LABELS))
 
     # loop over all splits
     for split in splits:
@@ -31,6 +50,17 @@ def load_opp_115(directory: str) -> datasets.DatasetDict:
 
         # convert temporary dataframe into HF dataset
         dataset = datasets.Dataset.from_pandas(temp_df, preserve_index=False)
+
+        # convert string labels to integers and store feature information
+        dataset = dataset.map(
+            lambda examples: {
+                "label": [
+                    label_info.feature.str2int(labels) for labels in examples["label"]
+                ]
+            },
+            batched=True,
+        )
+        dataset.features["label"] = label_info
 
         # insert dataset into combined DatasetDict
         combined[split] = dataset

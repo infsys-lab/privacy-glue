@@ -1,12 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from utils.pipeline_utils import Privacy_GLUE_Pipeline, SuccessFileFoundException
-import transformers
-import datasets
 import logging
-import pytest
 import os
+
+import datasets
+import pytest
+import transformers
+
+from utils.pipeline_utils import (
+    Privacy_GLUE_Pipeline,
+    SuccessFileFoundException,
+    main_process_first_only,
+)
 
 
 class Mocked_Pipeline(Privacy_GLUE_Pipeline):
@@ -24,6 +30,29 @@ class Mocked_Pipeline(Privacy_GLUE_Pipeline):
 
     def _run_train_loop(self):
         pass
+
+
+@pytest.mark.parametrize(
+    "local_rank",
+    [-1, 0, 1],
+)
+def test_main_process_first_only(local_rank, mocked_arguments, mocker):
+    class Mocked_Pipeline_Override(Mocked_Pipeline):
+        @main_process_first_only
+        def test_function(self):
+            return "test"
+
+    # create mocked pipeline class
+    mocked_pipeline = Mocked_Pipeline_Override(*mocked_arguments(local_rank=local_rank))
+
+    # execute sample pipeline method
+    return_value = mocked_pipeline.test_function()
+
+    # make assertions
+    if local_rank in [-1, 0]:
+        assert return_value == "test"
+    else:
+        assert return_value is None
 
 
 @pytest.mark.parametrize(
@@ -255,7 +284,7 @@ def test__check_for_success_file(
             ),
             "w",
         ):
-            if do_train and not overwrite_output_dir:
+            if do_train:
                 with pytest.raises(SuccessFileFoundException):
                     mocked_pipeline_with_tmp_path._check_for_success_file()
             else:
@@ -302,18 +331,20 @@ def test__log_starting_arguments(mocked_arguments, mocker):
     "seed",
     list(range(5)),
 )
-def test__set_global_seeds(seed, mocked_arguments, mocker):
+def test__make_deterministic(seed, mocked_arguments, mocker):
     # create mocked pipeline class
     mocked_pipeline = Mocked_Pipeline(*mocked_arguments(seed=seed))
 
     # mock set_seed in pipeline
-    set_seed = mocker.patch("utils.pipeline_utils.set_seed")
+    enable_full_determinism = mocker.patch(
+        "utils.pipeline_utils.enable_full_determinism"
+    )
 
     # call the pipeline method
-    mocked_pipeline._set_global_seeds()
+    mocked_pipeline._make_deterministic()
 
     # make assertion
-    set_seed.assert_called_once_with(seed)
+    enable_full_determinism.assert_called_once_with(seed)
 
 
 @pytest.mark.parametrize(
@@ -357,7 +388,7 @@ def test__find_existing_checkpoint(
     mocked_pipeline._find_existing_checkpoint()
 
     # make conditional assertions
-    if do_train and not overwrite_output_dir:
+    if do_train:
         get_last_checkpoint.assert_called_once()
         if checkpoint_existing:
             assert mocked_pipeline.last_checkpoint == "/path/to/some/checkpoint"
@@ -579,7 +610,7 @@ def test_run_start(mocked_arguments, mocker):
         "f_6",
     )
     mock.attach_mock(
-        mocker.patch("utils.pipeline_utils.Privacy_GLUE_Pipeline._set_global_seeds"),
+        mocker.patch("utils.pipeline_utils.Privacy_GLUE_Pipeline._make_deterministic"),
         "f_7",
     )
     mock.attach_mock(
@@ -747,3 +778,93 @@ def test_run_pipeline(
         run_task.assert_not_called()
         run_end.assert_not_called()
         run_finally.assert_called_once()
+
+
+@pytest.mark.parametrize(
+    "overwrite_output_dir",
+    [True, False],
+)
+@pytest.mark.parametrize(
+    "success_file_present, checkpoint_existing, output_dir_existing",
+    [
+        (True, True, True),
+        (True, False, True),
+        (False, True, True),
+        (False, False, True),
+        (False, False, False),
+    ],
+)
+def test_overwrite_output_dir_interaction(
+    overwrite_output_dir,
+    output_dir_existing,
+    success_file_present,
+    checkpoint_existing,
+    mocked_arguments_with_tmp_path,
+    mocker,
+):
+    # create mocked pipeline class
+    mocked_pipeline_with_tmp_path = Mocked_Pipeline(
+        *mocked_arguments_with_tmp_path(overwrite_output_dir=overwrite_output_dir)
+    )
+    seed_dir = os.path.join(
+        mocked_pipeline_with_tmp_path.train_args.output_dir, "seed_0"
+    )
+    mocked_pipeline_with_tmp_path.train_args.output_dir = seed_dir
+
+    # create mocked objects
+    mocker.patch.object(mocked_pipeline_with_tmp_path, "logger", create=True)
+
+    # create conditional scenarios and make assertions
+    if overwrite_output_dir:
+        if output_dir_existing:
+            os.makedirs(seed_dir)
+            open(
+                os.path.join(seed_dir, "some_file"),
+                "w",
+            ).close()
+            if success_file_present:
+                open(
+                    os.path.join(seed_dir, mocked_pipeline_with_tmp_path.success_file),
+                    "w",
+                ).close()
+            if checkpoint_existing:
+                os.makedirs(os.path.join(seed_dir, "checkpoint-0"))
+        mocked_pipeline_with_tmp_path._init_run_dir()
+        assert os.listdir(seed_dir) == []
+        mocked_pipeline_with_tmp_path._check_for_success_file()
+        mocked_pipeline_with_tmp_path._find_existing_checkpoint()
+        assert mocked_pipeline_with_tmp_path.last_checkpoint is None
+    else:
+        if success_file_present:
+            os.makedirs(seed_dir)
+            open(
+                os.path.join(seed_dir, mocked_pipeline_with_tmp_path.success_file), "w"
+            ).close()
+            mocked_pipeline_with_tmp_path._init_run_dir()
+            assert os.listdir(seed_dir) == [".success"]
+            with pytest.raises(SuccessFileFoundException):
+                mocked_pipeline_with_tmp_path._check_for_success_file()
+        else:
+            if checkpoint_existing:
+                checkpoint_dir = os.path.join(seed_dir, "checkpoint-0")
+                os.makedirs(checkpoint_dir)
+                mocked_pipeline_with_tmp_path._init_run_dir()
+                assert os.listdir(seed_dir) == ["checkpoint-0"]
+                mocked_pipeline_with_tmp_path._check_for_success_file()
+                mocked_pipeline_with_tmp_path._find_existing_checkpoint()
+                assert mocked_pipeline_with_tmp_path.last_checkpoint == checkpoint_dir
+            else:
+                if output_dir_existing:
+                    os.makedirs(seed_dir)
+                    open(
+                        os.path.join(seed_dir, "some_file"),
+                        "w",
+                    ).close()
+                    mocked_pipeline_with_tmp_path._init_run_dir()
+                    assert os.listdir(seed_dir) == ["some_file"]
+                else:
+                    mocked_pipeline_with_tmp_path._init_run_dir()
+                    assert os.listdir(seed_dir) == []
+                mocked_pipeline_with_tmp_path._check_for_success_file()
+                mocked_pipeline_with_tmp_path._find_existing_checkpoint()
+                assert mocked_pipeline_with_tmp_path.last_checkpoint is None

@@ -4,11 +4,11 @@
 import json
 import os
 import re
-from collections import defaultdict
+import warnings
 from glob import glob
 from parser import TASKS
-from statistics import mean, stdev
 
+import numpy as np
 from wandb.util import generate_id
 
 from reading_comprehension import Reading_Comprehension_Pipeline
@@ -50,10 +50,14 @@ class Privacy_GLUE_Experiment_Manager:
         self.model_args = model_args
         self.train_args = train_args
         self.experiment_args = experiment_args
+        self.experiment_args.model_dir = os.path.join(
+            self.train_args.output_dir,
+            re.sub(r"[/-]", "_", self.model_args.model_name_or_path),
+        )
 
-    def _summarize(self) -> None:
+    def summarize(self) -> None:
         # create dictionary used for collecting metrics
-        benchmark_summary = defaultdict(dict)
+        benchmark_summary = {}
 
         # loop over all task directories available
         for task_dir in glob(os.path.join(self.experiment_args.model_dir, "*/")):
@@ -67,28 +71,36 @@ class Privacy_GLUE_Experiment_Manager:
             else:
                 # loop over all seed directories inside valid task directory
                 for seed_dir in glob(os.path.join(task_dir, "seed_*")):
-                    # load JSON results file to dictionary
-                    with open(
-                        os.path.join(seed_dir, "all_results.json")
-                    ) as input_file_stream:
-                        all_results = json.load(input_file_stream)
+                    all_results_file = os.path.join(seed_dir, "all_results.json")
 
-                    # add metrics to upper list
-                    metric_by_seed_group.append(
-                        [
-                            all_results[f"predict_{metric}"]
-                            for metric in self.task_metrics[task]
-                        ]
-                    )
+                    # load JSON results file to dictionary
+                    if os.path.exists(all_results_file):
+                        with open(all_results_file) as input_file_stream:
+                            all_results = json.load(input_file_stream)
+
+                        # add metrics to upper list
+                        metric_by_seed_group.append(
+                            [
+                                all_results[f"predict_{metric}"]
+                                for metric in self.task_metrics[task]
+                            ]
+                        )
+                    else:
+                        warnings.warn(
+                            f"Results file {all_results_file} not found, "
+                            "skipping directory"
+                        )
 
             # convert seed-group order to group-seed
             metric_by_group_seed = list(zip(*metric_by_seed_group))
             benchmark_summary[task] = {"metrics": self.task_metrics[task]}
             benchmark_summary[task]["mean"] = [
-                mean(metric_group) for metric_group in metric_by_group_seed
+                np.round(np.mean(metric_group), 8).item()
+                for metric_group in metric_by_group_seed
             ]
             benchmark_summary[task]["std"] = [
-                stdev(metric_group) for metric_group in metric_by_group_seed
+                np.round(np.std(metric_group), 8).item()
+                for metric_group in metric_by_group_seed
             ]
             benchmark_summary[task]["num_samples"] = len(metric_by_seed_group)
 
@@ -99,13 +111,6 @@ class Privacy_GLUE_Experiment_Manager:
             json.dump(benchmark_summary, output_file_stream)
 
     def run_experiments(self) -> None:
-        # capture base output directory
-        output_dir = self.train_args.output_dir
-        self.experiment_args.model_dir = os.path.join(
-            output_dir,
-            re.sub(r"[/-]", "_", self.model_args.model_name_or_path),
-        )
-
         # decide iteration strategy
         if self.data_args.task != "all":
             tasks = [self.data_args.task]
@@ -148,4 +153,4 @@ class Privacy_GLUE_Experiment_Manager:
 
         # summarize PrivacyGLUE benchmark
         if self.experiment_args.do_summarize:
-            self._summarize()
+            self.summarize()

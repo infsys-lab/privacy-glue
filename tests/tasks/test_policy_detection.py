@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from tasks.policy_detection import load_policy_detection
-import datasets
 import os
+
+import pandas as pd
+import pytest
+
+from tasks.policy_detection import load_policy_detection
 
 
 def test_load_policy_detection():
@@ -17,19 +20,28 @@ def test_load_policy_detection():
     # check that all three splits are included
     assert sorted(data.keys()) == sorted(["train", "validation", "test"])
 
-    # merge train and validation to train to compare against files
-    data = datasets.concatenate_datasets(
-        [data["train"], data["validation"], data["test"]]
-    )
-
-    # define what is expected from the load function
-    expected = sorted(
-        [
-            ("testing once", "Policy"),
-            ("testing twice", "Not Policy"),
-            ("testing thrice", "Policy"),
-        ]
-    )
-
     # assert that we got what is expected
-    assert sorted(zip(data["text"], data["label"])) == expected
+    assert data["train"][0] == {"text": "testing twice", "label": 0}
+    assert data["validation"][0] == {"text": "testing once", "label": 1}
+    assert data["test"][0] == {"text": "testing thrice", "label": 1}
+
+
+def test_load_policy_detection_failure(mocker):
+    # mock relevant function
+    mocker.patch(
+        "tasks.policy_detection.pd.read_csv",
+        return_value=pd.DataFrame(
+            {
+                "policy_text": ["some_text_1", "some_text_2", "some_text_3"],
+                "is_policy": ["random_label_1", "random_label_2", "random_label_3"],
+            }
+        ),
+    )
+
+    # load sample data
+    with pytest.raises(ValueError):
+        load_policy_detection(
+            os.path.join(
+                os.path.dirname(os.path.dirname(__file__)), "data", "policy_detection"
+            )
+        )

@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import pandas as pd
-import datasets
 import os
+
+import datasets
+import pandas as pd
+
+LABELS = ["Irrelevant", "Relevant"]
 
 
 def load_privacy_qa(directory: str) -> datasets.DatasetDict:
@@ -12,6 +15,9 @@ def load_privacy_qa(directory: str) -> datasets.DatasetDict:
     train_df = train_df[["Query", "Segment", "Label"]].rename(
         columns={"Query": "question", "Segment": "text", "Label": "label"}
     )
+
+    # collect information about label
+    label_info = datasets.ClassLabel(names=LABELS)
     train_dataset = datasets.Dataset.from_pandas(train_df, preserve_index=False)
 
     # work on the test dataset
@@ -32,5 +38,15 @@ def load_privacy_qa(directory: str) -> datasets.DatasetDict:
             "test": test_dataset,
         }
     )
+
+    # map labels to integers and add feature information
+    for split in ["train", "validation", "test"]:
+        combined[split] = combined[split].map(
+            lambda examples: {
+                "label": [label_info.str2int(label) for label in examples["label"]]
+            },
+            batched=True,
+        )
+        combined[split].features["label"] = label_info
 
     return combined
