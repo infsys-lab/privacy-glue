@@ -17,12 +17,12 @@ import torch
 from transformers import PretrainedConfig, PreTrainedModel
 
 
-def pytest_configure():
+def pytest_configure(config):
     # globally disable caching with datasets
     datasets.disable_caching()
 
-    # handle CUDA_VISIBLE_DEVICES depending on inputs
-    if "CUDA_VISIBLE_DEVICES" not in os.environ:
+    # suppress CUDA_VISIBLE_DEVICES for unit tests
+    if config.option.markexpr != "slow":
         os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
 
@@ -32,10 +32,12 @@ def pytest_collection_modifyitems(config, items):
     markexpr = config.option.markexpr
     if keywordexpr or markexpr:
         return
-    skip_mymarker = pytest.mark.skip(reason="slow not selected")
+    skip_slow = pytest.mark.skip(
+        reason="slow tests skipped unless explicitly specified"
+    )
     for item in items:
         if "slow" in item.keywords:
-            item.add_marker(skip_mymarker)
+            item.add_marker(skip_slow)
 
 
 def get_mocked_arguments(
