@@ -126,4 +126,4 @@ $ bash scripts/run_privacy_glue.sh --cuda_visible_devices <device_id> \
     $ CUDA_VISIBLE_DEVICES=<device_id> make integration
     ```
 
-    **Note**: Replace the `<device_id>` argument with a GPU-ID to run single-GPU integration tests or GPU-IDs to run multi-GPU integration tests. Alternatively, remove the `CUDA_VISIBLE_DEVICES` environment variable for CPU integration tests.
+    **Note**: Replace the `<device_id>` argument with a GPU-ID to run single-GPU integration tests or GPU-IDs to run multi-GPU integration tests. Alternatively, pass an empty string to run CPU integration tests.
