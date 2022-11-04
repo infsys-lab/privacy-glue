@@ -47,7 +47,7 @@ def get_mocked_arguments(
     max_predict_samples=None,
     n_best_size=20,
     max_answer_length=30,
-    preprocessing_num_workers=1,
+    preprocessing_num_workers=None,
     overwrite_cache=False,
     pad_to_max_length=False,
     doc_stride=128,

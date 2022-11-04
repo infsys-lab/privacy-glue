@@ -221,7 +221,7 @@ def test__load_pretrained_model_and_tokenizer(
     "max_predict_samples, actual_predict_samples, "
     "overwrite_cache, preprocessing_num_workers",
     [
-        (None, 3, None, 3, None, 3, True, 4),
+        (None, 3, None, 3, None, 3, True, None),
         (2, 2, 2, 2, 1, 1, True, 3),
         (12, 3, 11, 3, 10, 3, False, 2),
     ],
