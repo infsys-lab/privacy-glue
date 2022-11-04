@@ -279,7 +279,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
         self.train_args.metric_for_best_model = "macro_f1"
         self.train_args.greater_is_better = True
 
-    def compute_metrics(self, p: EvalPrediction):
+    def _compute_metrics(self, p: EvalPrediction):
         predictions, labels = self._retransform_labels(p.predictions, p.label_ids)
         per_tasks_metrics = {}
 
@@ -329,7 +329,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
             args=self.train_args,
             train_dataset=self.train_dataset if self.train_args.do_train else None,
             eval_dataset=self.eval_dataset if self.train_args.do_eval else None,
-            compute_metrics=self.compute_metrics,
+            compute_metrics=self._compute_metrics,
             tokenizer=self.tokenizer,
             data_collator=self.data_collator,
             callbacks=[
@@ -378,23 +378,24 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
             )
 
             # assemble predictions into dictionary for dumping
-            prediction_dump = [
-                {
-                    "id": index,
-                    "task": task,
-                    "text": input_text,
-                    "gold_label": gold_label,
-                    "predicted_label": predicted_label,
-                }
-                for i, task in enumerate(self.subtasks)
-                for index, (input_text, gold_label, predicted_label) in enumerate(
-                    zip(
-                        self.raw_datasets["test"]["tokens"][i :: len(self.subtasks)],
-                        labels_per_task[task],
-                        predictions_per_task[task],
+            prediction_dump = []
+            running_index = 0
+            for i, task in enumerate(self.subtasks):
+                for input_text, gold_label, predicted_label in zip(
+                    self.raw_datasets["test"]["tokens"][i :: len(self.subtasks)],
+                    labels_per_task[task],
+                    predictions_per_task[task],
+                ):
+                    prediction_dump.append(
+                        {
+                            "id": running_index,
+                            "task": task,
+                            "text": input_text,
+                            "gold_label": gold_label,
+                            "predicted_label": predicted_label,
+                        }
                     )
-                )
-            ]
+                    running_index += 1
 
             # dump prediction outputs
             if self.trainer.is_world_process_zero():

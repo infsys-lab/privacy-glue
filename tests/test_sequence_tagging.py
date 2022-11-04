@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import os
+from math import isclose
 from types import SimpleNamespace
 
 import datasets
+import numpy as np
 import pytest
-
 from sequence_tagging import Sequence_Tagging_Pipeline
-
-from torch import Tensor
 
 
 @pytest.fixture
@@ -44,9 +44,91 @@ def mocked_pipeline(mocked_arguments):
     return mocked_pipeline
 
 
-mocked_prediction_vector = Tensor(
-    [[[-1.0, 0.0, 1.0] for j in range(5)] for k in range(2)]
+example_prediction_vector1 = np.array(
+    [
+        [
+            [-1.0, 0.0, 1.0],
+            [-1.0, 0.0, 1.0],
+            [-1.0, 0.0, 1.0],
+            [1.0, -1.0, 0.0],
+            [-1.0, 1.0, 0.0],
+        ]
+    ]
+    * 3
 )
+
+example_prediction_vector2 = np.array(
+    [
+        [
+            [-1.0, 0.0, 1.0],
+            [-1.0, 0.0, 1.0],
+            [-1.0, 0.0, 1.0],
+            [-1.0, -1.0, 1.0],
+            [-1.0, -1.0, 1.0],
+            [1.0, -1.0, 0.0],
+        ],
+        [
+            [1.0, 0.0, 0.0],
+            [-1.0, 0.0, 1.0],
+            [-1.0, 0.0, 1.0],
+            [1.0, -1.0, 0.0],
+            [-1.0, 1.0, 0.0],
+            [-1.0, 1.0, 0.0],
+        ],
+    ]
+)
+
+example_true_labels1 = [[2, 2, 2, 0, 1]] * 3
+example_true_labels2 = [[2, 2, 2, 0, 1, 1]] * 2
+
+
+example_metrics2 = {
+    "accuracy": (2 / 3),
+    "task1_accuracy": 0.5,
+    "micro_precision": 0.25,
+    "task1_micro_precision": 0.0,
+    "micro_recall": 0.5,
+    "task1_micro_recall": 0.0,
+    "micro_f1": (1 / 3),
+    "task1_micro_f1": 0.0,
+    "macro_precision": 0.25,
+    "task1_macro_precision": 0.0,
+    "macro_recall": 0.5,
+    "task1_macro_recall": 0.0,
+    "macro_f1": (1 / 3),
+    "task1_macro_f1": 0.0,
+    "task2_accuracy": (5 / 6),
+    "task2_micro_precision": 0.5,
+    "task2_micro_recall": 1.0,
+    "task2_micro_f1": (2 / 3),
+    "task2_macro_precision": 0.5,
+    "task2_macro_recall": 1.0,
+    "task2_macro_f1": (2 / 3),
+}
+
+example_metrics1 = {
+    "accuracy": 1.0,
+    "task1_accuracy": 1.0,
+    "micro_precision": 1.0,
+    "task1_micro_precision": 1.0,
+    "micro_recall": 1.0,
+    "task1_micro_recall": 1.0,
+    "micro_f1": 1.0,
+    "task1_micro_f1": 1.0,
+    "macro_precision": 1.0,
+    "task1_macro_precision": 1.0,
+    "macro_recall": 1.0,
+    "task1_macro_recall": 1.0,
+    "macro_f1": 1.0,
+    "task1_macro_f1": 1.0,
+    "task2_accuracy": 1.0,
+    "task2_micro_precision": 1.0,
+    "task2_micro_recall": 1.0,
+    "task2_micro_f1": 1.0,
+    "task2_macro_precision": 1.0,
+    "task2_macro_recall": 1.0,
+    "task2_macro_f1": 1.0,
+}
 
 
 @pytest.fixture
@@ -171,7 +253,6 @@ def test__load_pretrained_model_and_tokenizer(
 ):
     # create mocked pipeline object
     current_arguments = mocked_arguments(task=task)
-    print(current_arguments)
     mocked_pipeline = Sequence_Tagging_Pipeline(*current_arguments)
     mocked_pipeline.label_names = {
         st: ["a", "b", "c"] for st in mocked_pipeline.subtasks
@@ -575,20 +656,220 @@ def test__create_b_to_i_label_map(mocked_pipeline):
 
 
 @pytest.mark.parametrize(
-    "preds", [(mocked_prediction_vector,), mocked_prediction_vector]
+    "preds", [(example_prediction_vector1,), example_prediction_vector1]
 )
 def test__retransform_labels(preds, mocked_pipeline):
-    labels = [[2] * 5] * 2
+    labels = example_true_labels1
     true_p, true_l = mocked_pipeline._retransform_labels(preds, labels)
     print(true_p, true_l)
-    assert true_p["task1"] == [["O", "O", "O", "O", "O"]]
-    assert true_p["task2"] == [["O", "O", "O", "O", "O"]]
+    assert true_p["task1"] == [["O", "O", "O", "B-A", "I-A"]]
+    assert true_p["task2"] == [["O", "O", "O", "B-B", "I-B"]]
     assert true_p == true_l
 
 
-def test__compute_metrics(mocked_pipeline):
+@pytest.mark.parametrize(
+    "preds, labels, expected_metrics",
+    [
+        (example_prediction_vector1, example_true_labels1, example_metrics1),
+        (example_prediction_vector2, example_true_labels2, example_metrics2),
+    ],
+)
+def test__compute_metrics(preds, labels, expected_metrics, mocked_pipeline):
+    p = SimpleNamespace(predictions=preds, label_ids=labels)
+    metrics = mocked_pipeline._compute_metrics(p)
+    print(metrics)
+    for key in metrics:
+        print(key)
+        assert isclose(metrics[key], expected_metrics[key], abs_tol=1e-7)
 
-    p = SimpleNamespace(predictions=mocked_prediction_vector, label_ids=[[2] * 5] * 2)
-    metrics = mocked_pipeline.compute_metrics(p)
-    assert metrics["task1_accuracy"] == 1.0
-    assert metrics["task2_accuracy"] == 1.0
+
+@pytest.mark.parametrize(
+    "local_rank",
+    [-1, 0, 1],
+)
+@pytest.mark.parametrize(
+    "do_train",
+    [True, False],
+)
+@pytest.mark.parametrize(
+    "do_eval",
+    [True, False],
+)
+@pytest.mark.parametrize(
+    "do_predict",
+    [True, False],
+)
+@pytest.mark.parametrize(
+    "task",
+    ["policy_ie_b", "piextract"],
+)
+def test__run_train_loop(
+    local_rank,
+    do_train,
+    do_eval,
+    do_predict,
+    task,
+    mocked_examples,
+    mocked_arguments,
+    mocker,
+):
+    # create mocked pipeline object
+    early_stopping_patience = 3
+    current_arguments = mocked_arguments(
+        task=task,
+        local_rank=local_rank,
+        do_train=do_train,
+        do_eval=do_eval,
+        do_predict=do_predict,
+        early_stopping_patience=early_stopping_patience,
+    )
+    mocked_pipeline = Sequence_Tagging_Pipeline(*current_arguments)
+    mocked_pipeline.model = "model"
+    mocked_pipeline.tokenizer = "tokenizer"
+    mocked_pipeline.data_collator = "data_collator"
+    mocked_pipeline._compute_metrics = "_compute_metrics"
+    mocked_pipeline.last_checkpoint = "last_checkpoint"
+    mocked_pipeline.label_names = {
+        st: ["a", "b", "c"] for st in mocked_pipeline.subtasks
+    }
+    mocked_pipeline.raw_datasets = mocked_examples
+    mocked_pipeline.train_dataset = mocked_pipeline.raw_datasets["train"]
+    mocked_pipeline.eval_dataset = mocked_pipeline.raw_datasets["validation"]
+    mocked_pipeline.predict_dataset = mocked_pipeline.raw_datasets["test"]
+
+    # create mocked objects
+    trainer = mocker.patch(
+        "sequence_tagging.Trainer",
+    )
+    trainer.return_value.configure_mock(
+        **{
+            "is_world_process_zero.return_value": current_arguments[2].local_rank
+            in [-1, 0],
+            "train.return_value": SimpleNamespace(metrics={}),
+            "evaluate.return_value": {},
+            "predict.return_value": (
+                example_prediction_vector1,
+                example_true_labels1,
+                example_metrics1,
+            ),
+        }
+    )
+
+    early_stopping_callback = mocker.patch(
+        "sequence_tagging.EarlyStoppingCallback",
+    )
+    json_open_dump = mocker.MagicMock()
+    json_open_dump.attach_mock(
+        mocker.patch("sequence_tagging.open", mocker.mock_open()), "open"
+    )
+    json_open_dump.attach_mock(mocker.patch("sequence_tagging.json.dump"), "json_dump")
+    mocker.patch.object(mocked_pipeline, "logger", create=True)
+
+    # execute relevant pipeline method
+    mocked_pipeline._run_train_loop()
+
+    # make conditional assertions for trainer
+    trainer.assert_called_once_with(
+        model="model",
+        args=mocker.ANY,
+        train_dataset=mocked_pipeline.train_dataset if do_train else None,
+        eval_dataset=mocked_pipeline.eval_dataset if do_eval else None,
+        tokenizer="tokenizer",
+        data_collator="data_collator",
+        compute_metrics="_compute_metrics",
+        callbacks=[
+            early_stopping_callback(early_stopping_patience=early_stopping_patience)
+        ],
+    )
+
+    # make conditional assertions for training
+    if do_train:
+        mocked_pipeline.trainer.train.assert_called_once_with(
+            resume_from_checkpoint="last_checkpoint"
+        )
+        mocked_pipeline.trainer.save_model.assert_called_once()
+        mocked_pipeline.trainer.log_metrics.assert_any_call(
+            "train", {"train_samples": 3}
+        )
+        mocked_pipeline.trainer.save_metrics.assert_any_call(
+            "train", {"train_samples": 3}
+        )
+        mocked_pipeline.trainer.save_state.assert_called_once()
+    else:
+        mocked_pipeline.trainer.train.assert_not_called()
+        mocked_pipeline.trainer.save_model.assert_not_called()
+        mocked_pipeline.trainer.save_state.assert_not_called()
+        with pytest.raises(AssertionError):
+            mocked_pipeline.trainer.log_metrics.assert_any_call("train", mocker.ANY)
+        with pytest.raises(AssertionError):
+            mocked_pipeline.trainer.save_metrics.assert_any_call("train", mocker.ANY)
+
+    # make conditional assertions for evaluation
+    if do_eval:
+        mocked_pipeline.trainer.evaluate.assert_called_once()
+        mocked_pipeline.trainer.log_metrics.assert_any_call("eval", {"eval_samples": 3})
+        mocked_pipeline.trainer.save_metrics.assert_any_call(
+            "eval", {"eval_samples": 3}
+        )
+    else:
+        mocked_pipeline.trainer.evaluate.assert_not_called()
+        with pytest.raises(AssertionError):
+            mocked_pipeline.trainer.log_metrics.assert_any_call("eval", mocker.ANY)
+        with pytest.raises(AssertionError):
+            mocked_pipeline.trainer.save_metrics.assert_any_call("eval", mocker.ANY)
+
+    # make conditional assertions for prediction
+    if do_predict:
+        mocked_pipeline.trainer.predict.assert_called_once_with(
+            mocked_pipeline.predict_dataset, metric_key_prefix="predict"
+        )
+        mocked_pipeline.trainer.log_metrics.assert_any_call("predict", example_metrics1)
+        mocked_pipeline.trainer.save_metrics.assert_any_call(
+            "predict", example_metrics1
+        )
+        if local_rank in [-1, 0]:
+            # check that file was opened
+            json_open_dump.open.assert_called_once_with(
+                os.path.join(current_arguments[2].output_dir, "predictions.json"), "w"
+            )
+            sts = {"piextract": [0, 1, 2], "policy_ie_b": [0, 0, 1]}
+            txt_num = {"piextract": [1, 2, 3], "policy_ie_b": [1, 3, 2]}
+            # conditionally check dumped dictionary
+            json_open_dump.json_dump.assert_called_once_with(
+                [
+                    {
+                        "id": 0,
+                        "task": mocked_pipeline.subtasks[sts[task][0]],
+                        "text": f"test text for SC {txt_num[task][0]}",
+                        "gold_label": ["c", "c", "c", "a", "b"],
+                        "predicted_label": ["c", "c", "c", "a", "b"],
+                    },
+                    {
+                        "id": 1,
+                        "task": mocked_pipeline.subtasks[sts[task][1]],
+                        "text": f"test text for SC {txt_num[task][1]}",
+                        "gold_label": ["c", "c", "c", "a", "b"],
+                        "predicted_label": ["c", "c", "c", "a", "b"],
+                    },
+                    {
+                        "id": 2,
+                        "task": mocked_pipeline.subtasks[sts[task][2]],
+                        "text": f"test text for SC {txt_num[task][2]}",
+                        "gold_label": ["c", "c", "c", "a", "b"],
+                        "predicted_label": ["c", "c", "c", "a", "b"],
+                    },
+                ],
+                mocker.ANY,
+                indent=4,
+            )
+        else:
+            json_open_dump.open.assert_not_called()
+            json_open_dump.json_dump.assert_not_called()
+    else:
+        mocked_pipeline.trainer.predict.assert_not_called()
+        with pytest.raises(AssertionError):
+            mocked_pipeline.trainer.log_metrics.assert_any_call("predict", mocker.ANY)
+        with pytest.raises(AssertionError):
+            mocked_pipeline.trainer.save_metrics.assert_any_call("predict", mocker.ANY)
+        json_open_dump.open.assert_not_called()
+        json_open_dump.json_dump.assert_not_called()
