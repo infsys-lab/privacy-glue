@@ -662,8 +662,9 @@ def test__retransform_labels(preds, mocked_pipeline):
     labels = example_true_labels1
     true_p, true_l = mocked_pipeline._retransform_labels(preds, labels)
     print(true_p, true_l)
-    assert true_p["task1"] == [["O", "O", "O", "B-A", "I-A"]]
-    assert true_p["task2"] == [["O", "O", "O", "B-B", "I-B"]]
+    assert true_p["task1"][0] == ["O", "O", "O", "B-A", "I-A"]
+    assert len(true_p["task1"]) == 2
+    assert true_p["task2"][0] == ["O", "O", "O", "B-B", "I-B"]
     assert true_p == true_l
 
 
