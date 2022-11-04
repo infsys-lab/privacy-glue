@@ -37,7 +37,7 @@ optional arguments:
 
   --preprocessing_num_workers  <int>
                                number of workers to be used for preprocessing
-                               (default: 1)
+                               (default: None)
 
   --task                       <str>
                                task to be worked on. The following values are
@@ -86,7 +86,7 @@ parser() {
     --preprocessing_num_workers)
       if [[ -n "$2" ]]; then
         shift
-        PREPROCESSING_NUM_WORKERS="$1"
+        PREPROCESSING_NUM_WORKERS=("--preprocessing_num_workers" "$1")
       else
         {
           printf "%s\n\n" "Missing --preprocessing_num_workers argument"
@@ -154,7 +154,6 @@ main() {
     src/privacy_glue.py \
     --task "$TASK" \
     --model_name_or_path "$MODEL_NAME_OR_PATH" \
-    --preprocessing_num_workers "$PREPROCESSING_NUM_WORKERS" \
     --output_dir "$OUTPUT_DIR" \
     --do_train \
     --do_eval \
@@ -174,6 +173,7 @@ main() {
     --per_device_eval_batch_size "$((GLOBAL_BATCH_SIZE / ACCUMULATION_STEPS))" \
     --gradient_accumulation_steps "$ACCUMULATION_STEPS" \
     --eval_accumulation_steps "$ACCUMULATION_STEPS" \
+    "${PREPROCESSING_NUM_WORKERS[@]}" \
     "${FP16[@]}" \
     "${OVERWRITE_OUTPUT_DIR[@]}" \
     "${OVERWRITE_CACHE[@]}" \
@@ -185,6 +185,7 @@ FP16=()
 OVERWRITE_OUTPUT_DIR=()
 OVERWRITE_CACHE=()
 NO_CUDA=()
+PREPROCESSING_NUM_WORKERS=()
 TASK="all"
 OUTPUT_DIR="runs"
 WANDB="none"
@@ -192,7 +193,6 @@ CUDA_VISIBLE_DEVICES=0
 N_GPU=1
 GLOBAL_BATCH_SIZE=16
 ACCUMULATION_STEPS=1
-PREPROCESSING_NUM_WORKERS=1
 MODEL_NAME_OR_PATH="bert-base-uncased"
 PROGRAM_RUNTIME=("python3")
 
