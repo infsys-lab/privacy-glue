@@ -1,12 +1,12 @@
 SHELL := /bin/bash
 
-.PHONY: test integration_test
+.PHONY: test integration
 
 test:
 	pytest --cov-report html --cov-report term \
 	  --html=tests/reports/unit_tests.html --self-contained-html
 
-integration_test:
+integration:
 	N_GPU="$$(($$(printf "%s" "$$CUDA_VISIBLE_DEVICES" | \
 	  sed 's/^,\+//g; s/,\+$$//g; s/,\+ */,/g' | \
 	  tr -cd , | wc -c) + 1))"; \
