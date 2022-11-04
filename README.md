@@ -62,7 +62,7 @@ This repository documents PrivacyGLUE; a NLP benchmark consisting of legal-priva
 2. To run integration tests, execute:
 
     ```
-    $ CUDA_VISIBLE_DEVICES=<device_ids> make integration
+    $ CUDA_VISIBLE_DEVICES=<device_id> make integration
     ```
 
-    **Note**: Replace the `<device_ids>` argument with GPU-ID(s) in order to run single or multi-GPU integration tests. Alternatively, remove the `CUDA_VISIBLE_DEVICES` environment variable for CPU integration tests.
+    **Note**: Replace the `<device_id>` argument with a GPU-ID to run single-GPU integration tests or GPU-IDs to run multi-GPU integration tests. Alternatively, remove the `CUDA_VISIBLE_DEVICES` environment variable for CPU integration tests.
