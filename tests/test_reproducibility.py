@@ -13,18 +13,18 @@ import torch
 from transformers.trainer_utils import get_last_checkpoint
 
 require_cpu = pytest.mark.skipif(
-    torch.cuda.device_count() != 0 or "CUDA_VISIBLE_DEVICES" in os.environ,
+    torch.cuda.device_count() != 0,
     reason="GPU device(s) detected",
 )
 
 require_single_gpu = pytest.mark.skipif(
-    torch.cuda.device_count() != 1 or "CUDA_VISIBLE_DEVICES" not in os.environ,
-    reason="Single GPU not available or 'CUDA_VISIBLE_DEVICES' not declared",
+    torch.cuda.device_count() != 1,
+    reason="Single GPU not available",
 )
 
 require_multi_gpu = pytest.mark.skipif(
-    torch.cuda.device_count() < 2 or "CUDA_VISIBLE_DEVICES" not in os.environ,
-    reason="Multiple GPUs not available or 'CUDA_VISIBLE_DEVICES' not declared",
+    torch.cuda.device_count() < 2,
+    reason="Multiple GPUs not available",
 )
 
 
