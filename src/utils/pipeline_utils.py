@@ -176,7 +176,6 @@ class Privacy_GLUE_Pipeline(ABC):
                 group=self.model_args.wandb_group,
                 project=f"privacyGLUE-{self.data_args.task}",
                 reinit=True,
-                resume=True if self.last_checkpoint else None,
                 settings=wandb.Settings(console="off"),
             )
 
