@@ -169,10 +169,8 @@ main() {
     --warmup_ratio 0.1 \
     --early_stopping_patience 5 \
     --report_to "$WANDB" \
-    --per_device_train_batch_size "$((GLOBAL_BATCH_SIZE / ACCUMULATION_STEPS))" \
-    --per_device_eval_batch_size "$((GLOBAL_BATCH_SIZE / ACCUMULATION_STEPS))" \
-    --gradient_accumulation_steps "$ACCUMULATION_STEPS" \
-    --eval_accumulation_steps "$ACCUMULATION_STEPS" \
+    --per_device_train_batch_size "$DEVICE_BATCH_SIZE" \
+    --per_device_eval_batch_size "$DEVICE_BATCH_SIZE" \
     "${PREPROCESSING_NUM_WORKERS[@]}" \
     "${FP16[@]}" \
     "${OVERWRITE_OUTPUT_DIR[@]}" \
@@ -191,8 +189,7 @@ OUTPUT_DIR="runs"
 WANDB="none"
 CUDA_VISIBLE_DEVICES=0
 N_GPU=1
-GLOBAL_BATCH_SIZE=16
-ACCUMULATION_STEPS=1
+DEVICE_BATCH_SIZE=16
 MODEL_NAME_OR_PATH="bert-base-uncased"
 PROGRAM_RUNTIME=("python3")
 
