@@ -6,11 +6,11 @@ import os
 import re
 import warnings
 from glob import glob
-from parser import TASKS
 
 import numpy as np
 from wandb.util import generate_id
 
+from parser import TASKS
 from reading_comprehension import Reading_Comprehension_Pipeline
 from sequence_classification import Sequence_Classification_Pipeline
 from sequence_tagging import Sequence_Tagging_Pipeline
