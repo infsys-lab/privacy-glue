@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import tempfile
+
+import pytest
+
 from parser import (
     DataArguments,
     ExperimentArguments,
@@ -9,8 +12,6 @@ from parser import (
     TrainingArguments,
     get_parser,
 )
-
-import pytest
 
 
 @pytest.mark.parametrize(
