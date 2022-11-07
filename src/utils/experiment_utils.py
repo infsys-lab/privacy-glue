@@ -123,7 +123,7 @@ class Privacy_GLUE_Experiment_Manager:
         for task in tasks:
             self.data_args.task = task
             self.model_args.wandb_group_id = (
-                f"experiment_{generate_id()}"
+                f"{self.model_args.model_name_or_path}_{generate_id()}"
                 if "wandb" in self.train_args.report_to
                 else None
             )

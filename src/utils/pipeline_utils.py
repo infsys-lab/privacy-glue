@@ -171,10 +171,7 @@ class Privacy_GLUE_Pipeline(ABC):
     def _init_wandb_run(self) -> None:
         if "wandb" in self.train_args.report_to:
             wandb.init(
-                name=(
-                    f"{self.model_args.wandb_group_id[11:]}"
-                    f"_seed_{str(self.train_args.seed)}"
-                ),
+                name=f"seed_{self.train_args.seed}",
                 group=self.model_args.wandb_group_id,
                 project=f"privacyGLUE-{self.data_args.task}",
                 reinit=True,
