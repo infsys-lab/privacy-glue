@@ -54,6 +54,8 @@ extend-exclude = """
 profile = "black"
 skip_glob = ["data/*", "runs/*", "scripts/*",
              "submodules/*", ".venv/*", "coverage/*"]
+known_third_party = ["wandb"]
+known_first_party = ["parser"]
 
 [tool.coverage.run]
 branch = true
