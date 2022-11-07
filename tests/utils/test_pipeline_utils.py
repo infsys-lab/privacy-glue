@@ -433,7 +433,6 @@ def test__init_wandb_run(report_to, last_checkpoint, mocked_arguments, mocker):
             group=current_arguments[1].wandb_group,
             project=f"privacyGLUE-{current_arguments[0].task}",
             reinit=True,
-            resume=True if last_checkpoint else None,
             settings=mocker.ANY,
         )
     else:
