@@ -421,6 +421,7 @@ def test__init_wandb_run(report_to, last_checkpoint, mocked_arguments, mocker):
         "utils.pipeline_utils.wandb.init",
     )
     mocker.patch("utils.pipeline_utils.wandb.Settings")
+    mocker.patch("utils.pipeline_utils.wandb.util.generate_id", return_value="test")
 
     # execute relevant pipeline method
     mocked_pipeline._init_wandb_run()
@@ -428,8 +429,8 @@ def test__init_wandb_run(report_to, last_checkpoint, mocked_arguments, mocker):
     # make conditional assertions
     if "wandb" in report_to:
         wandb_init.assert_called_once_with(
-            name=f"seed_{current_arguments[2].seed}",
-            group=current_arguments[1].wandb_group_id,
+            name=f"test_seed_{current_arguments[2].seed}",
+            group=current_arguments[1].wandb_group,
             project=f"privacyGLUE-{current_arguments[0].task}",
             reinit=True,
             resume=True if last_checkpoint else None,

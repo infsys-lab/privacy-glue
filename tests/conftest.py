@@ -60,7 +60,7 @@ def get_mocked_arguments(
     use_fast_tokenizer=True,
     cache_dir=None,
     model_revision="main",
-    wandb_group_id="experiment_test",
+    wandb_group="experiment_test",
     early_stopping_patience=5,
     do_train=True,
     do_eval=True,
@@ -102,7 +102,7 @@ def get_mocked_arguments(
         use_fast_tokenizer=use_fast_tokenizer,
         cache_dir=cache_dir,
         model_revision=model_revision,
-        wandb_group_id=wandb_group_id,
+        wandb_group=wandb_group,
         early_stopping_patience=early_stopping_patience,
     )
     train_args = SimpleNamespace(
