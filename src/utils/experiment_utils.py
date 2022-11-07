@@ -8,7 +8,6 @@ import warnings
 from glob import glob
 
 import numpy as np
-from wandb.util import generate_id
 
 from parser import TASKS
 from reading_comprehension import Reading_Comprehension_Pipeline
@@ -122,8 +121,8 @@ class Privacy_GLUE_Experiment_Manager:
         # loop over tasks and seeds
         for task in tasks:
             self.data_args.task = task
-            self.model_args.wandb_group_id = (
-                f"{self.model_args.model_name_or_path}_{generate_id()}"
+            self.model_args.wandb_group = (
+                self.model_args.model_name_or_path
                 if "wandb" in self.train_args.report_to
                 else None
             )

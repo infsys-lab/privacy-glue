@@ -109,7 +109,6 @@ def test_run_experiments(
     )
 
     # mock relevant modules/objects
-    mocker.patch("utils.experiment_utils.generate_id", return_value="test")
     parser = mocker.patch("privacy_glue.get_parser")
     parser.return_value.parse_args_into_dataclasses.return_value = (
         data_args,
@@ -144,9 +143,7 @@ def test_run_experiments(
                     output_dir, model_dir_basename, _task, f"seed_{_seed}"
                 ),
                 report_to=report_to,
-                wandb_group_id=f"{model_name_or_path}_test"
-                if report_to == ["wandb"]
-                else None,
+                wandb_group=model_name_or_path if report_to == ["wandb"] else None,
             )
             train_args.get_process_log_level = mocker.ANY
             train_args.main_process_first = mocker.ANY
