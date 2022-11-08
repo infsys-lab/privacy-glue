@@ -118,14 +118,16 @@ class Privacy_GLUE_Experiment_Manager:
         else:
             tasks = [task for task in TASKS if task != "all"]
 
+        # create wandb_group class variable
+        self.model_args.wandb_group = (
+            self.model_args.model_name_or_path
+            if "wandb" in self.train_args.report_to
+            else None
+        )
+
         # loop over tasks and seeds
         for task in tasks:
             self.data_args.task = task
-            self.model_args.wandb_group = (
-                self.model_args.model_name_or_path
-                if "wandb" in self.train_args.report_to
-                else None
-            )
             for seed in range(self.experiment_args.random_seed_iterations):
                 self.train_args.seed = seed
                 self.train_args.output_dir = os.path.join(
@@ -133,6 +135,7 @@ class Privacy_GLUE_Experiment_Manager:
                     self.data_args.task,
                     f"seed_{seed}",
                 )
+
                 # branch into separate workflows depending on task type
                 if self.data_args.task in [
                     "opp_115",
