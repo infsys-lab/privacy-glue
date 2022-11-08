@@ -400,4 +400,4 @@ class Sequence_Classification_Pipeline(Privacy_GLUE_Pipeline):
                 with open(
                     os.path.join(self.train_args.output_dir, "predictions.json"), "w"
                 ) as output_file_stream:
-                    json.dump(prediction_dump, output_file_stream)
+                    json.dump(prediction_dump, output_file_stream, indent=4)

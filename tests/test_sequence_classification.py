@@ -938,6 +938,7 @@ def test__run_train_loop(
                         },
                     ],
                     mocker.ANY,
+                    indent=4,
                 )
             elif task == "opp_115":
                 json_open_dump.json_dump.assert_called_once_with(
@@ -962,6 +963,7 @@ def test__run_train_loop(
                         },
                     ],
                     mocker.ANY,
+                    indent=4,
                 )
             else:
                 json_open_dump.json_dump.assert_called_once_with(
@@ -986,6 +988,7 @@ def test__run_train_loop(
                         },
                     ],
                     mocker.ANY,
+                    indent=4,
                 )
         else:
             json_open_dump.open.assert_not_called()

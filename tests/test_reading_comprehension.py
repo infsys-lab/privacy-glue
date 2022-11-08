@@ -1301,6 +1301,7 @@ def test__run_train_loop(
                     },
                 ],
                 mocker.ANY,
+                indent=4,
             )
         else:
             json_open_dump.open.assert_not_called()
