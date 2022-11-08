@@ -5,7 +5,6 @@ import logging
 import os
 import shutil
 from abc import ABC, abstractmethod
-from copy import deepcopy
 from functools import wraps
 from glob import glob
 
@@ -50,9 +49,9 @@ class Privacy_GLUE_Pipeline(ABC):
         train_args: TrainingArguments,
         success_file: str = ".success",
     ) -> None:
-        self.data_args = deepcopy(data_args)
-        self.model_args = deepcopy(model_args)
-        self.train_args = deepcopy(train_args)
+        self.data_args = data_args
+        self.model_args = model_args
+        self.train_args = train_args
         self.success_file = success_file
 
     def _get_data(self) -> DatasetDict:
