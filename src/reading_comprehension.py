@@ -623,4 +623,4 @@ class Reading_Comprehension_Pipeline(Privacy_GLUE_Pipeline):
                     os.path.join(self.train_args.output_dir, "predictions.json"),
                     "w",
                 ) as output_file_stream:
-                    json.dump(results.predictions, output_file_stream)
+                    json.dump(results.predictions, output_file_stream, indent=4)
