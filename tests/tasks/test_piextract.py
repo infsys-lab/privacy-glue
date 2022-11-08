@@ -6,7 +6,7 @@ import os
 import datasets
 import pytest
 
-from tasks.piextract import load_piextract, merge_tags, read_conll_file, SUBTASKS
+from tasks.piextract import SUBTASKS, load_piextract, merge_tags, read_conll_file
 
 TASK2TEXTSPAN = {
     "COLLECT": "collect",
@@ -124,7 +124,7 @@ def test_load_piextract_mocked(mocker):
     mocker.patch("tasks.piextract.read_conll_file", return_value=mocked_conll_output())
     mocker.patch("tasks.piextract.merge_tags", return_value=mocked_merge_tags_output())
     mocker.patch(
-        "utils.tasks_utils.expand_dataset_per_task",
+        "utils.task_utils.expand_dataset_per_task",
         return_value=mocked_expand_dataset_per_task(),
     )
 

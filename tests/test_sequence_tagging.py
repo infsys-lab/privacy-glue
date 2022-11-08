@@ -24,7 +24,7 @@ def mocked_examples():
             ],
             "tags": [
                 ["O", "O", "O", "B-A", "I-A"],
-                ["O", "O", "O", "B-A", "I-A"],
+                ["O", "O", "O", "B-A", "I-A.B"],
                 ["O", "O", "O", "B-A", "I-A"],
             ],
             "subtask": ["task1", "task2", "task1"],
@@ -48,6 +48,7 @@ def mocked_pipeline(mocked_arguments):
 example_prediction_vector1 = np.array(
     [
         [
+            [-1.0, 0.0, 1.0],
             [-1.0, 0.0, 1.0],
             [-1.0, 0.0, 1.0],
             [-1.0, 0.0, 1.0],
@@ -79,7 +80,7 @@ example_prediction_vector2 = np.array(
     ]
 )
 
-example_true_labels1 = [[2, 2, 2, 0, 1]] * 3
+example_true_labels1 = [[-100, 2, 2, 2, 0, 1]] * 3
 example_true_labels2 = [[2, 2, 2, 0, 1, 1]] * 2
 
 
@@ -148,8 +149,8 @@ def mocked_tokenized_inputs():
     for split in ["train", "validation", "test"]:
         sample = {
             "word_ids": [
-                [None, 0, 1, 2, 3, 4],
-                [None, 0, 1, 2, 3, 4],
+                [None, 0, 1, 2, 3, 4, 4],
+                [None, 0, 1, 2, 3, 4, 4],
                 [None, 0, 1, 2, 3, 4],
             ],
             "tags": [
@@ -644,8 +645,8 @@ def test__transform_labels_to_ids(
         mocked_examples["train"], mocked_tokenized_inputs["train"]
     )
     assert labels == [
-        [-100, 0, 0, 0, 1, 2],
-        [-100, 0, 0, 0, 1, 2],
+        [-100, 0, 0, 0, 1, 2, 2 if label_all_tokens else -100],
+        [-100, 0, 0, 0, 1, 2, 2 if label_all_tokens else -100],
         [-100, 0, 0, 0, 1, 2],
     ]
     assert task_ids == [0, 1, 0]
@@ -667,6 +668,12 @@ def test__retransform_labels(preds, mocked_pipeline):
     assert len(true_p["task1"]) == 2
     assert true_p["task2"][0] == ["O", "O", "O", "B-B", "I-B"]
     assert true_p == true_l
+
+
+def test__set_metrics(mocked_pipeline):
+    mocked_pipeline._set_metrics()
+    assert mocked_pipeline.train_args.metric_for_best_model == "macro_f1"
+    assert mocked_pipeline.train_args.greater_is_better
 
 
 @pytest.mark.parametrize(

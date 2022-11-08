@@ -21,7 +21,7 @@ from transformers import (
 
 from utils.model_utils import MultiTaskModel
 from utils.pipeline_utils import Privacy_GLUE_Pipeline
-from utils.tasks_utils import sorted_interleave_task_datasets
+from utils.task_utils import sorted_interleave_task_datasets
 
 
 class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):

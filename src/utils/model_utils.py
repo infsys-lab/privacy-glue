@@ -94,10 +94,12 @@ class MultiTaskModel(nn.Module):
 
 
 class TokenClassificationHead(nn.Module):
-    def __init__(self, hidden_size, num_labels, dropout_p=0.1):
+    def __init__(self, hidden_size, num_labels, dropout_p=0.1, **kwargs):
         super().__init__()
         self.dropout = nn.Dropout(dropout_p)
-        self.classifier = nn.Linear(hidden_size, num_labels)
+        self.classifier = nn.Linear(
+            hidden_size, num_labels, bias=kwargs.get("bias", None)
+        )
         self.num_labels = num_labels
 
         self._init_weights()

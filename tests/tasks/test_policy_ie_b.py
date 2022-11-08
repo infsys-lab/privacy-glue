@@ -3,7 +3,7 @@
 
 import os
 
-from tasks.policy_ie_b import load_policy_ie_b, SUBTASKS
+from tasks.policy_ie_b import SUBTASKS, load_policy_ie_b
 
 
 def test_load_policy_ie_b():
