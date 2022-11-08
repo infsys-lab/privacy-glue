@@ -11,6 +11,21 @@ import pytest
 from utils.experiment_utils import Privacy_GLUE_Experiment_Manager
 
 
+class Mocked_Pipeline_Override:
+    def __init__(self, data_args, model_args, train_args):
+        self.data_args = data_args
+        self.model_args = model_args
+        self.train_args = train_args
+        self.data_args.test = "test"
+        self.data_args.max_answer_length = 1000
+        self.model_args.trial = "trial"
+        self.train_args.experiment = "experiment"
+        self.train_args.report_to = ["test"]
+
+    def run_pipeline(self):
+        pass
+
+
 @pytest.mark.parametrize(
     "model_name_or_path, model_dir_basename",
     [
@@ -335,3 +350,47 @@ def test_summarize(
 
     # make assertion
     assert benchmark_summary == expected_benchmark_summary
+
+
+@pytest.mark.parametrize(
+    "task",
+    [
+        "all",
+        "opp_115",
+        "policy_detection",
+        "policy_ie_a",
+        "privacy_qa",
+        "piextract",
+        "policy_ie_b",
+        "policy_qa",
+    ],
+)
+def test_deep_copy_arguments(task, mocked_arguments, mocker):
+    # create experiment manager
+    experiment_manager = Privacy_GLUE_Experiment_Manager(
+        *mocked_arguments(task=task, do_summarize=False, with_experiment_args=True)
+    )
+
+    # mock modules to always return pipeline override
+    mocker.patch(
+        "utils.experiment_utils.Sequence_Classification_Pipeline",
+        Mocked_Pipeline_Override,
+    )
+    mocker.patch(
+        "utils.experiment_utils.Sequence_Tagging_Pipeline",
+        Mocked_Pipeline_Override,
+    )
+    mocker.patch(
+        "utils.experiment_utils.Reading_Comprehension_Pipeline",
+        Mocked_Pipeline_Override,
+    )
+
+    # run relevant manager method
+    experiment_manager.run_experiments()
+
+    # make assertions
+    assert not hasattr(experiment_manager.data_args, "test")
+    assert not hasattr(experiment_manager.model_args, "trial")
+    assert not hasattr(experiment_manager.train_args, "experiment")
+    assert experiment_manager.train_args.report_to != ["test"]
+    assert experiment_manager.data_args.max_answer_length != 1000

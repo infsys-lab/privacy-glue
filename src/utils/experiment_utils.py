@@ -5,6 +5,7 @@ import json
 import os
 import re
 import warnings
+from copy import deepcopy
 from glob import glob
 
 import numpy as np
@@ -136,6 +137,12 @@ class Privacy_GLUE_Experiment_Manager:
                     f"seed_{seed}",
                 )
 
+                # create deep copy of arguments
+                # NOTE: this ensures no back-propagation of downsteam changes
+                data_args = deepcopy(self.data_args)
+                model_args = deepcopy(self.model_args)
+                train_args = deepcopy(self.train_args)
+
                 # branch into separate workflows depending on task type
                 if self.data_args.task in [
                     "opp_115",
@@ -144,15 +151,15 @@ class Privacy_GLUE_Experiment_Manager:
                     "privacy_qa",
                 ]:
                     Sequence_Classification_Pipeline(
-                        self.data_args, self.model_args, self.train_args
+                        data_args, model_args, train_args
                     ).run_pipeline()
                 elif self.data_args.task in ["piextract", "policy_ie_b"]:
                     Sequence_Tagging_Pipeline(
-                        self.data_args, self.model_args, self.train_args
+                        data_args, model_args, train_args
                     ).run_pipeline()
                 elif self.data_args.task == "policy_qa":  # pragma: no branch
                     Reading_Comprehension_Pipeline(
-                        self.data_args, self.model_args, self.train_args
+                        data_args, model_args, train_args
                     ).run_pipeline()
 
         # summarize PrivacyGLUE benchmark
