@@ -163,6 +163,7 @@ main() {
     --load_best_model_at_end \
     --evaluation_strategy "epoch" \
     --save_strategy "epoch" \
+    --logging_steps 100 \
     --save_total_limit 2 \
     --num_train_epochs 20 \
     --learning_rate 3e-5 \
