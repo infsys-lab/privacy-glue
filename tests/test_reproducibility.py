@@ -88,6 +88,7 @@ class Test_Reproducibility:
             "--learning_rate": "3e-5",
             "--warmup_ratio": "0.1",
             "--report_to": "none",
+            "--full_determinism": None,
             "--per_device_train_batch_size": "2",
             "--per_device_eval_batch_size": "2",
             "--max_train_samples": "16",

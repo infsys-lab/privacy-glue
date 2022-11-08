@@ -170,6 +170,7 @@ main() {
     --warmup_ratio 0.1 \
     --early_stopping_patience 5 \
     --report_to "$WANDB" \
+    --full_determinism \
     --per_device_train_batch_size "$DEVICE_BATCH_SIZE" \
     --per_device_eval_batch_size "$DEVICE_BATCH_SIZE" \
     "${PREPROCESSING_NUM_WORKERS[@]}" \
