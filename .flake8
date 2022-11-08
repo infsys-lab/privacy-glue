@@ -9,6 +9,6 @@ exclude =
     scripts,
     runs,
     data,
-    cov_html,
+    coverage,
     .pytest_cache,
     .mypy_cache

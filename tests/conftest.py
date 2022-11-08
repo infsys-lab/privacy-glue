@@ -17,9 +17,27 @@ import torch
 from transformers import PretrainedConfig, PreTrainedModel
 
 
-def pytest_configure():
+def pytest_configure(config):
     # globally disable caching with datasets
     datasets.disable_caching()
+
+    # suppress CUDA_VISIBLE_DEVICES for unit tests
+    if config.option.markexpr != "slow":
+        os.environ["CUDA_VISIBLE_DEVICES"] = ""
+
+
+def pytest_collection_modifyitems(config, items):
+    # source: https://stackoverflow.com/a/56379871
+    keywordexpr = config.option.keyword
+    markexpr = config.option.markexpr
+    if keywordexpr or markexpr:
+        return
+    skip_slow = pytest.mark.skip(
+        reason="slow tests skipped unless explicitly specified"
+    )
+    for item in items:
+        if "slow" in item.keywords:
+            item.add_marker(skip_slow)
 
 
 def get_mocked_arguments(
@@ -31,7 +49,7 @@ def get_mocked_arguments(
     max_predict_samples=None,
     n_best_size=20,
     max_answer_length=30,
-    preprocessing_num_workers=1,
+    preprocessing_num_workers=None,
     overwrite_cache=False,
     pad_to_max_length=False,
     doc_stride=128,
@@ -42,7 +60,7 @@ def get_mocked_arguments(
     use_fast_tokenizer=True,
     cache_dir=None,
     model_revision="main",
-    wandb_group_id="experiment_test",
+    wandb_group="experiment_test",
     early_stopping_patience=5,
     do_train=True,
     do_eval=True,
@@ -86,7 +104,7 @@ def get_mocked_arguments(
         use_fast_tokenizer=use_fast_tokenizer,
         cache_dir=cache_dir,
         model_revision=model_revision,
-        wandb_group_id=wandb_group_id,
+        wandb_group=wandb_group,
         early_stopping_patience=early_stopping_patience,
     )
     train_args = SimpleNamespace(

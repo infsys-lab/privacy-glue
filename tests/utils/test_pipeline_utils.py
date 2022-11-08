@@ -406,22 +406,35 @@ def test__find_existing_checkpoint(
     "report_to",
     [["wandb"], []],
 )
-def test__init_wandb_run(report_to, mocked_arguments, mocker):
+@pytest.mark.parametrize(
+    "last_checkpoint",
+    ["/path/to/some/checkpoint", None],
+)
+def test__init_wandb_run(report_to, last_checkpoint, mocked_arguments, mocker):
     # create mocked pipeline class
-    mocked_pipeline = Mocked_Pipeline(*mocked_arguments(report_to=report_to))
-    mocked_pipeline.last_checkpoint = "/path/to/some/checkpoint"
+    current_arguments = mocked_arguments(report_to=report_to)
+    mocked_pipeline = Mocked_Pipeline(*current_arguments)
+    mocked_pipeline.last_checkpoint = last_checkpoint
 
-    # mock wandb init method
+    # mock wandb methods
     wandb_init = mocker.patch(
         "utils.pipeline_utils.wandb.init",
     )
+    mocker.patch("utils.pipeline_utils.wandb.Settings")
+    mocker.patch("utils.pipeline_utils.wandb.util.generate_id", return_value="test")
 
     # execute relevant pipeline method
     mocked_pipeline._init_wandb_run()
 
     # make conditional assertions
     if "wandb" in report_to:
-        wandb_init.assert_called_once()
+        wandb_init.assert_called_once_with(
+            name=f"test_seed_{current_arguments[2].seed}",
+            group=current_arguments[1].wandb_group,
+            project=f"privacyGLUE-{current_arguments[0].task}",
+            reinit=True,
+            settings=mocker.ANY,
+        )
     else:
         wandb_init.assert_not_called()
 

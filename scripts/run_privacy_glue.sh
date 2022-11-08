@@ -7,55 +7,63 @@ usage() {
 usage: run_privacy_glue.sh [option...]
 
 optional arguments:
-  --cuda_visible_devices  <str>
-                          comma separated string of integers passed directly to
-                          the "CUDA_VISIBLE_DEVICES" environmental variable
-                          (default: 0)
+  --cuda_visible_devices       <str>
+                               comma separated string of integers passed
+                               directly to the "CUDA_VISIBLE_DEVICES"
+                               environment variable
+                               (default: 0)
 
-  --fp16_all              enable 16-bit mixed precision computation
-                          through NVIDIA Apex for both training and evaluation
-                          (default: False)
+  --fp16                       enable 16-bit mixed precision computation
+                               through NVIDIA Apex for training
+                               (default: False)
 
-  --model_name_or_path    <str>
-                          model to be used for fine-tuning. Currently only the
-                          following are supported:
-                          "all-mpnet-base-v2",
-                          "bert-base-uncased",
-                          "nlpaueb/legal-bert-base-uncased",
-                          "mukund/privbert"
-                          (default: bert-base-uncased)
+  --model_name_or_path         <str>
+                               model to be used for fine-tuning. Currently only
+                               the following are supported:
+                               "bert-base-uncased",
+                               "roberta-base",
+                               "nlpaueb/legal-bert-base-uncased",
+                               "saibo/legal-roberta-base",
+                               "mukund/privbert"
+                               (default: bert-base-uncased)
 
-  --no_cuda               disable CUDA even when available (default: False)
+  --no_cuda                    disable CUDA even when available (default: False)
 
-  --num_workers           <int>
-                          number of workers to be used for preprocessing
-                          (default: 1)
+  --overwrite_cache            overwrite caches used in preprocessing
+                               (default: False)
 
-  --overwrite             overwrite cached data and saved checkpoint(s)
-                          (default: False)
+  --overwrite_output_dir       overwrite run directories and saved checkpoint(s)
+                               (default: False)
 
-  --task                  <str>
-                          task to be worked on. The following values are
-                          accepted: "opp_115", "piextract",
-                          "policy_detection", "policy_ie_a", "policy_ie_b",
-                          "policy_qa", "privacy_qa", "all"
-                          (default: all)
+  --preprocessing_num_workers  <int>
+                               number of workers to be used for preprocessing
+                               (default: None)
 
-  --wandb                 log metrics and results to wandb
-                          (default: False)
+  --task                       <str>
+                               task to be worked on. The following values are
+                               accepted: "opp_115", "piextract",
+                               "policy_detection", "policy_ie_a", "policy_ie_b",
+                               "policy_qa", "privacy_qa", "all"
+                               (default: all)
 
-  -h, --help              show this help message and exit
+  --wandb                      log metrics and results to wandb
+                               (default: False)
+
+  -h, --help                   show this help message and exit
 EOF
 }
 
 parser() {
   while [[ -n "$1" ]]; do
     case "$1" in
-    --fp16_all)
-      FP16_ALL=("--fp16" "--fp16_full_eval")
+    --fp16)
+      FP16=("--fp16")
       ;;
-    --overwrite)
-      OVERWRITE=("--overwrite_cache" "--overwrite_output_dir")
+    --overwrite_output_dir)
+      OVERWRITE_OUTPUT_DIR=("--overwrite_output_dir")
+      ;;
+    --overwrite_cache)
+      OVERWRITE_CACHE=("--overwrite_cache")
       ;;
     --no_cuda)
       NO_CUDA=("--no_cuda")
@@ -75,13 +83,13 @@ parser() {
         exit 1
       fi
       ;;
-    --num_workers)
+    --preprocessing_num_workers)
       if [[ -n "$2" ]]; then
         shift
-        NUM_WORKERS="$1"
+        PREPROCESSING_NUM_WORKERS=("--preprocessing_num_workers" "$1")
       else
         {
-          printf "%s\n\n" "Missing --num_workers argument"
+          printf "%s\n\n" "Missing --preprocessing_num_workers argument"
           usage
         } >&2
         exit 1
@@ -146,7 +154,6 @@ main() {
     src/privacy_glue.py \
     --task "$TASK" \
     --model_name_or_path "$MODEL_NAME_OR_PATH" \
-    --preprocessing_num_workers "$NUM_WORKERS" \
     --output_dir "$OUTPUT_DIR" \
     --do_train \
     --do_eval \
@@ -156,32 +163,34 @@ main() {
     --load_best_model_at_end \
     --evaluation_strategy "epoch" \
     --save_strategy "epoch" \
+    --logging_steps 100 \
     --save_total_limit 2 \
     --num_train_epochs 20 \
     --learning_rate 3e-5 \
     --warmup_ratio 0.1 \
+    --early_stopping_patience 5 \
     --report_to "$WANDB" \
-    --per_device_train_batch_size "$((GLOBAL_BATCH_SIZE / ACCUMULATION_STEPS))" \
-    --per_device_eval_batch_size "$((GLOBAL_BATCH_SIZE / ACCUMULATION_STEPS))" \
-    --gradient_accumulation_steps "$ACCUMULATION_STEPS" \
-    --eval_accumulation_steps "$ACCUMULATION_STEPS" \
-    "${FP16_ALL[@]}" \
-    "${OVERWRITE[@]}" \
+    --per_device_train_batch_size "$DEVICE_BATCH_SIZE" \
+    --per_device_eval_batch_size "$DEVICE_BATCH_SIZE" \
+    "${PREPROCESSING_NUM_WORKERS[@]}" \
+    "${FP16[@]}" \
+    "${OVERWRITE_OUTPUT_DIR[@]}" \
+    "${OVERWRITE_CACHE[@]}" \
     "${NO_CUDA[@]}"
 }
 
 # declare global variable defaults
-FP16_ALL=()
-OVERWRITE=()
+FP16=()
+OVERWRITE_OUTPUT_DIR=()
+OVERWRITE_CACHE=()
 NO_CUDA=()
+PREPROCESSING_NUM_WORKERS=()
 TASK="all"
 OUTPUT_DIR="runs"
 WANDB="none"
 CUDA_VISIBLE_DEVICES=0
 N_GPU=1
-GLOBAL_BATCH_SIZE=16
-ACCUMULATION_STEPS=1
-NUM_WORKERS=1
+DEVICE_BATCH_SIZE=16
 MODEL_NAME_OR_PATH="bert-base-uncased"
 PROGRAM_RUNTIME=("python3")
 

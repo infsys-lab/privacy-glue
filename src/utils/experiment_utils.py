@@ -5,15 +5,16 @@ import json
 import os
 import re
 import warnings
+from copy import deepcopy
 from glob import glob
-from parser import TASKS
 
 import numpy as np
-from wandb.util import generate_id
 
+from parser import TASKS
 from reading_comprehension import Reading_Comprehension_Pipeline
 from sequence_classification import Sequence_Classification_Pipeline
 from sequence_tagging import Sequence_Tagging_Pipeline
+from utils.pipeline_utils import main_process_first_only
 
 
 class Privacy_GLUE_Experiment_Manager:
@@ -55,6 +56,7 @@ class Privacy_GLUE_Experiment_Manager:
             re.sub(r"[/-]", "_", self.model_args.model_name_or_path),
         )
 
+    @main_process_first_only
     def summarize(self) -> None:
         # create dictionary used for collecting metrics
         benchmark_summary = {}
@@ -117,14 +119,16 @@ class Privacy_GLUE_Experiment_Manager:
         else:
             tasks = [task for task in TASKS if task != "all"]
 
+        # create wandb_group class variable
+        self.model_args.wandb_group = (
+            self.model_args.model_name_or_path
+            if "wandb" in self.train_args.report_to
+            else None
+        )
+
         # loop over tasks and seeds
         for task in tasks:
             self.data_args.task = task
-            self.model_args.wandb_group_id = (
-                f"experiment_{generate_id()}"
-                if "wandb" in self.train_args.report_to
-                else None
-            )
             for seed in range(self.experiment_args.random_seed_iterations):
                 self.train_args.seed = seed
                 self.train_args.output_dir = os.path.join(
@@ -132,6 +136,13 @@ class Privacy_GLUE_Experiment_Manager:
                     self.data_args.task,
                     f"seed_{seed}",
                 )
+
+                # create deep copy of arguments
+                # NOTE: this ensures no back-propagation of downsteam changes
+                data_args = deepcopy(self.data_args)
+                model_args = deepcopy(self.model_args)
+                train_args = deepcopy(self.train_args)
+
                 # branch into separate workflows depending on task type
                 if self.data_args.task in [
                     "opp_115",
@@ -140,15 +151,15 @@ class Privacy_GLUE_Experiment_Manager:
                     "privacy_qa",
                 ]:
                     Sequence_Classification_Pipeline(
-                        self.data_args, self.model_args, self.train_args
+                        data_args, model_args, train_args
                     ).run_pipeline()
                 elif self.data_args.task in ["piextract", "policy_ie_b"]:
                     Sequence_Tagging_Pipeline(
-                        self.data_args, self.model_args, self.train_args
+                        data_args, model_args, train_args
                     ).run_pipeline()
                 elif self.data_args.task == "policy_qa":  # pragma: no branch
                     Reading_Comprehension_Pipeline(
-                        self.data_args, self.model_args, self.train_args
+                        data_args, model_args, train_args
                     ).run_pipeline()
 
         # summarize PrivacyGLUE benchmark

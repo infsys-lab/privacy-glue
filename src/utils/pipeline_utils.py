@@ -7,16 +7,17 @@ import shutil
 from abc import ABC, abstractmethod
 from functools import wraps
 from glob import glob
-from parser import DataArguments, ModelArguments
 
 import datasets
 import torch
 import transformers
+import wandb
 from datasets import DatasetDict
 from transformers import TrainingArguments
 from transformers.trainer_utils import enable_full_determinism, get_last_checkpoint
 
-import wandb
+
+from parser import DataArguments, ModelArguments
 from tasks.opp_115 import load_opp_115
 from tasks.piextract import load_piextract
 from tasks.policy_detection import load_policy_detection
@@ -169,16 +170,14 @@ class Privacy_GLUE_Pipeline(ABC):
 
     @main_process_first_only
     def _init_wandb_run(self) -> None:
+        # create wandb run conditionally
         if "wandb" in self.train_args.report_to:
             wandb.init(
-                name=(
-                    f"{self.model_args.wandb_group_id[11:]}"
-                    f"_seed_{str(self.train_args.seed)}"
-                ),
-                group=self.model_args.wandb_group_id,
+                name=f"{wandb.util.generate_id()}_seed_{self.train_args.seed}",
+                group=self.model_args.wandb_group,
                 project=f"privacyGLUE-{self.data_args.task}",
                 reinit=True,
-                resume=True if self.last_checkpoint else None,
+                settings=wandb.Settings(console="off"),
             )
 
     @main_process_first_only

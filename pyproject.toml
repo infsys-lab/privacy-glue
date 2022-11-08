@@ -29,6 +29,7 @@ shellcheck-py = "^0.8.0"
 shfmt-py = "^3.4.3"
 pytest-mock = "^3.8.2"
 isort = "^5.10.1"
+pytest-html = "^3.2.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -44,7 +45,7 @@ extend-exclude = """
   scripts |
   runs |
   data |
-  cov_html |
+  coverage |
   .venv
 )/
 """
@@ -52,7 +53,9 @@ extend-exclude = """
 [tool.isort]
 profile = "black"
 skip_glob = ["data/*", "runs/*", "scripts/*",
-             "submodules/*", ".venv/*", "cov_html/*"]
+             "submodules/*", ".venv/*", "coverage/*"]
+known_third_party = ["wandb"]
+known_first_party = ["parser"]
 
 [tool.coverage.run]
 branch = true
@@ -70,12 +73,13 @@ exclude_lines = [
 skip_empty = true
 
 [tool.coverage.html]
-directory = "cov_html"
+directory = "coverage"
 
 [tool.pytest.ini_options]
 addopts = "--cov=src --basetemp=tests/artifacts"
 testpaths = ["tests"]
 pythonpath = ["src"]
+markers = ["slow: slow integration tests on multiple devices"]
 
 [tool.mypy]
 allow_redefinition = true
