@@ -3,7 +3,6 @@
 
 import json
 import os
-from parser import DataArguments, ModelArguments
 from typing import Dict, List, Tuple
 
 import numpy as np
@@ -19,6 +18,7 @@ from transformers import (
     default_data_collator,
 )
 
+from parser import DataArguments, ModelArguments
 from utils.model_utils import MultiTaskModel
 from utils.pipeline_utils import Privacy_GLUE_Pipeline
 from utils.task_utils import sorted_interleave_task_datasets
