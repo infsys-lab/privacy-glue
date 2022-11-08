@@ -68,11 +68,31 @@ def test_main_process_first_only(local_rank, mocked_arguments, mocker):
     ],
 )
 def test__init__(task, mocked_arguments):
-    mocked_pipeline = Mocked_Pipeline(*mocked_arguments(task=task))
+    # instantiate mocked pipeline
+    data_args, model_args, train_args = mocked_arguments(task=task)
+    mocked_pipeline = Mocked_Pipeline(data_args, model_args, train_args)
+
+    # make some perturbations
+    mocked_pipeline.data_args.test = "test"
+    mocked_pipeline.data_args.max_answer_length = 1000
+    mocked_pipeline.model_args.trial = "trial"
+    mocked_pipeline.train_args.experiment = "experiment"
+
+    # make initial assertions
     assert mocked_pipeline.data_args.task == task
     assert mocked_pipeline.model_args.model_name_or_path == "bert-base-uncased"
     assert mocked_pipeline.train_args.report_to == []
     assert mocked_pipeline.success_file == ".success"
+
+    # make assertions regarding deep-copy
+    assert hasattr(mocked_pipeline.data_args, "test")
+    assert hasattr(mocked_pipeline.model_args, "trial")
+    assert hasattr(mocked_pipeline.train_args, "experiment")
+    assert not hasattr(data_args, "test")
+    assert not hasattr(model_args, "trial")
+    assert not hasattr(train_args, "experiment")
+    assert mocked_pipeline.data_args.max_answer_length == 1000
+    assert data_args.max_answer_length != 1000
 
 
 @pytest.mark.parametrize(
