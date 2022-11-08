@@ -1,27 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import os
 import json
-
+import os
+from parser import DataArguments, ModelArguments
 from typing import Dict, List, Tuple
 
 import numpy as np
 from seqeval.metrics import sequence_labeling as seqeval_metrics
 from transformers import (
-    AutoTokenizer,
     AutoConfig,
+    AutoTokenizer,
+    DataCollatorForTokenClassification,
+    EarlyStoppingCallback,
+    EvalPrediction,
     Trainer,
     TrainingArguments,
-    EvalPrediction,
-    EarlyStoppingCallback,
-    DataCollatorForTokenClassification,
     default_data_collator,
 )
 
-from parser import DataArguments, ModelArguments
-from utils.pipeline_utils import Privacy_GLUE_Pipeline
 from utils.model_utils import MultiTaskModel
+from utils.pipeline_utils import Privacy_GLUE_Pipeline
 from utils.tasks_utils import sorted_interleave_task_datasets
 
 

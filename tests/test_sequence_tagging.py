@@ -8,6 +8,7 @@ from types import SimpleNamespace
 import datasets
 import numpy as np
 import pytest
+
 from sequence_tagging import Sequence_Tagging_Pipeline
 
 
@@ -689,6 +690,10 @@ def test__compute_metrics(preds, labels, expected_metrics, mocked_pipeline):
     [-1, 0, 1],
 )
 @pytest.mark.parametrize(
+    "early_stopping_patience",
+    [None, 5],
+)
+@pytest.mark.parametrize(
     "do_train",
     [True, False],
 )
@@ -710,12 +715,12 @@ def test__run_train_loop(
     do_eval,
     do_predict,
     task,
+    early_stopping_patience,
     mocked_examples,
     mocked_arguments,
     mocker,
 ):
     # create mocked pipeline object
-    early_stopping_patience = 3
     current_arguments = mocked_arguments(
         task=task,
         local_rank=local_rank,

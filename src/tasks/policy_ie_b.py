@@ -5,9 +5,8 @@ from typing import cast
 
 import datasets
 
-from utils.tasks_utils import expand_dataset_per_task
 from utils.task_utils import policy_ie_file_mapping
-
+from utils.tasks_utils import expand_dataset_per_task
 
 SUBTASKS = ["type-I", "type-II"]
 LABELS = [

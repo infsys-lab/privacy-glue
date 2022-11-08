@@ -9,7 +9,6 @@ import datasets
 
 from utils.tasks_utils import expand_dataset_per_task
 
-
 SUBTASKS = sorted(["COLLECT", "NOT_COLLECT", "NOT_SHARE", "SHARE"])
 LABELS = sorted(
     [
