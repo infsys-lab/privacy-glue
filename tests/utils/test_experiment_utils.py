@@ -17,6 +17,7 @@ class Mocked_Pipeline_Override:
         self.model_args = model_args
         self.train_args = train_args
         self.data_args.test = "test"
+        self.data_args.sample_nested_object["sample"].append(4)
         self.data_args.max_answer_length = 1000
         self.model_args.trial = "trial"
         self.train_args.experiment = "experiment"
@@ -385,6 +386,9 @@ def test_deep_copy_arguments(task, mocked_arguments, mocker):
         Mocked_Pipeline_Override,
     )
 
+    # add nested objects to arguments
+    experiment_manager.data_args.sample_nested_object = {"sample": [1, 2, 3]}
+
     # run relevant manager method
     experiment_manager.run_experiments()
 
@@ -394,3 +398,4 @@ def test_deep_copy_arguments(task, mocked_arguments, mocker):
     assert not hasattr(experiment_manager.train_args, "experiment")
     assert experiment_manager.train_args.report_to != ["test"]
     assert experiment_manager.data_args.max_answer_length != 1000
+    assert experiment_manager.data_args.sample_nested_object == {"sample": [1, 2, 3]}
