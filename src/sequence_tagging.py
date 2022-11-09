@@ -61,7 +61,9 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
 
     def _load_pretrained_model_and_tokenizer(self) -> None:
         self.config = AutoConfig.from_pretrained(
-            self.model_args.model_name_or_path,
+            self.model_args.config_name
+            if self.model_args.config_name
+            else self.model_args.model_name_or_path,
             cache_dir=self.model_args.cache_dir,
             revision=self.model_args.model_revision,
         )
