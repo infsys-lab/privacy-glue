@@ -82,7 +82,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
         self.model = MultiTaskModel(
             self.model_args.model_name_or_path,
             tasks=self.subtasks,
-            labels=self.label_names,
+            label_names=self.label_names,
             config=self.config,
         )
 
