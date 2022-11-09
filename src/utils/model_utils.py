@@ -63,9 +63,8 @@ class MultiTaskModel(nn.Module):
         )
         sequence_output, pooled_output = outputs[:2]
         unique_task_ids_list = torch.unique(task_ids).tolist()
-
         loss_list = []
-        logits_list = []
+        logits_list = None
         for unique_task_id in unique_task_ids_list:
             task_id_filter = task_ids == unique_task_id
             logits, task_loss = self.output_heads[str(unique_task_id)].forward(
@@ -74,34 +73,25 @@ class MultiTaskModel(nn.Module):
                 labels=None if labels is None else labels[task_id_filter],
                 attention_mask=attention_mask[task_id_filter],
             )
-
+            if logits_list is None:
+                logits_list = logits.new_empty(
+                    (input_ids.shape[0], input_ids.shape[1], self.max_output_layer_size)
+                )
+            if logits.shape[2] < self.max_output_layer_size:
+                # Pad the smaller output layers so logit outputs can be transformed
+                # to tensor
+                logits = nn.functional.pad(
+                    logits,
+                    (0, self.max_output_layer_size - logits.shape[2], 0, 0, 0, 0),
+                    "constant",
+                    -100,
+                )
+            logits_list[task_id_filter] = logits
             if labels is not None:
+                # For training only the loss is used
                 loss_list.append(task_loss)
 
-            logits_list.append(logits)
-        # logits are only used for eval. and in case of eval the batch is not multi task
-        # For training only the loss is used
-
-        # zip and flatten subtasks logit lists to interleave them and have all examples
-        # in one list
-        logits_list = [
-            logits
-            for zipped_subtask_logits in zip(*logits_list)
-            for logits in zipped_subtask_logits
-        ]
-
-        # Pad the smaller output layers so logit outputs can be transformed to tensor
-        logits_list = [
-            nn.functional.pad(
-                logits,
-                (0, self.max_output_layer_size - logits.shape[1]),
-                "constant",
-                -100,
-            )
-            for logits in logits_list
-        ]
-
-        outputs = (torch.stack(logits_list), outputs[2:])
+        outputs = (logits_list, outputs[2:])
 
         if len(loss_list) > 0:
             loss = torch.stack(loss_list)
