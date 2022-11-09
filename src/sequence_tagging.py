@@ -154,7 +154,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
         # Tokenize the texts
         tokenized_inputs = self.tokenizer(
             examples["tokens"],
-            padding="max_length" if self.data_args.pad_to_max_length else padding,
+            padding="max_length" if self.data_args.pad_to_max_length else False,
             max_length=self.data_args.max_seq_length,
             truncation=True,
             is_split_into_words=True,
