@@ -150,7 +150,6 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
         return labels, task_ids
 
     def _preprocess_function(self, examples):
-        padding = False
         # Tokenize the texts
         tokenized_inputs = self.tokenizer(
             examples["tokens"],
