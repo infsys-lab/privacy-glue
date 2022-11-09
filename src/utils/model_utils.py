@@ -13,12 +13,24 @@ from transformers import AutoConfig, AutoModel
 # how-to-create-and-train-a-multi-task-transformer-model-18c54a146240
 class MultiTaskModel(nn.Module):
     def __init__(
-        self, encoder_name_or_path, tasks: List, label_names: Dict, config: AutoConfig
+        self,
+        encoder_name_or_path,
+        tasks: List,
+        label_names: Dict,
+        from_tf,
+        config: AutoConfig,
+        cache_dir,
+        revision,
     ):
         super().__init__()
 
-        self.encoder = AutoModel.from_pretrained(encoder_name_or_path, config=config)
-
+        self.encoder = AutoModel.from_pretrained(
+            encoder_name_or_path,
+            from_tf=from_tf,
+            config=config,
+            cache_dir=cache_dir,
+            revision=revision,
+        )
         self.output_heads = nn.ModuleDict()
         # one model several heads
         for task_id, task in enumerate(tasks):
