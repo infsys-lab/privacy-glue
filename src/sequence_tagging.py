@@ -85,7 +85,10 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
             self.model_args.model_name_or_path,
             tasks=self.subtasks,
             label_names=self.label_names,
+            from_tf=bool(".ckpt" in self.model_args.model_name_or_path),
             config=self.config,
+            cache_dir=self.model_args.cache_dir,
+            revision=self.model_args.model_revision,
         )
 
     def _create_b_to_i_label_map(self) -> Dict:
