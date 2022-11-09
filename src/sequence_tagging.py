@@ -335,7 +335,9 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
                 EarlyStoppingCallback(
                     early_stopping_patience=self.model_args.early_stopping_patience
                 )
-            ],
+            ]
+            if self.model_args.early_stopping_patience
+            else None,
         )
 
         # Training
