@@ -295,8 +295,12 @@ def test__load_pretrained_model_and_tokenizer(
     auto_model.assert_called_once_with(
         current_arguments[1].model_name_or_path,
         tasks=mocked_pipeline.subtasks,
+        label_names=mocked_pipeline.label_names,
         config=returned_model,
-        labels=mocked_pipeline.label_names,
+        cache_dir=None,
+        revision="main",
+        max_output_layer_size=3,
+        from_tf=False,
     )
     assert mocked_pipeline.config == returned_model
     assert mocked_pipeline.tokenizer == "mocked_tokenizer"
@@ -792,7 +796,9 @@ def test__run_train_loop(
         compute_metrics="_compute_metrics",
         callbacks=[
             early_stopping_callback(early_stopping_patience=early_stopping_patience)
-        ],
+        ]
+        if mocked_pipeline.model_args.early_stopping_patience
+        else None,
     )
 
     # make conditional assertions for training

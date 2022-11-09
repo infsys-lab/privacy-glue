@@ -21,9 +21,10 @@ class MultiTaskModel(nn.Module):
         config: AutoConfig,
         cache_dir,
         revision,
+        max_output_layer_size,
     ):
         super().__init__()
-
+        self.max_output_layer_size = max_output_layer_size
         self.encoder = AutoModel.from_pretrained(
             encoder_name_or_path,
             from_tf=from_tf,
@@ -90,10 +91,12 @@ class MultiTaskModel(nn.Module):
         ]
 
         # Pad the smaller output layers so logit outputs can be transformed to tensor
-        max_output_layer_size = max([logits.shape[1] for logits in logits_list])
         logits_list = [
             nn.functional.pad(
-                logits, (0, max_output_layer_size - logits.shape[1]), "constant", -100
+                logits,
+                (0, self.max_output_layer_size - logits.shape[1]),
+                "constant",
+                -100,
             )
             for logits in logits_list
         ]

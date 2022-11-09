@@ -12,8 +12,16 @@ LABEL_NAMES = {"task1": ["a", "b", "c"], "task2": ["a", "b"]}
 
 
 def mocked_multi_task_arguments(tasks=["task1", "task2"], label_names=LABEL_NAMES):
-    config = SimpleNamespace(hidden_size=5)
-    return ("model_name", tasks, label_names, config)
+    return {
+        "encoder_name_or_path": "model_name",
+        "tasks": tasks,
+        "label_names": label_names,
+        "from_tf": False,
+        "config": SimpleNamespace(hidden_size=5),
+        "cache_dir": None,
+        "revision": "main",
+        "max_output_layer_size": max(map(len, label_names.values())),
+    }
 
 
 @pytest.mark.parametrize(
@@ -26,8 +34,15 @@ def test_mtm_init(tasks, mocker):
         "utils.model_utils.AutoModel.from_pretrained",
         return_value=SimpleNamespace(config=expected_config),
     )
-    mtm = MultiTaskModel(*mocked_multi_task_arguments(tasks=tasks))
-    pretrained.assert_called_once_with("model_name", config=expected_config)
+    mtm = MultiTaskModel(**mocked_multi_task_arguments(tasks=tasks))
+    pretrained.assert_called_once_with(
+        "model_name",
+        config=expected_config,
+        cache_dir=None,
+        revision="main",
+        from_tf=False,
+    )
+    assert mtm.max_output_layer_size == 3
     assert len(mtm.output_heads) == len(tasks)
     assert set(mtm.output_heads.keys()) == set(map(str, range(len(tasks))))
 
@@ -43,7 +58,7 @@ def test_mtm_forward(labels, mocker):
         "utils.model_utils.TokenClassificationHead.forward",
         return_value=(torch.zeros(1, 2, 3), torch.zeros(1)),
     )
-    mtm = MultiTaskModel(*mocked_multi_task_arguments())
+    mtm = MultiTaskModel(**mocked_multi_task_arguments())
     encoder = mocker.patch.object(
         mtm,
         "encoder",

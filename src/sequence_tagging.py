@@ -89,6 +89,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
             config=self.config,
             cache_dir=self.model_args.cache_dir,
             revision=self.model_args.model_revision,
+            max_output_layer_size=max(map(len, self.label_names.values())),
         )
 
     def _create_b_to_i_label_map(self) -> Dict:
