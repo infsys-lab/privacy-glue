@@ -47,8 +47,9 @@ def test_mtm_init(tasks, mocker):
     assert set(mtm.output_heads.keys()) == set(map(str, range(len(tasks))))
 
 
-@pytest.mark.parametrize("labels", [torch.CharTensor([0, 1, 1, 1]), None])
-def test_mtm_forward(labels, mocker):
+@pytest.mark.parametrize("labels", [torch.CharTensor([[0, 1], [1, 1]]), None])
+@pytest.mark.parametrize("forward_output", [torch.zeros(1, 2, 2), torch.zeros(1, 2, 3)])
+def test_mtm_forward(labels, forward_output, mocker):
     expected_config = SimpleNamespace(hidden_size=5)
     mocker.patch(
         "utils.model_utils.AutoModel.from_pretrained",
@@ -56,19 +57,19 @@ def test_mtm_forward(labels, mocker):
     )
     tch_forward = mocker.patch(
         "utils.model_utils.TokenClassificationHead.forward",
-        return_value=(torch.zeros(1, 2, 3), torch.zeros(1)),
+        return_value=(forward_output, torch.zeros(1)),
     )
     mtm = MultiTaskModel(**mocked_multi_task_arguments())
     encoder = mocker.patch.object(
         mtm,
         "encoder",
-        return_value=(torch.zeros(4, 2, 2), torch.zeros(4, 2, 2)),
+        return_value=(torch.zeros(2, 2, 2), torch.zeros(2, 2)),
     )
     output = mtm.forward(
-        input_ids=torch.zeros(4),
-        attention_mask=torch.CharTensor([1, 1, 1, 1]),
+        input_ids=torch.zeros(2, 2),
+        attention_mask=torch.ones(2, 2),
         labels=labels,
-        task_ids=torch.CharTensor([0, 0, 0, 1]),
+        task_ids=torch.CharTensor([1, 0]),
     )
     tch_forward.assert_called()
     encoder.assert_called()
@@ -76,10 +77,20 @@ def test_mtm_forward(labels, mocker):
     if labels is None:
         assert len(output) == 2
         assert output[0].shape == (2, 2, 3)
+        if forward_output.shape[2] == 3:
+            assert output[0][0][0][2] == 0
+        else:
+            assert output[0][0][0][2] == -100
+        assert output[0][0][0][0] == 0
     else:
-        assert output[1].shape == (2, 2, 3)
-        assert output[0] == 0.0
         assert len(output) == 3
+        assert output[1].shape == (2, 2, 3)
+        if forward_output.shape[2] == 3:
+            assert output[1][0][0][2] == 0
+        else:
+            assert output[1][0][0][2] == -100
+        assert output[1][0][0][0] == 0
+        assert output[0] == 0.0
 
 
 @pytest.mark.parametrize("num_labels", [1, 4])
