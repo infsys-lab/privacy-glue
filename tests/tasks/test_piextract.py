@@ -6,7 +6,14 @@ import os
 import datasets
 import pytest
 
-from tasks.piextract import load_piextract, merge_ner_tags, read_conll_file
+from tasks.piextract import SUBTASKS, load_piextract, merge_tags, read_conll_file
+
+TASK2TEXTSPAN = {
+    "COLLECT": "collect",
+    "NOT_COLLECT": "nocollect",
+    "SHARE": "share",
+    "NOT_SHARE": "noshare",
+}
 
 
 def mocked_conll_output():
@@ -15,7 +22,7 @@ def mocked_conll_output():
             ["train", "check", "for", "PI-Extract"],
             ["another", "train", "check", "for", "PI-Extract"],
         ],
-        "ner_tags": [
+        "tags": [
             ["O", "O", "O", "label-train-nocollect-1"],
             ["O", "O", "O", "O", "label-train-nocollect-2"],
         ],
@@ -50,6 +57,24 @@ def mocked_merge_tags_output():
     ]
 
 
+def mocked_expand_dataset_per_task():
+    return {
+        st: [
+            (
+                ("train", "check", "for", "PI-Extract"),
+                ("O", "O", "O", "label-train-nocollect-1"),
+                st,
+            ),
+            (
+                ("another", "train", "check", "for", "PI-Extract"),
+                ("O", "O", "O", "O", "label-train-nocollect-2"),
+                st,
+            ),
+        ]
+        for st in SUBTASKS
+    }
+
+
 def test_read_conll_file():
     conll_file = os.path.join(
         os.path.dirname(os.path.dirname(__file__)),
@@ -63,14 +88,14 @@ def test_read_conll_file():
     data = read_conll_file(conll_file)
 
     # check their keys make sense
-    assert sorted(data.keys()) == sorted(["tokens", "ner_tags"])
+    assert sorted(data.keys()) == sorted(["tokens", "tags"])
 
     # assert that we got what is expected
     assert data == mocked_conll_output()
 
 
 @pytest.mark.parametrize(
-    "raw_ner_tags, merged_ner_tags",
+    "raw_tags, merged_tags",
     [
         (
             [
@@ -90,15 +115,17 @@ def test_read_conll_file():
         )
     ],
 )
-def test_merge_ner_tags(raw_ner_tags, merged_ner_tags):
-    assert merge_ner_tags(raw_ner_tags) == merged_ner_tags
+def test_merge_tags(raw_tags, merged_tags):
+    assert merge_tags(raw_tags) == merged_tags
 
 
 def test_load_piextract_mocked(mocker):
     # patch other units in the load_piextract function
     mocker.patch("tasks.piextract.read_conll_file", return_value=mocked_conll_output())
+    mocker.patch("tasks.piextract.merge_tags", return_value=mocked_merge_tags_output())
     mocker.patch(
-        "tasks.piextract.merge_ner_tags", return_value=mocked_merge_tags_output()
+        "utils.task_utils.expand_dataset_per_task",
+        return_value=mocked_expand_dataset_per_task(),
     )
 
     # load sample data
@@ -110,29 +137,28 @@ def test_load_piextract_mocked(mocker):
     assert sorted(data.keys()) == sorted(["train", "validation", "test"])
 
     # merge validation and train to train to compare against files
-    data["train"] = datasets.concatenate_datasets([data["train"], data["validation"]])
-    del data["validation"]
+    for st in SUBTASKS:
+        data["train"][st] = datasets.concatenate_datasets(
+            [data["train"][st], data["validation"][st]]
+        )
+        del data["validation"][st]
 
     # iterate over splits
-    for (split, data_split) in data.items():
-        # check that all column names are as expected
-        assert data_split.column_names == ["tokens", "ner_tags"]
-
-        # assert that we got what is expected
-        assert sorted(
-            zip(
-                map(tuple, data_split["tokens"]),
-                [tuple(map(tuple, ner_tags)) for ner_tags in data_split["ner_tags"]],
+    for (split, data_splits) in data.items():
+        for (st, data_split) in sorted(data_splits.items()):
+            # check that all column names are as expected
+            assert data_split.column_names == ["tokens", "tags", "subtask"]
+            # assert that we got what is expected
+            assert (
+                list(
+                    zip(
+                        [tuple(tokens) for tokens in data_split["tokens"]],
+                        [tuple(tags) for tags in data_split["tags"]],
+                        (st, st),
+                    )
+                )
+                == mocked_expand_dataset_per_task()[st]
             )
-        ) == sorted(
-            zip(
-                map(tuple, mocked_conll_output()["tokens"]),
-                [
-                    tuple(map(tuple, ner_tags))
-                    for ner_tags in mocked_merge_tags_output()
-                ],
-            )
-        )
 
 
 def test_load_piextract():
@@ -143,61 +169,42 @@ def test_load_piextract():
 
     # check that all three splits are included
     assert sorted(data.keys()) == sorted(["train", "validation", "test"])
+    assert all([sorted(data[k].keys()) == SUBTASKS for k in data])
 
     # merge validation and train to train to compare against files
-    data["train"] = datasets.concatenate_datasets([data["train"], data["validation"]])
-    del data["validation"]
+    for st in SUBTASKS:
+        data["train"][st] = datasets.concatenate_datasets(
+            [data["train"][st], data["validation"][st]]
+        )
+        del data["validation"][st]
 
     # iterate over splits
-    for (split, data_split) in data.items():
-        # check that all column names are as expected
-        assert data_split.column_names == ["tokens", "ner_tags"]
-
-        # define what is expected from the load function
-        expected = sorted(
-            [
+    for (split, data_splits) in data.items():
+        for (st, data_split) in data_splits.items():
+            # check that all column names are as expected
+            assert data_split.column_names == ["tokens", "tags", "subtask"]
+            # define what is expected from the load function
+            expected = [
                 (
                     (f"{split}", "check", "for", "PI-Extract"),
-                    (
-                        ("O", "O", "O", "O"),
-                        ("O", "O", "O", "O"),
-                        ("O", "O", "O", "O"),
-                        (
-                            f"label-{split}-collect-1",
-                            f"label-{split}-nocollect-1",
-                            f"label-{split}-share-1",
-                            f"label-{split}-noshare-1",
-                        ),
-                    ),
+                    ("O", "O", "O", f"label-{split}-{TASK2TEXTSPAN[st]}-1"),
+                    st,
                 ),
                 (
                     ("another", f"{split}", "check", "for", "PI-Extract"),
-                    (
-                        ("O", "O", "O", "O"),
-                        ("O", "O", "O", "O"),
-                        ("O", "O", "O", "O"),
-                        ("O", "O", "O", "O"),
-                        (
-                            f"label-{split}-collect-2",
-                            f"label-{split}-nocollect-2",
-                            f"label-{split}-share-2",
-                            f"label-{split}-noshare-2",
-                        ),
-                    ),
+                    ("O", "O", "O", "O", f"label-{split}-{TASK2TEXTSPAN[st]}-2"),
+                    st,
                 ),
             ]
-        )
 
-        # assert that we got what is expected
-        assert (
-            sorted(
-                zip(
-                    map(tuple, data_split["tokens"]),
-                    [
-                        tuple(map(tuple, ner_tags))
-                        for ner_tags in data_split["ner_tags"]
-                    ],
+            # assert that we got what is expected
+            assert (
+                list(
+                    zip(
+                        tuple(map(tuple, data_split["tokens"])),
+                        tuple(map(tuple, data_split["tags"])),
+                        data_split["subtask"],
+                    )
                 )
+                == expected
             )
-            == expected
-        )
