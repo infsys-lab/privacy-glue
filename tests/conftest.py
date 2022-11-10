@@ -79,6 +79,7 @@ def get_mocked_arguments(
     random_seed_iterations=5,
     do_summarize=True,
     with_experiment_args=False,
+    label_all_tokens=True,
 ):
     data_args = SimpleNamespace(
         task=task,
@@ -93,6 +94,7 @@ def get_mocked_arguments(
         overwrite_cache=overwrite_cache,
         pad_to_max_length=pad_to_max_length,
         doc_stride=doc_stride,
+        label_all_tokens=label_all_tokens,
     )
     model_args = SimpleNamespace(
         model_name_or_path=model_name_or_path,
