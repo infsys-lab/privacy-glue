@@ -189,6 +189,17 @@ class DataArguments:
         },
     )
 
+    label_all_tokens: bool = field(
+        default=True,
+        metadata={
+            "help": (
+                "Piextract and Policy_ie_b: Determines whether tokens which where "
+                "split up from one word in tokenization 'inherit' the label from the "
+                "initial word (True) or will be ignored (False)"
+            )
+        },
+    )
+
     def __post_init__(self):
         assert os.path.isdir(self.data_dir), f"{self.data_dir} is not a valid directory"
         assert (
