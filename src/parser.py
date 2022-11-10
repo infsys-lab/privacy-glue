@@ -195,7 +195,7 @@ class DataArguments:
             "help": (
                 "Piextract and Policy_ie_b: Determines whether tokens which where "
                 "split up from one word in tokenization 'inherit' the label from the "
-                "initial word (True) or will be ignored (False)"
+                "initial word (True) or will be ignored (False)."
             )
         },
     )
