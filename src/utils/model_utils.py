@@ -64,34 +64,39 @@ class MultiTaskModel(nn.Module):
         sequence_output, pooled_output = outputs[:2]
         unique_task_ids_list = torch.unique(task_ids).tolist()
         loss_list = []
-        logits_list = None
+        logits = None
         for unique_task_id in unique_task_ids_list:
             task_id_filter = task_ids == unique_task_id
-            logits, task_loss = self.output_heads[str(unique_task_id)].forward(
+            # send the encoder outputs to the correct classification head depending on
+            # task id.
+            task_logits, task_loss = self.output_heads[str(unique_task_id)].forward(
                 sequence_output[task_id_filter],
                 pooled_output[task_id_filter],
                 labels=None if labels is None else labels[task_id_filter],
                 attention_mask=attention_mask[task_id_filter],
             )
-            if logits_list is None:
-                logits_list = logits.new_empty(
+            # on first iteration create a new Tensor with the same dtype and device as
+            # the classification head output but scale to the appropriate dimensions.
+            if logits is None:
+                logits = task_logits.new_empty(
                     (input_ids.shape[0], input_ids.shape[1], self.max_output_layer_size)
                 )
-            if logits.shape[2] < self.max_output_layer_size:
-                # Pad the smaller output layers so logit outputs can be transformed
-                # to tensor
-                logits = nn.functional.pad(
-                    logits,
-                    (0, self.max_output_layer_size - logits.shape[2], 0, 0, 0, 0),
+            # Pad the smaller output layers so the outputs can be fit into the logits
+            # tensor.
+            if task_logits.shape[2] < self.max_output_layer_size:
+                task_logits = nn.functional.pad(
+                    task_logits,
+                    (0, self.max_output_layer_size - task_logits.shape[2], 0, 0, 0, 0),
                     "constant",
                     -100,
                 )
-            logits_list[task_id_filter] = logits
+            # fill in the outputs in the right places
+            logits[task_id_filter] = task_logits
+
             if labels is not None:
-                # For training only the loss is used
                 loss_list.append(task_loss)
 
-        outputs = (logits_list, outputs[2:])
+        outputs = (logits, outputs[2:])
 
         if len(loss_list) > 0:
             loss = torch.stack(loss_list)
@@ -107,7 +112,6 @@ class TokenClassificationHead(nn.Module):
             hidden_size, num_labels, bias=kwargs.get("bias", None)
         )
         self.num_labels = num_labels
-
         self._init_weights()
 
     def _init_weights(self):
