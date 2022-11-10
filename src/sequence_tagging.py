@@ -166,7 +166,6 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
         return tokenized_inputs
 
     def _apply_preprocessing(self) -> None:
-        self.data_args.label_all_tokens = True
         self.b_to_i_label = self._create_b_to_i_label_map()
         self.label_to_ids = {
             l: i for st in self.subtasks for i, l in enumerate(self.label_names[st])
