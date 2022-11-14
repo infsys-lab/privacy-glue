@@ -17,6 +17,9 @@ wandb = "^0.13.3"
 evaluate = "^0.2.2"
 scikit-learn = "^1.1.2"
 seqeval = "^1.2.2"
+plotnine = "^0.10.1"
+jupyter
+
 
 [tool.poetry.dev-dependencies]
 ipdb = "^0.13.9"
