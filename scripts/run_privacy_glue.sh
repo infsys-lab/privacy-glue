@@ -155,20 +155,14 @@ main() {
     --task "$TASK" \
     --model_name_or_path "$MODEL_NAME_OR_PATH" \
     --output_dir "$OUTPUT_DIR" \
+    --max_train_samples 64 --max_eval_samples 64 --max_predict_samples 64 \
     --do_train \
-    --do_eval \
-    --do_pred \
-    --do_clean \
-    --do_summarize \
-    --load_best_model_at_end \
-    --evaluation_strategy "epoch" \
     --save_strategy "epoch" \
     --logging_steps 100 \
     --save_total_limit 2 \
-    --num_train_epochs 20 \
+    --num_train_epochs 4 \
     --learning_rate 3e-5 \
     --warmup_ratio 0.1 \
-    --early_stopping_patience 5 \
     --report_to "$WANDB" \
     --full_determinism \
     --per_device_train_batch_size "$DEVICE_BATCH_SIZE" \

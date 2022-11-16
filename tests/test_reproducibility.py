@@ -32,23 +32,23 @@ require_multi_gpu = pytest.mark.skipif(
 @pytest.mark.parametrize(
     "task",
     [
-        "opp_115",
-        "policy_detection",
-        "policy_ie_a",
-        "privacy_qa",
+        # "opp_115",
+        # "policy_detection",
+        # "policy_ie_a",
+        # "privacy_qa",
         "piextract",
-        "policy_ie_b",
-        "policy_qa",
+        # "policy_ie_b",
+        # "policy_qa",
     ],
 )
 @pytest.mark.parametrize(
     "model_name_or_path",
     [
         "bert-base-uncased",
-        "roberta-base",
-        "nlpaueb/legal-bert-base-uncased",
-        "saibo/legal-roberta-base",
-        "mukund/privbert",
+        # "roberta-base",
+        # "nlpaueb/legal-bert-base-uncased",
+        # "saibo/legal-roberta-base",
+        # "mukund/privbert",
     ],
 )
 @pytest.mark.parametrize(
@@ -78,11 +78,6 @@ class Test_Reproducibility:
             "--model_name_or_path": model_name_or_path,
             "--output_dir": output_dir,
             "--do_train": None,
-            "--do_eval": None,
-            "--do_pred": None,
-            "--do_summarize": None,
-            "--load_best_model_at_end": None,
-            "--evaluation_strategy": "epoch",
             "--save_strategy": "epoch",
             "--num_train_epochs": "4",
             "--learning_rate": "3e-5",
@@ -166,21 +161,21 @@ class Test_Reproducibility:
             runtime + ["src/privacy_glue.py"] + args_list_two, env=subprocess_env
         )
 
-        # load dumped benchmark summary one
-        with open(
-            glob(os.path.join(str(tmp_path), "run_one", "*", "benchmark_summary.json"))[
-                0
-            ]
-        ) as input_file_stream:
-            benchmark_summary_one = json.load(input_file_stream)
+        # # load dumped benchmark summary one
+        # with open(
+        #     glob(os.path.join(str(tmp_path), "run_one", "*", "benchmark_summary.json"))[
+        #         0
+        #     ]
+        # ) as input_file_stream:
+        #     benchmark_summary_one = json.load(input_file_stream)
 
-        # load dumped benchmark summary two
-        with open(
-            glob(os.path.join(str(tmp_path), "run_two", "*", "benchmark_summary.json"))[
-                0
-            ]
-        ) as input_file_stream:
-            benchmark_summary_two = json.load(input_file_stream)
+        # # load dumped benchmark summary two
+        # with open(
+        #     glob(os.path.join(str(tmp_path), "run_two", "*", "benchmark_summary.json"))[
+        #         0
+        #     ]
+        # ) as input_file_stream:
+        #     benchmark_summary_two = json.load(input_file_stream)
 
         # get latest checkpoint directories
         checkpoint_one = get_last_checkpoint(
@@ -203,7 +198,7 @@ class Test_Reproducibility:
         assert process_two.returncode == 0
 
         # assert that benchmark summaries are the same
-        assert benchmark_summary_one == benchmark_summary_two
+        # assert benchmark_summary_one == benchmark_summary_two
 
         # assert that keys are the same
         assert weights_one.keys() == weights_two.keys()
@@ -296,21 +291,21 @@ class Test_Reproducibility:
         ) as input_file_stream:
             session_log_two = input_file_stream.read()
 
-        # load dumped benchmark summary one
-        with open(
-            glob(os.path.join(str(tmp_path), "run_one", "*", "benchmark_summary.json"))[
-                0
-            ]
-        ) as input_file_stream:
-            benchmark_summary_one = json.load(input_file_stream)
+        # # load dumped benchmark summary one
+        # with open(
+        #     glob(os.path.join(str(tmp_path), "run_one", "*", "benchmark_summary.json"))[
+        #         0
+        #     ]
+        # ) as input_file_stream:
+        #     benchmark_summary_one = json.load(input_file_stream)
 
-        # load dumped benchmark summary two
-        with open(
-            glob(os.path.join(str(tmp_path), "run_two", "*", "benchmark_summary.json"))[
-                0
-            ]
-        ) as input_file_stream:
-            benchmark_summary_two = json.load(input_file_stream)
+        # # load dumped benchmark summary two
+        # with open(
+        #     glob(os.path.join(str(tmp_path), "run_two", "*", "benchmark_summary.json"))[
+        #         0
+        #     ]
+        # ) as input_file_stream:
+        #     benchmark_summary_two = json.load(input_file_stream)
 
         # get latest checkpoint directories
         checkpoint_one = get_last_checkpoint(
@@ -337,7 +332,7 @@ class Test_Reproducibility:
         assert "Checkpoint detected, resuming training" in session_log_two
 
         # assert that benchmark summaries are the same
-        assert benchmark_summary_one == benchmark_summary_two
+        # assert benchmark_summary_one == benchmark_summary_two
 
         # assert that keys are the same
         assert weights_one.keys() == weights_two.keys()

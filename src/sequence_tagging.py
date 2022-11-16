@@ -9,11 +9,11 @@ import numpy as np
 from seqeval.metrics import sequence_labeling as seqeval_metrics
 from transformers import (
     AutoConfig,
+    AutoModelForTokenClassification,
     AutoTokenizer,
     DataCollatorForTokenClassification,
     EarlyStoppingCallback,
     EvalPrediction,
-    Trainer,
     TrainingArguments,
     default_data_collator,
 )
@@ -22,6 +22,7 @@ from parser import DataArguments, ModelArguments
 from utils.model_utils import MultiTaskModel
 from utils.pipeline_utils import Privacy_GLUE_Pipeline
 from utils.task_utils import sorted_interleave_task_datasets
+from utils.trainer_utils import MultitaskTrainer
 
 
 class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
@@ -66,6 +67,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
             else self.model_args.model_name_or_path,
             cache_dir=self.model_args.cache_dir,
             revision=self.model_args.model_revision,
+            num_labels=3,
         )
         # We need to instantiate RobertaTokenizerFast with add_prefix_space=True
         # to use it with pretokenized inputs.
@@ -80,16 +82,20 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
             revision=self.model_args.model_revision,
             add_prefix_space=add_prefix_space,
         )
-
-        self.model = MultiTaskModel(
-            self.model_args.model_name_or_path,
-            tasks=self.subtasks,
-            label_names=self.label_names,
-            from_tf=bool(".ckpt" in self.model_args.model_name_or_path),
-            config=self.config,
-            cache_dir=self.model_args.cache_dir,
-            revision=self.model_args.model_revision,
-            max_output_layer_size=max(map(len, self.label_names.values())),
+        self.model = MultiTaskModel.create(
+            model_name=self.model_args.model_name_or_path,
+            model_type_dict={
+                "0": AutoModelForTokenClassification,
+                "1": AutoModelForTokenClassification,
+                "2": AutoModelForTokenClassification,
+                "3": AutoModelForTokenClassification,
+            },
+            model_config_dict={
+                "0": self.config,
+                "1": self.config,
+                "2": self.config,
+                "3": self.config,
+            },
         )
 
     def _create_b_to_i_label_map(self) -> Dict:
@@ -326,8 +332,15 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
         return return_metrics
 
     def _run_train_loop(self) -> None:
+        self.train_dataset = {
+            str(task_id): self.train_dataset.filter(
+                lambda x: x["task_ids"] == task_id
+            ).remove_columns("task_ids")
+            for task_id in [0, 1, 2, 3]
+        }
+
         # Initialize the Trainer
-        self.trainer = Trainer(
+        self.trainer = MultitaskTrainer(
             model=self.model,
             args=self.train_args,
             train_dataset=self.train_dataset if self.train_args.do_train else None,
@@ -351,9 +364,7 @@ class Sequence_Tagging_Pipeline(Privacy_GLUE_Pipeline):
             )
             metrics = train_result.metrics
             metrics["train_samples"] = len(self.train_dataset)
-
             self.trainer.save_model()  # Saves the tokenizer too for easy upload
-
             self.trainer.log_metrics("train", metrics)
             self.trainer.save_metrics("train", metrics)
             self.trainer.save_state()
