@@ -1,5 +1,3 @@
-SHELL := /bin/bash
-
 .PHONY: test integration
 
 test:
