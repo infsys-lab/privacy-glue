@@ -44,7 +44,7 @@ repos:
       - id: python-deploy-dev
         name: poetry-export-dev
         entry: poetry export
-        args: [-f, requirements.txt, --without-hashes, --dev, -o, requirements-dev.txt]
+        args: [-f, requirements.txt, --without-hashes, --with, dev, -o, requirements-dev.txt]
         language: system
         files: ^pyproject\.toml$|^poetry\.lock$
         pass_filenames: false

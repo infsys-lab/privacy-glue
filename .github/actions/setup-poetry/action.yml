@@ -3,7 +3,8 @@ name: Setup poetry
 inputs:
   poetry-version:
     description: 'Poetry version'
-    required: true
+    required: false
+    default: '1.2.2'
   python-version:
     description: 'Python version'
     required: false

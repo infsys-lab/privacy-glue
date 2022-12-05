@@ -28,8 +28,6 @@ jobs:
 
       - name: Setup poetry
         uses: ./.github/actions/setup-poetry
-        with:
-          poetry-version: '1.2.0'
 
       - name: Cache poetry virtualenv
         uses: actions/cache@v3
