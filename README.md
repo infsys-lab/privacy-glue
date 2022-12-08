@@ -36,7 +36,7 @@ This repository documents PrivacyGLUE; a NLP benchmark consisting of legal-priva
 ## Tasks :runner:
 
 | Task             | Type                                | Study                                                                                |
-|------------------|-------------------------------------|--------------------------------------------------------------------------------------|
+|:-----------------|:------------------------------------|:-------------------------------------------------------------------------------------|
 | OPP-115          | Multi-label sequence classification | [Wilson et al. (2016)](https://usableprivacy.org/data)<sup>\*</sup>                  |
 | PI-Extract       | Multi-task token classification     | [Duc et al. (2021)](https://github.com/um-rtcl/piextract_dataset)                    |
 | Policy-Detection | Binary sequence classification      | [Amos et al. (2021)](https://privacypolicies.cs.princeton.edu/)                      |
@@ -110,11 +110,13 @@ $ bash scripts/run_privacy_glue.sh --cuda_visible_devices <device_id> \
 
 ## Notebooks :book:
 
-We utilize the following `ipynb` notebooks to analyze benchmark results:
+We utilize the following `ipynb` notebooks for general analyses outside of the PrivacyGLUE benchmark:
 
-1. [visualize_domain_embeddings.ipynb](notebooks/visualize_domain_embeddings.ipynb): This notebook is used to compute BERT embeddings for Wikipedia, EURLEX and privacy policies. These are then visualized in 2 dimensions using t-SNE and UMAP.
-2. [visualize_results.ipynb](notebooks/visualize_results.ipynb): This notebook is used to plot benchmark results and perform significance testing.
-3. [inspect_predictions.ipynb](notebooks/inspect_predictions.ipynb): This notebook is used to inspect test-set predictions and perform more detailed analyses of inter-model disagreements.
+| Notebook                                                                         | Description                                                                                           |
+|:---------------------------------------------------------------------------------|:------------------------------------------------------------------------------------------------------|
+| [visualize_domain_embeddings.ipynb](notebooks/visualize_domain_embeddings.ipynb) | Compute and visualize BERT embeddings for Wikipedia, EURLEX and Privacy Policies using t-SNE and UMAP |
+| [visualize_results.ipynb](notebooks/visualize_results.ipynb)                     | Plot benchmark results and perform significance testing                                               |
+| [inspect_predictions.ipynb](notebooks/inspect_predictions.ipynb)                 | Inspect test-set predictions for model-disagreement analysis                                          |
 
 ## Test :microscope:
 
