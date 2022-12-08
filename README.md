@@ -108,7 +108,13 @@ $ bash scripts/run_privacy_glue.sh --cuda_visible_devices <device_id> \
                                    --fp16
 ```
 
-**Note:** We utilize `ipynb` notebooks to analyze benchmark results, which can be found in the `notebooks` directory.
+## Notebooks :book:
+
+We utilize the following `ipynb` notebooks to analyze benchmark results:
+
+1. [visualize_domain_embeddings.ipynb](notebooks/visualize_domain_embeddings.ipynb): This notebook is used to compute BERT embeddings for Wikipedia, EURLEX and privacy policies. These are then visualized in 2 dimensions using t-SNE and UMAP.
+2. [visualize_results.ipynb](notebooks/visualize_results.ipynb): This notebook is used to plot benchmark results and perform significance testing.
+3. [inspect_predictions.ipynb](notebooks/inspect_predictions.ipynb): This notebook is used to inspect test-set predictions and perform more detailed analyses of inter-model disagreements.
 
 ## Test :microscope:
 
