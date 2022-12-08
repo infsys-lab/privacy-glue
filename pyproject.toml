@@ -20,6 +20,7 @@ seqeval = "^1.2.2"
 plotnine = "^0.10.1"
 jupyter = "^1.0.0"
 scipy = "^1.9.3"
+umap-learn = "^0.5.3"
 
 [tool.poetry.group.dev.dependencies]
 ipdb = "^0.13.9"
