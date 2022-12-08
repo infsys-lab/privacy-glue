@@ -108,6 +108,8 @@ $ bash scripts/run_privacy_glue.sh --cuda_visible_devices <device_id> \
                                    --fp16
 ```
 
+**Note:** We utilize `ipynb` notebooks to analyze benchmark results, which can be found in the `notebooks` directory.
+
 ## Test :microscope:
 
 1. To run unit tests, execute:
