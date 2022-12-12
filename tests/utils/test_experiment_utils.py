@@ -301,6 +301,7 @@ def test_summarize(
                 np.round(np.std(metric_group), 8).item()
                 for metric_group in metric_by_group_seed
             ],
+            "samples": [list(group) for group in metric_by_group_seed],
             "num_samples": len(metric_by_seed_group),
         }
 
@@ -324,6 +325,9 @@ def test_summarize(
                     os.path.join(seed_dir, "all_results.json"), "w"
                 ) as output_file_stream:
                     json.dump(metrics_dump, output_file_stream)
+
+    # sort all keys alphabetically
+    expected_benchmark_summary = dict(sorted(expected_benchmark_summary.items()))
 
     # add unrelated directory if required
     if add_unrelated_directory:
