@@ -116,7 +116,7 @@ We utilize the following `ipynb` notebooks for general analyses outside of the P
 |:---------------------------------------------------------------------------------|:------------------------------------------------------------------------------------------------------|
 | [visualize_domain_embeddings.ipynb](notebooks/visualize_domain_embeddings.ipynb) | Compute and visualize BERT embeddings for Wikipedia, EURLEX and Privacy Policies using t-SNE and UMAP |
 | [visualize_results.ipynb](notebooks/visualize_results.ipynb)                     | Plot benchmark results and perform significance testing                                               |
-| [inspect_predictions.ipynb](notebooks/inspect_predictions.ipynb)                 | Inspect test-set predictions for model-disagreement analysis                                          |
+| [inspect_predictions.ipynb](notebooks/inspect_predictions.ipynb)                 | Inspect test-set predictions for model agreement analysis                                             |
 
 ## Test :microscope:
 
