@@ -72,7 +72,10 @@ class Privacy_GLUE_Experiment_Manager:
                 continue
             else:
                 # loop over all seed directories inside valid task directory
-                for seed_dir in glob(os.path.join(task_dir, "seed_*")):
+                for seed_dir in sorted(
+                    glob(os.path.join(task_dir, "seed_*")),
+                    key=lambda path: int(os.path.basename(path).replace("seed_", "")),
+                ):
                     all_results_file = os.path.join(seed_dir, "all_results.json")
 
                     # load JSON results file to dictionary
@@ -104,7 +107,11 @@ class Privacy_GLUE_Experiment_Manager:
                 np.round(np.std(metric_group), 8).item()
                 for metric_group in metric_by_group_seed
             ]
+            benchmark_summary[task]["samples"] = metric_by_group_seed
             benchmark_summary[task]["num_samples"] = len(metric_by_seed_group)
+
+        # sort dictionary based on keys
+        benchmark_summary = dict(sorted(benchmark_summary.items()))
 
         # dump benchmark dictionary
         with open(
