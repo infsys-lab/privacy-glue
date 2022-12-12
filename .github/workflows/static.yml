@@ -7,12 +7,12 @@ on:
   workflow_dispatch:
   pull_request:
     branches: main
-    paths: ['src/**', 'tests/**', 'pyproject.toml', 'poetry.lock', '.flake8', 'scripts/**',
-    '.github/actions/setup-poetry/action.yml', '.github/workflows/static.yml']
+    paths: ['src/**', 'notebooks/**', 'tests/**', 'pyproject.toml', 'poetry.lock', '.flake8',
+    'scripts/**', '.github/actions/setup-poetry/action.yml', '.github/workflows/static.yml']
   push:
     branches: main
-    paths: ['src/**', 'tests/**', 'pyproject.toml', 'poetry.lock', '.flake8', 'scripts/**',
-    '.github/actions/setup-poetry/action.yml', '.github/workflows/static.yml']
+    paths: ['src/**', 'notebooks/**', 'tests/**', 'pyproject.toml', 'poetry.lock', '.flake8',
+    'scripts/**', '.github/actions/setup-poetry/action.yml', '.github/workflows/static.yml']
 
 concurrency:
   # new commit on branch cancels running workflows of the same branch
@@ -41,17 +41,29 @@ jobs:
         run: |
           poetry install --only dev
 
-      - name: Style-check with black
+      - name: Python style-check with black
         run: |
           poetry run black --diff --check .
 
-      - name: Import-check with isort
+      - name: Python import-check with isort
         run: |
           poetry run isort --diff --check-only .
 
-      - name: Lint with flake8
+      - name: Python lint with flake8
         run: |
           poetry run flake8 --show-source --statistics .
+
+      - name: Ipynb style-check with black
+        run: |
+          poetry run nbqa black --diff --check .
+
+      - name: Ipynb import-check with isort
+        run: |
+          poetry run nbqa isort --diff --check-only .
+
+      - name: Ipynb lint with flake8
+        run: |
+          poetry run nbqa flake8 --show-source --statistics .
 
       - name: Style-check with shfmt
         run: |
