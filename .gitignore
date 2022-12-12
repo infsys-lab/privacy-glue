@@ -7,3 +7,4 @@ pytest.xml
 wandb/
 tests/artifacts/
 tests/reports/
+notebooks/.ipynb_checkpoints/
