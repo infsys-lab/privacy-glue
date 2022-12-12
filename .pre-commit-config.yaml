@@ -1,8 +1,8 @@
 repos:
   - repo: local
     hooks:
-      - id: python-style
-        name: black
+      - id: python-black
+        name: python-black
         entry: poetry run black
         args: [--diff, --check]
         language: system
@@ -11,8 +11,8 @@ repos:
 
   - repo: local
     hooks:
-      - id: python-import
-        name: isort
+      - id: python-isort
+        name: python-isort
         entry: poetry run isort
         args: [--diff, --check-only]
         language: system
@@ -21,8 +21,8 @@ repos:
 
   - repo: local
     hooks:
-      - id: python-lint
-        name: flake8
+      - id: python-flake8
+        name: python-flake8
         entry: poetry run flake8
         args: [--show-source, --statistics]
         language: system
@@ -31,7 +31,37 @@ repos:
 
   - repo: local
     hooks:
-      - id: python-deploy-main
+      - id: ipynb-black
+        name: ipynb-black
+        entry: poetry run nbqa black
+        args: [--diff, --check]
+        language: system
+        files: ^notebooks/
+        types: [jupyter]
+
+  - repo: local
+    hooks:
+      - id: ipynb-isort
+        name: ipynb-isort
+        entry: poetry run nbqa isort
+        args: [--diff, --check-only]
+        language: system
+        files: ^notebooks/
+        types: [jupyter]
+
+  - repo: local
+    hooks:
+      - id: ipynb-flake8
+        name: ipynb-flake8
+        entry: poetry run nbqa flake8
+        args: [--show-source, --statistics]
+        language: system
+        files: ^notebooks/
+        types: [jupyter]
+
+  - repo: local
+    hooks:
+      - id: poetry-export-main
         name: poetry-export-main
         entry: poetry export
         args: [-f, requirements.txt, --without-hashes, -o, requirements.txt]
@@ -41,7 +71,7 @@ repos:
 
   - repo: local
     hooks:
-      - id: python-deploy-dev
+      - id: poetry-export-dev
         name: poetry-export-dev
         entry: poetry export
         args: [-f, requirements.txt, --without-hashes, --with, dev, -o, requirements-dev.txt]
@@ -51,7 +81,7 @@ repos:
 
   - repo: local
     hooks:
-      - id: shell-lint
+      - id: shellcheck
         name: shellcheck
         entry: poetry run shellcheck
         language: system
@@ -60,7 +90,7 @@ repos:
 
   - repo: local
     hooks:
-      - id: shell-style
+      - id: shfmt
         name: shfmt
         entry: poetry run shfmt
         args: [-i, '2', -d]

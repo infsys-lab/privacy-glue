@@ -17,6 +17,10 @@ wandb = "^0.13.3"
 evaluate = "^0.2.2"
 scikit-learn = "^1.1.2"
 seqeval = "^1.2.2"
+plotnine = "^0.10.1"
+jupyter = "^1.0.0"
+scipy = "^1.9.3"
+umap-learn = "^0.5.3"
 
 [tool.poetry.group.dev.dependencies]
 ipdb = "^0.13.9"
@@ -30,6 +34,7 @@ shfmt-py = "^3.4.3"
 pytest-mock = "^3.8.2"
 isort = "^5.10.1"
 pytest-html = "^3.2.0"
+nbqa = "^1.5.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -56,6 +61,11 @@ skip_glob = ["data/*", "runs/*", "scripts/*",
              "submodules/*", ".venv/*", "coverage/*"]
 known_third_party = ["wandb"]
 known_first_party = ["parser"]
+
+[tool.nbqa.files]
+black = "^notebooks/"
+isort = "^notebooks/"
+flake8 = "^notebooks/"
 
 [tool.coverage.run]
 branch = true
