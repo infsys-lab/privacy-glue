@@ -1,6 +1,6 @@
 # privacy-glue
 
-This repository documents PrivacyGLUE; a NLP benchmark consisting of legal-privacy related tasks.
+This repository documents PrivacyGLUE; a NLP benchmark for general language understanding in the privacy language domain.
 
 ## Dependencies :mag:
 
