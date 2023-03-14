@@ -108,6 +108,8 @@ $ bash scripts/run_privacy_glue.sh --cuda_visible_devices <device_id> \
                                    --fp16
 ```
 
+**Note**: Replace the `<device_id>` argument with a GPU ID or comma-separated GPU IDs to run single and multi-GPU fine-tuning respectively. Correspokndingly, replace `<model>` with one of our supported models listed in the usage documentation above.
+
 ## Notebooks :book:
 
 We utilize the following `ipynb` notebooks for general analyses outside of the PrivacyGLUE benchmark:
