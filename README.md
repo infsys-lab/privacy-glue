@@ -4,7 +4,7 @@ This repository documents PrivacyGLUE; a NLP benchmark for general language unde
 
 ## Dependencies :mag:
 
-1. This repository's code was tested with Python version `3.8.13` and CUDA version `11.7`. To sync dependencies, we recommend creating a virtual environment with the same python version and installing the relevant packages with [`poetry`](https://python-poetry.org/):
+1. This repository was tested against Python version `3.8.13` and CUDA version `11.7`. Create a virtual environment with the same python version and install dependencies with [`poetry`](https://python-poetry.org/):
 
     ```
     $ poetry install
@@ -15,19 +15,19 @@ This repository documents PrivacyGLUE; a NLP benchmark for general language unde
     $ pip install -r requirements.txt
     ```
 
-2.  This repository requires a working installation of Git [`LFS`](https://git-lfs.github.com/) to access upstream task data. We utilized version `3.2.0` in our implementation.
+2.  Install Git [`LFS`](https://git-lfs.github.com/) to access upstream task data. We utilized version `3.2.0` in our implementation.
 
-3. **Optional:** If you intend to develop this repository further, we recommend installing [`pre-commit`](https://github.com/pre-commit/pre-commit) to utilize local pre-commit hooks for various code-checks.
+3. **Optional:** To further develop this repository, install [`pre-commit`](https://github.com/pre-commit/pre-commit) to setup pre-commit hooks for code-checks.
 
 ## Initialization :fire:
 
-1. To prepare the necessary git submodules and data, execute:
+1. To prepare git submodules and data, execute:
 
     ```
     $ bash scripts/prepare.sh
     ```
 
-2. **Optional:** If you intend to further develop this repository, execute the following to initialize pre-commit hooks:
+2. **Optional:** To install pre-commit hooks for further development of this repository, execute:
 
     ```
     $ pre-commit install
@@ -108,11 +108,11 @@ $ bash scripts/run_privacy_glue.sh --cuda_visible_devices <device_id> \
                                    --fp16
 ```
 
-**Note**: Replace the `<device_id>` argument with a GPU ID or comma-separated GPU IDs to run single and multi-GPU fine-tuning respectively. Correspokndingly, replace `<model>` with one of our supported models listed in the usage documentation above.
+**Note**: Replace the `<device_id>` argument with a GPU ID or comma-separated GPU IDs to run single-GPU or multi-GPU fine-tuning respectively. Correspondingly, replace the `<model>` argument with one of our supported models listed in the usage documentation above.
 
 ## Notebooks :book:
 
-We utilize the following `ipynb` notebooks for general analyses outside of the PrivacyGLUE benchmark:
+We utilize the following `ipynb` notebooks for analyses outside of the PrivacyGLUE benchmark:
 
 | Notebook                                                                         | Description                                                                                           |
 |:---------------------------------------------------------------------------------|:------------------------------------------------------------------------------------------------------|
@@ -134,7 +134,7 @@ We utilize the following `ipynb` notebooks for general analyses outside of the P
     $ CUDA_VISIBLE_DEVICES=<device_id> make integration
     ```
 
-    **Note**: Replace the `<device_id>` argument with a GPU-ID to run single-GPU integration tests or GPU-IDs to run multi-GPU integration tests. Alternatively, pass an empty string to run CPU integration tests.
+    **Note:** Replace the `<device_id>` argument with a GPU ID or comma-separated GPU IDs to run single-GPU or multi-GPU integration tests respectively. Alternatively, pass an empty string to run CPU integration tests.
 
 
 ## Citation :classical_building:
