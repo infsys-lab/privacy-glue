@@ -4,7 +4,7 @@ This repository documents PrivacyGLUE; a NLP benchmark for general language unde
 
 ## Dependencies :mag:
 
-1. This repository's code was tested with Python version `3.8.13`. To sync dependencies, we recommend creating a virtual environment with the same python version and installing the relevant packages with [`poetry`](https://python-poetry.org/):
+1. This repository's code was tested with Python version `3.8.13` and CUDA version `11.7`. To sync dependencies, we recommend creating a virtual environment with the same python version and installing the relevant packages with [`poetry`](https://python-poetry.org/):
 
     ```
     $ poetry install
