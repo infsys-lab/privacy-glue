@@ -1,6 +1,12 @@
-# privacy-glue
+# PrivacyGLUE: A Benchmark Dataset for General Language Understanding in Privacy Policies
 
-This repository documents PrivacyGLUE; a NLP benchmark for general language understanding in the privacy language domain.
+<p align="center">
+<img src="./data/assets/privacy_glue_flowchart.png">
+</p>
+
+PrivacyGLUE is the first comprehensive privacy-oriented NLP benchmark comprising 7 relevant and high-quality privacy tasks for measuring general language understanding in the privacy language domain. We release performances from the BERT, RoBERTa, Legal-BERT, Legal-RoBERTa and PrivBERT pretrained language models and perform model-pair agreement analysis to detect examples where models benefited from domain specialization. Our findings show that PrivBERT, the only model pretrained on privacy policies, outperforms other models by an average of 2–3% over all PrivacyGLUE tasks, shedding light on the importance of in-domain pretraining for privacy policies.
+
+This repository functions as the official codebase for reproducing the PrivacyGLUE benchmark reported in our MDPI Applied Sciencies [paper](https://www.mdpi.com/2076-3417/13/6/3701) with citation information found [here](#Citation-classical_building). Additional information on the PrivacyGLUE tasks can be found in [here](#Tasks-runner). We direct readers to our paper for further details on our methodologies and results.
 
 ## Dependencies :mag:
 
@@ -118,7 +124,7 @@ We utilize the following `ipynb` notebooks for analyses outside of the PrivacyGL
 |:---------------------------------------------------------------------------------|:------------------------------------------------------------------------------------------------------|
 | [visualize_domain_embeddings.ipynb](notebooks/visualize_domain_embeddings.ipynb) | Compute and visualize BERT embeddings for Wikipedia, EURLEX and Privacy Policies using t-SNE and UMAP |
 | [visualize_results.ipynb](notebooks/visualize_results.ipynb)                     | Plot benchmark results and perform significance testing                                               |
-| [inspect_predictions.ipynb](notebooks/inspect_predictions.ipynb)                 | Inspect test-set predictions for model agreement analysis                                             |
+| [inspect_predictions.ipynb](notebooks/inspect_predictions.ipynb)                 | Inspect test-set predictions for model-pair agreement analysis                                        |
 
 ## Test :microscope:
 
@@ -136,18 +142,46 @@ We utilize the following `ipynb` notebooks for analyses outside of the PrivacyGL
 
     **Note:** Replace the `<device_id>` argument with a GPU ID or comma-separated GPU IDs to run single-GPU or multi-GPU integration tests respectively. Alternatively, pass an empty string to run CPU integration tests.
 
-
 ## Citation :classical_building:
 
 If you found PrivacyGLUE useful, we kindly ask you to cite our paper as follows:
 
 ```bibtex
-@article{shankar2023privacyglue,
-  title =        {PrivacyGLUE: A Benchmark Dataset for General Language
+@Article{app13063701,
+  AUTHOR =       {Shankar, Atreya and Waldis, Andreas and Bless, Christof and
+                  Andueza Rodriguez, Maria and Mazzola, Luca},
+  TITLE =        {PrivacyGLUE: A Benchmark Dataset for General Language
                   Understanding in Privacy Policies},
-  author =       {Shankar, Atreya and Waldis, Andreas and Bless, Christof and
-                  Rodriguez, Maria A and Mazzola, Luca},
-  year =         {2023},
-  publisher =    {Preprints}
+  JOURNAL =      {Applied Sciences},
+  VOLUME =       {13},
+  YEAR =         {2023},
+  NUMBER =       {6},
+  ARTICLE-NUMBER ={3701},
+  URL =          {https://www.mdpi.com/2076-3417/13/6/3701},
+  ISSN =         {2076-3417},
+  ABSTRACT =     {Benchmarks for general language understanding have been
+                  rapidly developing in recent years of NLP research,
+                  particularly because of their utility in choosing
+                  strong-performing models for practical downstream
+                  applications. While benchmarks have been proposed in the legal
+                  language domain, virtually no such benchmarks exist for
+                  privacy policies despite their increasing importance in modern
+                  digital life. This could be explained by privacy policies
+                  falling under the legal language domain, but we find evidence
+                  to the contrary that motivates a separate benchmark for
+                  privacy policies. Consequently, we propose PrivacyGLUE as the
+                  first comprehensive benchmark of relevant and high-quality
+                  privacy tasks for measuring general language understanding in
+                  the privacy language domain. Furthermore, we release
+                  performances from multiple transformer language models and
+                  perform model&ndash;pair agreement analysis to detect tasks
+                  where models benefited from domain specialization. Our
+                  findings show the importance of in-domain pretraining for
+                  privacy policies. We believe PrivacyGLUE can accelerate NLP
+                  research and improve general language understanding for humans
+                  and AI algorithms in the privacy language domain, thus
+                  supporting the adoption and acceptance rates of solutions
+                  based on it.},
+  DOI =          {10.3390/app13063701}
 }
 ```
