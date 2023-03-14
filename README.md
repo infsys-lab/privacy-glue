@@ -55,6 +55,29 @@ This repository functions as the official codebase for reproducing the PrivacyGL
 
 <sup>\*\*</sup>PI-Extract and PolicyIE-B consist of four and two subtasks respectively, and the number of BIO token classes per subtask are separated by a forward-slash character.
 
+## Leaderboard :checkered_flag:
+
+Our current leaderboard consists of the BERT ([Devlin et al., 2019](https://aclanthology.org/N19-1423/)), RoBERTa ([Liu et al., 2021](https://aclanthology.org/2021.ccl-1.108/)), Legal-BERT ([Chalkidis et al., 2020](https://aclanthology.org/2020.findings-emnlp.261/)), Legal-RoBERTa ([Geng et al., 2021](https://arxiv.org/abs/2109.06862)) and PrivBERT ([Srinath et al., 2021](https://aclanthology.org/2021.acl-long.532/)) models.
+
+| Task             | Metric<sup>\*</sup> | BERT                | RoBERTa             | Legal-BERT          | Legal-RoBERTa       | PrivBERT                |
+|:-----------------|:--------------------|:--------------------|:--------------------|:--------------------|:--------------------|:------------------------|
+| OPP-115          | m-F<sub>1</sub>     | 78.4<sub>±0.6</sub> | 79.5<sub>±1.1</sub> | 79.6<sub>±1.0</sub> | 79.1<sub>±0.7</sub> | **82.1**<sub>±0.5</sub> |
+|                  | µ-F<sub>1</sub>     | 84.0<sub>±0.5</sub> | 85.4<sub>±0.5</sub> | 84.3<sub>±0.7</sub> | 84.7<sub>±0.3</sub> | **87.2**<sub>±0.4</sub> |
+| PI-Extract       | m-F<sub>1</sub>     | 60.0<sub>±2.7</sub> | 62.4<sub>±4.4</sub> | 59.5<sub>±3.0</sub> | 60.5<sub>±3.9</sub> | **66.4**<sub>±3.4</sub> |
+|                  | µ-F<sub>1</sub>     | 60.0<sub>±2.7</sub> | 62.4<sub>±4.4</sub> | 59.5<sub>±3.0</sub> | 60.5<sub>±3.9</sub> | **66.4**<sub>±3.4</sub> |
+| Policy-Detection | m-F<sub>1</sub>     | 85.3<sub>±1.8</sub> | 86.9<sub>±1.3</sub> | 86.6<sub>±1.0</sub> | 86.4<sub>±2.0</sub> | **87.3**<sub>±1.1</sub> |
+|                  | µ-F<sub>1</sub>     | 92.1<sub>±1.2</sub> | 92.7<sub>±0.8</sub> | 92.7<sub>±0.5</sub> | 92.4<sub>±1.3</sub> | **92.9**<sub>±0.8</sub> |
+| PolicyIE-A       | m-F<sub>1</sub>     | 72.9<sub>±1.7</sub> | 73.2<sub>±1.6</sub> | 73.2<sub>±1.5</sub> | 73.5<sub>±1.5</sub> | **75.3**<sub>±2.2</sub> |
+|                  | µ-F<sub>1</sub>     | 84.7<sub>±1.0</sub> | 84.8<sub>±0.6</sub> | 84.7<sub>±0.5</sub> | 84.8<sub>±0.3</sub> | **86.2**<sub>±1.0</sub> |
+| PolicyIE-B       | m-F<sub>1</sub>     | 50.3<sub>±0.7</sub> | 52.8<sub>±0.6</sub> | 51.5<sub>±0.7</sub> | 53.5<sub>±0.5</sub> | **55.4**<sub>±0.7</sub> |
+|                  | µ-F<sub>1</sub>     | 50.3<sub>±0.5</sub> | 54.5<sub>±0.7</sub> | 52.2<sub>±1.0</sub> | 53.6<sub>±0.9</sub> | **55.7**<sub>±1.3</sub> |
+| PolicyQA         | s-F<sub>1</sub>     | 55.7<sub>±0.5</sub> | 57.4<sub>±0.4</sub> | 55.3<sub>±0.7</sub> | 56.3<sub>±0.6</sub> | **59.3**<sub>±0.5</sub> |
+|                  | EM                  | 28.0<sub>±0.9</sub> | 30.0<sub>±0.5</sub> | 27.5<sub>±0.6</sub> | 28.6<sub>±0.9</sub> | **31.4**<sub>±0.6</sub> |
+| PrivacyQA        | m-F<sub>1</sub>     | 53.6<sub>±0.8</sub> | 54.4<sub>±0.3</sub> | 53.6<sub>±0.8</sub> | 54.4<sub>±0.5</sub> | **55.3**<sub>±0.6</sub> |
+|                  | µ-F<sub>1</sub>     | 90.0<sub>±0.1</sub> | 90.2<sub>±0.0</sub> | 90.1<sub>±0.1</sub> | 90.2<sub>±0.1</sub> | **90.2**<sub>±0.1</sub> |
+
+<sup>\*</sup>m-F<sub>1</sub>, µ-F<sub>1</sub>, s-F<sub>1</sub> and EM refer to the Macro-F<sub>1</sub>, Micro-F<sub>1</sub>, Sample-F<sub>1</sub> and Exact Match metrics respectively
+
 ## Usage :snowflake:
 
 We use the `run_privacy_glue.sh` script to run PrivacyGLUE benchmark experiments:
