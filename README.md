@@ -21,7 +21,7 @@ This repository documents PrivacyGLUE; a NLP benchmark for general language unde
 
 ## Initialization :fire:
 
-1. To prepare the necessary git submodules and data, simply execute:
+1. To prepare the necessary git submodules and data, execute:
 
     ```
     $ bash scripts/prepare.sh
