@@ -41,17 +41,19 @@ This repository functions as the official codebase for reproducing the PrivacyGL
 
 ## Tasks :runner:
 
-| Task             | Type                                | Study                                                                                |
-|:-----------------|:------------------------------------|:-------------------------------------------------------------------------------------|
-| OPP-115          | Multi-label sequence classification | [Wilson et al. (2016)](https://usableprivacy.org/data)<sup>\*</sup>                  |
-| PI-Extract       | Multi-task token classification     | [Duc et al. (2021)](https://github.com/um-rtcl/piextract_dataset)                    |
-| Policy-Detection | Binary sequence classification      | [Amos et al. (2021)](https://privacypolicies.cs.princeton.edu/)                      |
-| PolicyIE-A       | Multi-class sequence classification | [Ahmad et al. (2021)](https://github.com/wasiahmad/PolicyIE)                         |
-| PolicyIE-B       | Multi-task token classification     | [Ahmad et al. (2021)](https://github.com/wasiahmad/PolicyIE)                         |
-| PolicyQA         | Reading comprehension               | [Ahmad et al. (2020)](https://github.com/wasiahmad/PolicyQA)                         |
-| PrivacyQA        | Binary sequence classification      | [Ravichander et al. (2019)](https://github.com/AbhilashaRavichander/PrivacyQA_EMNLP) |
+| Task             | Study                                                                                | Type                                | Train/Dev/Test Instances | Classes                |
+|:-----------------|:-------------------------------------------------------------------------------------|:------------------------------------|:------------------------:|:----------------------:|
+| OPP-115          | [Wilson et al. (2016)](https://usableprivacy.org/data)<sup>\*</sup>                  | Multi-label sequence classification | 2,185/550/697            | 12                     |
+| PI-Extract       | [Duc et al. (2021)](https://github.com/um-rtcl/piextract_dataset)                    | Multi-task token classification     | 2,579/456/1,029          | 3/3/3/3<sup>\*\*</sup> |
+| Policy-Detection | [Amos et al. (2021)](https://privacypolicies.cs.princeton.edu/)                      | Binary sequence classification      | 773/137/391              | 2                      |
+| PolicyIE-A       | [Ahmad et al. (2021)](https://github.com/wasiahmad/PolicyIE)                         | Multi-class sequence classification | 4,109/100/1,041          | 5                      |
+| PolicyIE-B       | [Ahmad et al. (2021)](https://github.com/wasiahmad/PolicyIE)                         | Multi-task token classification     | 4,109/100/1,041          | 29/9<sup>\*\*</sup>    |
+| PolicyQA         | [Ahmad et al. (2020)](https://github.com/wasiahmad/PolicyQA)                         | Reading comprehension               | 17,056/3,809/4,152       | --                     |
+| PrivacyQA        | [Ravichander et al. (2019)](https://github.com/AbhilashaRavichander/PrivacyQA_EMNLP) | Binary sequence classification      | 157,420/27,780/62,150    | 2                      |
 
 <sup>\*</sup>Data splits were not defined in Wilson et al. (2016) and were instead taken from [Mousavi et al. (2020)](https://github.com/SmartDataAnalytics/Polisis_Benchmark)
+
+<sup>\*\*</sup>PI-Extract and PolicyIE-B consist of four and two subtasks respectively, and the number of BIO token classes per subtask are separated by a forward-slash character.
 
 ## Usage :snowflake:
 
