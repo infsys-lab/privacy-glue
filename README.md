@@ -133,3 +133,19 @@ We utilize the following `ipynb` notebooks for general analyses outside of the P
     ```
 
     **Note**: Replace the `<device_id>` argument with a GPU-ID to run single-GPU integration tests or GPU-IDs to run multi-GPU integration tests. Alternatively, pass an empty string to run CPU integration tests.
+
+
+## Citation :classical_building:
+
+If you found PrivacyGLUE useful, we kindly ask you to cite our paper as follows:
+
+```bibtex
+@article{shankar2023privacyglue,
+  title =        {PrivacyGLUE: A Benchmark Dataset for General Language
+                  Understanding in Privacy Policies},
+  author =       {Shankar, Atreya and Waldis, Andreas and Bless, Christof and
+                  Rodriguez, Maria A and Mazzola, Luca},
+  year =         {2023},
+  publisher =    {Preprints}
+}
+```
