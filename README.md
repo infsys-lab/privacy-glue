@@ -10,7 +10,7 @@ PrivacyGLUE is the first comprehensive privacy-oriented NLP benchmark comprising
 
 In this readme, we describe the PrivacyGLUE benchmark [tasks](#Tasks-runner) and our current [leaderboard](#Leaderboard-checkered_flag). Following this, we provide instructions to install [dependencies](#Dependencies-mag), [initialize](#Initialization-fire) the repository and [reproduce](#Usage-snowflake) the benchmark results. We direct readers to our paper for further details on our methodologies and results, with citation information found [below](#Citation-classical_building).
 
-*Note that a previous version of this paper was submitted to the ACL Rolling Review (ARR) in December 2022 before resubmission to the MDPI Applied Sciences special issue on NLP and applications in February 2023*
+*Note that a previous version of this paper was [submitted](https://openreview.net/forum?id=n3xGexO17SJ) to the ACL Rolling Review (ARR) on 16th December 2022 before resubmission to the MDPI Applied Sciences special issue on NLP and applications on 3rd February 2023.*
 
 ## Tasks :runner:
 
