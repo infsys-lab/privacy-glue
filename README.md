@@ -4,40 +4,13 @@
 <img src="./data/assets/privacy_glue_flowchart.png">
 </p>
 
+This repository functions as the official codebase for the *"PrivacyGLUE: A Benchmark Dataset for General Language Understanding in Privacy Policies"* [paper](https://www.mdpi.com/2076-3417/13/6/3701) published in the MDPI Applied Sciences special issue for NLP and applications.
+
 PrivacyGLUE is the first comprehensive privacy-oriented NLP benchmark comprising 7 relevant and high-quality privacy tasks for measuring general language understanding in the privacy language domain. We release performances from the BERT, RoBERTa, Legal-BERT, Legal-RoBERTa and PrivBERT pretrained language models and perform model-pair agreement analysis to detect examples where models benefited from domain specialization. Our findings show that PrivBERT, the only model pretrained on privacy policies, outperforms other models by an average of 2–3% over all PrivacyGLUE tasks, shedding light on the importance of in-domain pretraining for privacy policies.
 
-This repository functions as the official codebase for reproducing the PrivacyGLUE benchmark reported in our MDPI Applied Sciencies [paper](https://www.mdpi.com/2076-3417/13/6/3701) with citation information found [here](#Citation-classical_building). Additional information on the PrivacyGLUE tasks can be found in [here](#Tasks-runner). We direct readers to our paper for further details on our methodologies and results.
+In this readme, we describe the PrivacyGLUE benchmark [tasks](#Tasks-runner) and our current [leaderboard](#Leaderboard-checkered_flag). Following this, we provide instructions to install [dependencies](#Dependencies-mag), [initialize](#Initialization-fire) the repository and [reproduce](#Usage-snowflake) the benchmark results. We direct readers to our paper for further details on our methodologies and results, with citation information found [below](#Citation-classical_building).
 
-## Dependencies :mag:
-
-1. This repository was tested against Python version `3.8.13` and CUDA version `11.7`. Create a virtual environment with the same python version and install dependencies with [`poetry`](https://python-poetry.org/):
-
-    ```
-    $ poetry install
-    ```
-
-    Alternatively, install dependencies in the virtual environment using `pip`:
-    ```
-    $ pip install -r requirements.txt
-    ```
-
-2.  Install Git [`LFS`](https://git-lfs.github.com/) to access upstream task data. We utilized version `3.2.0` in our implementation.
-
-3. **Optional:** To further develop this repository, install [`pre-commit`](https://github.com/pre-commit/pre-commit) to setup pre-commit hooks for code-checks.
-
-## Initialization :fire:
-
-1. To prepare git submodules and data, execute:
-
-    ```
-    $ bash scripts/prepare.sh
-    ```
-
-2. **Optional:** To install pre-commit hooks for further development of this repository, execute:
-
-    ```
-    $ pre-commit install
-    ```
+*Note that a previous version of this paper was submitted to the ACL Rolling Review (ARR) in December 2022 before resubmission to the MDPI Applied Sciences special issue on NLP and applications in February 2023*
 
 ## Tasks :runner:
 
@@ -77,6 +50,37 @@ Our current leaderboard consists of the BERT ([Devlin et al., 2019](https://acla
 |                  | µ-F<sub>1</sub>     | 90.0<sub>±0.1</sub> | 90.2<sub>±0.0</sub> | 90.1<sub>±0.1</sub> | 90.2<sub>±0.1</sub> | **90.2**<sub>±0.1</sub> |
 
 <sup>\*</sup>m-F<sub>1</sub>, µ-F<sub>1</sub>, s-F<sub>1</sub> and EM refer to the Macro-F<sub>1</sub>, Micro-F<sub>1</sub>, Sample-F<sub>1</sub> and Exact Match metrics respectively
+
+## Dependencies :mag:
+
+1. This repository was tested against Python version `3.8.13` and CUDA version `11.7`. Create a virtual environment with the same python version and install dependencies with [`poetry`](https://python-poetry.org/):
+
+    ```
+    $ poetry install
+    ```
+
+    Alternatively, install dependencies in the virtual environment using `pip`:
+    ```
+    $ pip install -r requirements.txt
+    ```
+
+2.  Install Git [`LFS`](https://git-lfs.github.com/) to access upstream task data. We utilized version `3.2.0` in our implementation.
+
+3. **Optional:** To further develop this repository, install [`pre-commit`](https://github.com/pre-commit/pre-commit) to setup pre-commit hooks for code-checks.
+
+## Initialization :fire:
+
+1. To prepare git submodules and data, execute:
+
+    ```
+    $ bash scripts/prepare.sh
+    ```
+
+2. **Optional:** To install pre-commit hooks for further development of this repository, execute:
+
+    ```
+    $ pre-commit install
+    ```
 
 ## Usage :snowflake:
 
