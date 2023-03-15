@@ -8,9 +8,18 @@ This repository functions as the official codebase for the *"PrivacyGLUE: A Benc
 
 PrivacyGLUE is the first comprehensive privacy-oriented NLP benchmark comprising 7 relevant and high-quality privacy tasks for measuring general language understanding in the privacy language domain. We release performances from the BERT, RoBERTa, Legal-BERT, Legal-RoBERTa and PrivBERT pretrained language models and perform model-pair agreement analysis to detect examples where models benefited from domain specialization. Our findings show that PrivBERT, the only model pretrained on privacy policies, outperforms other models by an average of 2–3% over all PrivacyGLUE tasks, shedding light on the importance of in-domain pretraining for privacy policies.
 
-In this readme, we describe the PrivacyGLUE benchmark [tasks](#Tasks-runner) and our current [leaderboard](#Leaderboard-checkered_flag). Following this, we provide instructions to install [dependencies](#Dependencies-mag), [initialize](#Initialization-fire) the repository and [reproduce](#Usage-snowflake) the benchmark results. We direct readers to our paper for further details on our methodologies and results, with citation information found [below](#Citation-classical_building).
-
 *Note that a previous version of this paper was [submitted](https://openreview.net/forum?id=n3xGexO17SJ) to the ACL Rolling Review (ARR) on 16th December 2022 before resubmission to the MDPI Applied Sciences special issue on NLP and applications on 3rd February 2023.*
+
+## Table of Contents
+
+1. [Tasks](#Tasks-runner)
+2. [Leaderboard](#Leaderboard-checkered_flag)
+3. [Dependencies](#Dependencies-mag)
+3. [Initialization](#Initialization-fire)
+4. [Usage](#Usage-snowflake)
+5. [Notebooks](#Notebooks-book)
+5. [Test](#Test-microscope)
+5. [Citation](#Citation-classical_building)
 
 ## Tasks :runner:
 
