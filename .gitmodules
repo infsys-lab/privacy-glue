@@ -20,5 +20,5 @@
   branch = main
 [submodule "submodules/policy-detection-data"]
   path = submodules/policy-detection-data
-  url = https://gitlab.enterpriselab.ch/infsys-lab/policy-detection-data.git
+  url = https://github.com/infsys-lab/policy-detection-data.git
   branch = main
