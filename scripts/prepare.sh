@@ -77,6 +77,7 @@ policy_qa() {
 }
 
 policy_ie() {
+  local inner_source inner_target_a inner_target_b
   local target_a="./data/policy_ie_a"
   local target_b="./data/policy_ie_b"
   local source="submodules/policy-ie/data/bio_format"
@@ -110,6 +111,7 @@ policy_ie() {
 }
 
 opp_115() {
+  local csv_file target_csv_file
   local target="./data/opp_115"
   mkdir -p "$target"
 
